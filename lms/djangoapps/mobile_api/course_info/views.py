@@ -13,10 +13,27 @@ from student.models import CourseEnrollment, User
 
 
 class CourseUpdatesList(generics.ListAPIView):
-    """Notes:
+    """
+    **Use Case**
 
-    1. This only works for new-style course updates and is not the older freeform
-       format.
+        Get the content for course updates.
+
+    **Example request**:
+
+        GET /api/mobile/v0.5/course_info/{organization}/{course_number}/{course_run}/updates
+
+    **Response Values**
+
+        A array of course updates. Each course update contains:
+
+            * date: The date of the course update.
+
+            * content: The content, as a string, of the course update. HTML tags
+              are not included in the string.
+
+            * status: Whether the update is visible or not.
+
+            * id: The unique identifier of the update.
     """
     authentication_classes = (OAuth2Authentication, SessionAuthentication)
     permission_classes = (permissions.IsAuthenticated,)
@@ -34,7 +51,18 @@ class CourseUpdatesList(generics.ListAPIView):
 
 
 class CourseHandoutsList(generics.ListAPIView):
-    """Please just render this in an HTML view for now.
+    """
+    **Use Case**
+
+        Get the HTML for course handouts.
+
+    **Example request**:
+
+        GET /api/mobile/v0.5/course_info/{organization}/{course_number}/{course_run}/handouts
+
+    **Response Values**
+
+        * handouts_html: The HTML for course handouts.
     """
     authentication_classes = (OAuth2Authentication, SessionAuthentication)
     permission_classes = (permissions.IsAuthenticated,)
@@ -47,6 +75,19 @@ class CourseHandoutsList(generics.ListAPIView):
 
 
 class CourseAboutDetail(generics.RetrieveAPIView):
+    """
+    **Use Case**
+
+        Get the HTML for the course about page.
+
+    **Example request**:
+
+        GET /api/mobile/v0.5/course_info/{organization}/{course_number}/{course_run}/about
+
+    **Response Values**
+
+        * overview: The HTML for the course About page.
+    """
     authentication_classes = (OAuth2Authentication, SessionAuthentication)
     permission_classes = (permissions.IsAuthenticated,)
 
