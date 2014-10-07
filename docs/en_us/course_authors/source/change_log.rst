@@ -13,8 +13,12 @@ October, 2014
 
    * - Date
      - Change
+   * - 10/14/14
+     - Updated :ref:`Set Important Dates for Your Course` to reflect change
+       that course dates now use UTC.
    * - 10/7/14
      - Added the :ref:`Including Student Cohorts` chapter.
+       
        
 *****************
 September, 2014
