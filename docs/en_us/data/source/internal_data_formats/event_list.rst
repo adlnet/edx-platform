@@ -42,6 +42,8 @@ Alphabetical Event List
      - :ref:`Instructor_Event_Types`
    * - ``dump-grades-raw``
      - :ref:`Instructor_Event_Types`
+   * - ``edx.app.browser.launched``
+     - :ref:`mobile`
    * - ``edx.cohort.created``
      - :ref:`student_cohort_events`
    * - ``edx.cohort.creation_requested``
@@ -58,6 +60,14 @@ Alphabetical Event List
      - :ref:`enrollment` and :ref:`instructor_enrollment`
    * - ``edx.forum.searched``
      - :ref:`forum_events`
+   * - ``edx.video.download.requested``
+     - :ref:`mobile`
+   * - ``edx.video.downloaded``
+     - :ref:`mobile`
+   * - ``edx.video.screen.fullscreen.toggled``
+     - :ref:`mobile`
+   * - ``edx.video.transcript.language.selected``
+     - :ref:`mobile`
    * - ``get_anon_ids``
      - :ref:`Instructor_Event_Types`
    * - ``get_student_progress_page``

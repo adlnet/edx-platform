@@ -14,6 +14,9 @@ October-December 2014
 
    * - Date
      - Change
+   * - 10/19/14
+     - Added new events relating to mobile device use to the
+       :ref:`Tracking Logs` chapter.
    * - 10/07/14
      - Added new student and instructor events relating to cohort use to the
        :ref:`Tracking Logs` chapter.

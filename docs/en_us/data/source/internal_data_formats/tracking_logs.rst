@@ -202,12 +202,16 @@ the description for each type of event.
 
 **Type:** string
 
-**Details:** Specifies whether the triggered event originated in the browser or
-on the server. The values in this field are:
+**Details:** Specifies the source of the interaction that triggered the event.
+The values in this field are:
 
 * 'browser'
 * 'server'
 * 'task'
+* 'mobile'
+
+**History**: Updated 10 Oct 2014 to identify events emitted from mobile
+devices.
 
 =====================
 ``event_type`` Field
@@ -236,7 +240,8 @@ data packages. To locate information about a specific event type, see the
 
 **Type:** string
 
-**Details:** IP address of the user who triggered the event. 
+**Details:** IP address of the user who triggered the event. Empty for events
+that originate on mobile devices.
 
 ===================
 ``page`` Field
@@ -245,7 +250,7 @@ data packages. To locate information about a specific event type, see the
 **Type:** string
 
 **Details:** The '$URL' of the page the user was visiting when the event was
-emitted.
+emitted. For events that originate on mobile devices, identifies the view into the browser page.
 
 ===================
 ``session`` Field
@@ -290,6 +295,8 @@ outside the Instructor Dashboard.
 * :ref:`navigational`
 
 * :ref:`video`
+
+* :ref:`mobile`
 
 * :ref:`pdf`
 
@@ -544,11 +551,14 @@ Video Interaction Events
 
 .. video_player_spec.js, lms-modules.js
 
-The browser emits these events when a user works with a video.
+The browser or mobile device emits these events when a user works with a video.
 
 **Component**: Video
 
-**Event Source**: Browser
+**Event Source**: Browser or mobile
+
+**History**: Updated 10 Oct 2014 to include data applicable when the
+``event.source`` is a mobile device.
 
 ``play_video``, ``pause_video``
 ---------------------------------
@@ -560,6 +570,31 @@ The browser emits these events when a user works with a video.
   **pause** control. The browser also emits these events when the video player
   reaches the end of the video file and play automatically stops.
 
+**History**: Updated 10 Oct 2014 to include fields that apply to events with an
+``event.source`` of mobile only.
+
+``context`` **Member Fields**: 
+
+.. list-table::
+   :widths: 15 15 60
+   :header-rows: 1
+
+   * - Field
+     - Type
+     - Details and Member Fields
+   * - ``client``
+     - dict
+     - Applies to events with an ``event.source`` of mobile only. Includes
+       member dictionaries and fields for special context data passed from
+       Segment.io, including ``network``, ``locale``, ``app``, ``device``, and
+       ``userAgent``.
+   * - ``received_at``
+     - float
+     - Applies to events with an ``event.source`` of mobile only.
+   * - ``path``
+     - string
+     - Applies to events with an ``event.source`` of mobile only.
+
 ``event`` **Member Fields**: These events have the same ``event`` fields.
 
 .. list-table::
@@ -569,19 +604,27 @@ The browser emits these events when a user works with a video.
    * - Field
      - Type
      - Details
-   * - ``id``
-     - string
-     - EdX ID of the video being watched (for example, i4x-HarvardX-PH207x-video-Simple_Random_Sample).
+   * - ``current_time``
+     - integer
+     - Applies to events with an ``event.source`` of mobile only.
    * - ``code``
      - string
      - For YouTube videos, the ID of the video being loaded (for example,
        OEyXaRPEzfM). For non-YouTube videos, 'html5'.
+   * - ``id``
+     - string
+     - EdX ID of the video being watched (for example, i4x-HarvardX-PH207x-
+       video-Simple_Random_Sample).
    * - ``currentTime``
      - float
      - Time the video was played, in seconds. 
    * - ``speed``
      - string
      - Video speed in use: '0.75', '1.0', '1.25', '1.50'.
+   * - ``name``
+     - string
+     - Applies to events with an ``event.source`` of mobile only:
+       ``edx.video.played`` or  ``edx.video.paused``
 
 ``stop_video``
 --------------------
@@ -589,9 +632,10 @@ The browser emits these events when a user works with a video.
 The browser emits  ``stop_video`` events when the video player reaches the end
 of the video file and play automatically stops.
 
-**History**: Added 25 June 2014.
+**History**: Added 25 June 2014. Updated 10 Oct 2014 to include fields that
+apply to events with an ``event.source`` of mobile only.
 
-``event`` **Member Fields**: 
+``context`` **Member Fields**: 
 
 .. list-table::
    :widths: 15 15 60
@@ -599,49 +643,19 @@ of the video file and play automatically stops.
 
    * - Field
      - Type
-     - Details
-   * - ``currentTime``
+     - Details and Member Fields
+   * - ``client``
+     - dict
+     - Applies to events with an ``event.source`` of mobile only. Includes
+       member dictionaries and fields for special context data passed from
+       Segment.io, including ``network``, ``locale``, ``app``, ``device``, and
+       ``userAgent``.
+   * - ``received_at``
      - float
-     - Time the video ended, in seconds. 
-
-``seek_video``
------------------
-
-The browser emits ``seek_video`` events when a user clicks the playback bar or
-transcript to go to a different point in the video file.
-
-**History**: Prior to 25 Jun 2014, the ``old_time`` and ``new_time`` were set
-to the same value.
-
-``event`` **Member Fields**: 
-
-.. list-table::
-   :widths: 15 15 60
-   :header-rows: 1
-
-   * - Field
-     - Type
-     - Details
-   * - ``old_time``
-     - integer
-     - The time in the video, in seconds, at which the user chose to go to a
-       different point in the file.
-   * - ``new_time``
-     - integer
-     - The time in the video, in seconds, that the user selected as the
-       destination point.
-   * - ``type``
+     - Applies to events with an ``event.source`` of mobile only.
+   * - ``path``
      - string
-     - The navigational method used to change position within the video.
-
-``speed_change_video`` 
-------------------------
-
-The browser emits ``speed_change_video`` events when a user selects a different
-playing speed for the video.
-
-**History**: Prior to 12 Feb 2014, this event was emitted when the user
-selected either the same speed or a different speed.
+     - Applies to events with an ``event.source`` of mobile only.
 
 ``event`` **Member Fields**: 
 
@@ -653,7 +667,117 @@ selected either the same speed or a different speed.
      - Type
      - Details
    * - ``current_time``
-     - 
+     - integer
+     - Applies to events with an ``event.source`` of mobile only.
+   * - ``currentTime``
+     - float
+     - Time the video ended, in seconds. 
+   * - ``name``
+     - string
+     - Applies to events with an ``event.source`` of mobile only:
+       ``edx.video.stopped``
+
+``seek_video``
+-----------------
+
+The browser emits ``seek_video`` events when a user clicks the playback bar or
+transcript to go to a different point in the video file.
+
+**History**: Prior to 25 Jun 2014, the ``old_time`` and ``new_time`` were set
+to the same value. Updated 10 Oct 2014 to include fields that apply to events
+with an ``event.source`` of mobile only.
+
+``context`` **Member Fields**: 
+
+.. list-table::
+   :widths: 15 15 60
+   :header-rows: 1
+
+   * - Field
+     - Type
+     - Details and Member Fields
+   * - ``client``
+     - dict
+     - Applies to events with an ``event.source`` of mobile only. Includes
+       member dictionaries and fields for special context data passed from
+       Segment.io, including ``network``, ``locale``, ``app``, ``device``, and
+       ``userAgent``.
+   * - ``received_at``
+     - float
+     - Applies to events with an ``event.source`` of mobile only.
+   * - ``path``
+     - string
+     - Applies to events with an ``event.source`` of mobile only.
+
+``event`` **Member Fields**: 
+
+.. list-table::
+   :widths: 15 15 60
+   :header-rows: 1
+
+   * - Field
+     - Type
+     - Details
+   * - ``name``
+     - string
+     - Applies to events with an ``event.source`` of mobile only.
+       ``edx.video.seeked``
+   * - ``old_time``
+     - integer
+     - The time in the video, in seconds, at which the user chose to go to a
+       different point in the file.
+   * - ``new_time``
+     - integer
+     - The time in the video, in seconds, that the user selected as the
+       destination point.
+   * - ``type``
+     - string
+     - The navigational method used to change position within the video.
+       'onCaptionSeek', 'onSlideSeek', or 'onSkipSeek'
+
+``speed_change_video`` 
+------------------------
+
+The browser emits ``speed_change_video`` events when a user selects a different
+playing speed for the video.
+
+**History**: Prior to 12 Feb 2014, this event was emitted when the user
+selected either the same speed or a different speed. Updated 10 Oct 2014 to
+include fields that apply to events with an ``event.source`` of mobile only.
+
+``context`` **Member Fields**: 
+
+.. list-table::
+   :widths: 15 15 60
+   :header-rows: 1
+
+   * - Field
+     - Type
+     - Details and Member Fields
+   * - ``client``
+     - dict
+     - Applies to events with an ``event.source`` of mobile only. Includes
+       member dictionaries and fields for special context data passed from
+       Segment.io, including ``network``, ``locale``, ``app``, ``device``, and
+       ``userAgent``.
+   * - ``received_at``
+     - float
+     - Applies to events with an ``event.source`` of mobile only.
+   * - ``path``
+     - string
+     - Applies to events with an ``event.source`` of mobile only.
+
+``event`` **Member Fields**: 
+
+.. list-table::
+   :widths: 15 15 60
+   :header-rows: 1
+
+   * - Field
+     - Type
+     - Details
+   * - ``current_time``
+     - integer
      - The time in the video that the user chose to change the playing speed.  
    * - ``old_speed``
      - 
@@ -661,6 +785,10 @@ selected either the same speed or a different speed.
    * - ``new_speed``
      - 
      - The speed that the user selected for the video to play. 
+   * - ``name``
+     - string
+     - Applies to events with an ``event.source`` of mobile only.
+       ``edx.video.speed.changed``
 
 ``load_video``
 -----------------
@@ -668,6 +796,31 @@ selected either the same speed or a different speed.
 The browser emits  ``load_video`` events when the video is fully rendered and
 ready to play.
 
+**History**: Updated 10 Oct 2014 to include fields that apply to events with an
+``event.source`` of mobile only.
+
+``context`` **Member Fields**: 
+
+.. list-table::
+   :widths: 15 15 60
+   :header-rows: 1
+
+   * - Field
+     - Type
+     - Details and Member Fields
+   * - ``client``
+     - dict
+     - Applies to events with an ``event.source`` of mobile only. Includes
+       member dictionaries and fields for special context data passed from
+       Segment.io, including ``network``, ``locale``, ``app``, ``device``, and
+       ``userAgent``.
+   * - ``received_at``
+     - float
+     - Applies to events with an ``event.source`` of mobile only.
+   * - ``path``
+     - string
+     - Applies to events with an ``event.source`` of mobile only.
+
 ``event`` **Member Fields**: 
 
 .. list-table::
@@ -681,6 +834,10 @@ ready to play.
      - string
      - For YouTube videos, the ID of the video being loaded (for example,
        OEyXaRPEzfM). For non-YouTube videos, 'html5'.
+   * - ``name``
+     - string
+     - Applies to events with an ``event.source`` of mobile only.
+       ``edx.video.loaded``
 
 ``hide_transcript``
 -------------------
@@ -688,6 +845,31 @@ ready to play.
 The browser emits  ``hide_transcript`` events when the user clicks **CC** to
 suppress display of the video transcript.
 
+**History**: Updated 10 Oct 2014 to include fields that apply to events with an
+``event.source`` of mobile only.
+
+``context`` **Member Fields**: 
+
+.. list-table::
+   :widths: 15 15 60
+   :header-rows: 1
+
+   * - Field
+     - Type
+     - Details and Member Fields
+   * - ``client``
+     - dict
+     - Applies to events with an ``event.source`` of mobile only. Includes
+       member dictionaries and fields for special context data passed from
+       Segment.io, including ``network``, ``locale``, ``app``, ``device``, and
+       ``userAgent``.
+   * - ``received_at``
+     - float
+     - Applies to events with an ``event.source`` of mobile only.
+   * - ``path``
+     - string
+     - Applies to events with an ``event.source`` of mobile only.
+
 ``event`` **Member Fields**: 
 
 .. list-table::
@@ -697,13 +879,21 @@ suppress display of the video transcript.
    * - Field
      - Type
      - Details
+   * - ``current_time``
+     - integer
+     - Applies to events with an ``event.source`` of mobile only.
    * - ``code``
      - string
      - For YouTube videos, the ID of the video being loaded (for example,
        OEyXaRPEzfM). For non-YouTube videos, 'html5'.
    * - ``currentTime``
      - float
-     - The point in the video file at which the transcript was hidden, in seconds. 
+     - The point in the video file at which the transcript was hidden, in
+       seconds.
+   * - ``name``
+     - string
+     - Applies to events with an ``event.source`` of mobile only.
+       ``edx.video.transcript.hide.clicked``
 
 ``show_transcript``
 --------------------
@@ -711,6 +901,32 @@ suppress display of the video transcript.
 The browser emits  ``show_transcript`` events when the user clicks **CC** to
 display the video transcript.
 
+**History**: Updated 10 Oct 2014 to include fields that apply to events with an
+``event.source`` of mobile only.
+
+``context`` **Member Fields**: 
+
+.. list-table::
+   :widths: 15 15 60
+   :header-rows: 1
+
+   * - Field
+     - Type
+     - Details and Member Fields
+   * - ``client``
+     - dict
+     - Applies to events with an ``event.source`` of mobile only. Includes
+       member dictionaries and fields for special context data passed from
+       Segment.io, including ``network``, ``locale``, ``app``, ``device``, and
+       ``userAgent``.
+   * - ``received_at``
+     - float
+     - Applies to events with an ``event.source`` of mobile only.
+   * - ``path``
+     - string
+     - Applies to events with an ``event.source`` of mobile only.
+
+``event`` **Member Fields**: 
 
 .. list-table::
    :widths: 15 15 60
@@ -719,13 +935,180 @@ display the video transcript.
    * - Field
      - Type
      - Details
+   * - ``current_time``
+     - integer
+     - Applies to events with an ``event.source`` of mobile only.
    * - ``code``
      - string
      - For YouTube videos, the ID of the video being loaded (for example,
        OEyXaRPEzfM). For non-YouTube videos, 'html5'.
    * - ``currentTime``
      - float
-     - The point in the video file at which the transcript was opened, in seconds. 
+     - The point in the video file at which the transcript was opened, in
+       seconds.
+   * - ``name``
+     - string
+     - Applies to events with an ``event.source`` of mobile only.
+       ``edx.video.transcript.show.clicked``
+
+.. _mobile:
+
+==============================
+Mobile Interaction Events
+==============================
+
+The mobile device emits these events when a user works with a video.
+
+**Component**: Video
+
+**Event Source**: Mobile
+
+**History**: Added 10 Oct 2014.
+
+``edx.app.browser.launched``
+----------------------------------------
+
+The mobile device emits ``edx.app.browser.launched`` events when
+a user starts the mobile app.
+
+**History**: Added 10 Oct 2014.
+
+``event`` **Member Fields**: 
+
+.. list-table::
+   :widths: 15 15 60
+   :header-rows: 1
+
+   * - Field
+     - Type
+     - Details
+   * - ``source``
+     - string
+     - 'courseware', 'video', etc.
+   * - ``screen/page``
+     - 
+     - Additional data to identify where in the course content the video is
+       located.
+   * - ``target_url``
+     - string
+     - Identifies the URL to open in a (non-mobile) browser.
+   * - ``name``
+     - string
+     - ``edx.app.browser.launched``
+
+``edx.video.download.requested``
+----------------------------------------
+
+The mobile device emits ``edx.video.download.requested`` events when a user
+selects the **Download** option for a video file.
+
+**History**: Added 10 Oct 2014.
+
+``event`` **Member Fields**: 
+
+.. list-table::
+   :widths: 15 15 60
+   :header-rows: 1
+
+   * - Field
+     - Type
+     - Details
+   * - ``source``
+     - string
+     - 'fromVideo' or 'fromLocker'
+   * - ``locker.download.type``
+     - string
+     - 'one', 'allInSection', or 'selection' (if the user selects several
+       videos from a list)
+   * - ``number``
+     - string
+     - The number of videos files selected for download. '1',
+       'numberOfVideosInSection', or 'other'
+   * - ``video_list``
+     - dict
+     - Contains member fields ``id``, ``code``, ``usage_key``, and
+       ``resolution``.
+   * - ``name``
+     - string
+     - ``edx.video.download.requested``
+
+``edx.video.downloaded``
+----------------------------------------
+
+The mobile device emits ``edx.video.downloaded`` events when a video file is
+completely downloaded.
+
+**History**: Added 10 Oct 2014.
+
+``event`` **Member Fields**: 
+
+.. list-table::
+   :widths: 15 15 60
+   :header-rows: 1
+
+   * - Field
+     - Type
+     - Details
+   * - ``name``
+     - string
+     - ``edx.video.downloaded``
+
+``edx.video.screen.fullscreen.toggled``
+----------------------------------------
+
+The mobile device emits ``edx.video.screen.fullscreen.toggled`` events when
+a user changes the display mode for a video file.
+
+**History**: Added 10 Oct 2014.
+
+``event`` **Member Fields**: 
+
+.. list-table::
+   :widths: 15 15 60
+   :header-rows: 1
+
+   * - Field
+     - Type
+     - Details
+   * - ``current_time``
+     - integer
+     - The time in the video that the user chose to change display mode.  
+   * - ``settings.video.fullscreen``
+     - 
+     - 'true' 'false'
+   * - ``name``
+     - 
+     - ``edx.video.screen.fullscreen.toggled``
+
+``edx.video.transcript.language.selected``
+-------------------------------------------
+
+The mobile device emits ``edx.video.transcript.language.selected`` events when
+a user selects a language for a video file's transcript.
+
+**History**: Added 10 Oct 2014.
+
+``event`` **Member Fields**: 
+
+.. list-table::
+   :widths: 15 15 60
+   :header-rows: 1
+
+   * - Field
+     - Type
+     - Details
+   * - ``language``
+     - integer
+     - Set to a two-digit language code.
+   * - ``file``
+     - 
+     - transcriptFile
+   * - ``current_time``
+     - integer
+     - The time in the video that the user chose to change the language.  
+   * - ``name``
+     - string
+     - ``edx.video.transcript.language.selected``
 
 .. _pdf:
 
