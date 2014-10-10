@@ -1,3 +1,6 @@
+"""
+Transfer Student Management Command
+"""
 from opaque_keys.edx.keys import CourseKey
 from optparse import make_option
 from django.contrib.auth.models import User
@@ -7,10 +10,12 @@ from track.management.tracked_command import TrackedCommand
 
 
 class TransferStudentError(Exception):
+    """Generic Error when handling student transfers."""
     pass
 
 
 class Command(TrackedCommand):
+    """Management Command for transferring students from one course to new courses."""
     help = """
     This command takes two course ids as input and transfers
     all students enrolled in one course into the other.  This will

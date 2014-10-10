@@ -15,6 +15,7 @@ from xmodule.modulestore.tests.factories import CourseFactory
 @unittest.skipUnless(settings.ROOT_URLCONF == 'lms.urls', 'Test only valid in lms')
 @ddt.ddt
 class TestTransferStudents(ModuleStoreTestCase):
+    """Tests for transferring students between courses."""
 
     PASSWORD = 'test'
 
