@@ -957,12 +957,13 @@ class CourseDescriptor(CourseFields, SequenceDescriptor):
     @property
     def start_date_text(self):
         """
-        Returns the desired text corresponding the course's start date.  Prefers .advertised_start,
+        Returns the desired text corresponding the course's start date and time.  Prefers .advertised_start,
         then falls back to .start
         """
         i18n = self.runtime.service(self, "i18n")
         _ = i18n.ugettext
         strftime = i18n.strftime
+        timezone = u" UTC"
 
         def try_parse_iso_8601(text):
             try:
@@ -970,21 +971,21 @@ class CourseDescriptor(CourseFields, SequenceDescriptor):
                 if result is None:
                     result = text.title()
                 else:
-                    result = strftime(result, "SHORT_DATE")
+                    result = strftime(result, "DATE_TIME")
             except ValueError:
                 result = text.title()
 
             return result
 
         if isinstance(self.advertised_start, basestring):
-            return try_parse_iso_8601(self.advertised_start)
+            return (try_parse_iso_8601(self.advertised_start) + timezone).strip()
         elif self.start_date_is_still_default:
             # Translators: TBD stands for 'To Be Determined' and is used when a course
             # does not yet have an announced start date.
             return _('TBD')
         else:
             when = self.advertised_start or self.start
-            return strftime(when, "SHORT_DATE")
+            return (strftime(when, "DATE_TIME") + timezone).strip()
 
     @property
     def start_date_is_still_default(self):
@@ -997,15 +998,17 @@ class CourseDescriptor(CourseFields, SequenceDescriptor):
     @property
     def end_date_text(self):
         """
-        Returns the end date for the course formatted as a string.
+        Returns the end date and time for the course formatted as a string.
 
         If the course does not have an end date set (course.end is None), an empty string will be returned.
         """
+        timezone = u" UTC"
+
         if self.end is None:
             return ''
         else:
             strftime = self.runtime.service(self, "i18n").strftime
-            return strftime(self.end, "SHORT_DATE")
+            return (strftime(self.end, "DATE_TIME") + timezone).strip()
 
     @property
     def forum_posts_allowed(self):
