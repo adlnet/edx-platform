@@ -67,7 +67,7 @@ class Command(TrackedCommand):
 
                 new_enrollment = CourseEnrollment.enroll(user, dest_key, mode=mode)
 
-                # Unenroll from the new coures if the user had unenrolled
+                # Un-enroll from the new course if the user had un-enrolled
                 # form the old course.
                 if not old_is_active:
                     new_enrollment.update_enrollment(is_active=False)
