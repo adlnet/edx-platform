@@ -963,7 +963,6 @@ class CourseDescriptor(CourseFields, SequenceDescriptor):
         i18n = self.runtime.service(self, "i18n")
         _ = i18n.ugettext
         strftime = i18n.strftime
-        timezone = u" UTC"
 
         def try_parse_iso_8601(text):
             try:
@@ -971,21 +970,21 @@ class CourseDescriptor(CourseFields, SequenceDescriptor):
                 if result is None:
                     result = text.title()
                 else:
-                    result = strftime(result, "DATE_TIME")
+                    result = self._with_timezone(strftime(result, "DATE_TIME"))
             except ValueError:
                 result = text.title()
 
             return result
 
         if isinstance(self.advertised_start, basestring):
-            return (try_parse_iso_8601(self.advertised_start) + timezone).strip()
+            return try_parse_iso_8601(self.advertised_start)
         elif self.start_date_is_still_default:
             # Translators: TBD stands for 'To Be Determined' and is used when a course
             # does not yet have an announced start date.
             return _('TBD')
         else:
             when = self.advertised_start or self.start
-            return (strftime(when, "DATE_TIME") + timezone).strip()
+            return self._with_timezone(strftime(when, "DATE_TIME"))
 
     @property
     def start_date_is_still_default(self):
@@ -1002,13 +1001,17 @@ class CourseDescriptor(CourseFields, SequenceDescriptor):
 
         If the course does not have an end date set (course.end is None), an empty string will be returned.
         """
-        timezone = u" UTC"
-
         if self.end is None:
             return ''
         else:
             strftime = self.runtime.service(self, "i18n").strftime
-            return (strftime(self.end, "DATE_TIME") + timezone).strip()
+            return self._with_timezone(strftime(self.end, "DATE_TIME"))
+
+    def _with_timezone(self, date_time):
+      """
+      Adds 'UTC' string to the end of start/end date and time texts.
+      """
+      return (date_time + u" UTC").strip()
 
     @property
     def forum_posts_allowed(self):

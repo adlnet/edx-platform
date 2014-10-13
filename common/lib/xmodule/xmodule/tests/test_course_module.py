@@ -186,8 +186,8 @@ class IsNewCourseTestCase(unittest.TestCase):
 
     start_advertised_settings = [
         # start, advertised, result, is_still_default
-        ('2012-12-02T12:00', None, 'Dec 02, 2012', False),
-        ('2012-12-02T12:00', '2011-11-01T12:00', 'Nov 01, 2011', False),
+        ('2012-12-02T12:00', None, 'Dec 02, 2012 at 12:00 UTC', False),
+        ('2012-12-02T12:00', '2011-11-01T12:00', 'Nov 01, 2011 at 12:00 UTC', False),
         ('2012-12-02T12:00', 'Spring 2012', 'Spring 2012', False),
         ('2012-12-02T12:00', 'November, 2011', 'November, 2011', False),
         (xmodule.course_module.CourseFields.start.default, None, 'TBD', True),
@@ -245,7 +245,7 @@ class IsNewCourseTestCase(unittest.TestCase):
         self.assertEqual('', d.end_date_text)
 
         d = get_dummy_course('2012-12-02T12:00', end='2014-9-04T12:00')
-        self.assertEqual('Sep 04, 2014', d.end_date_text)
+        self.assertEqual('Sep 04, 2014 at 12:00 UTC', d.end_date_text)
 
 
 class DiscussionTopicsTestCase(unittest.TestCase):
