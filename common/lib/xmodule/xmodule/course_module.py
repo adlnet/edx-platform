@@ -955,7 +955,14 @@ class CourseDescriptor(CourseFields, SequenceDescriptor):
         return self.location.course_key
 
     @property
+    def start_date_time_text(self):
+        text = self._start_date("DATE_TIME")
+
+    @property
     def start_date_text(self):
+        return self._start_date("SHORT_DATE")
+
+    def _start_date(self, format_string):
         """
         Returns the desired text corresponding the course's start date and time.  Prefers .advertised_start,
         then falls back to .start
@@ -970,7 +977,9 @@ class CourseDescriptor(CourseFields, SequenceDescriptor):
                 if result is None:
                     result = text.title()
                 else:
-                    result = self._with_timezone(strftime(result, "DATE_TIME"))
+                    result = strftime(result, format_string)
+                    if format_string == "DATE_TIME":
+                        result = self._with_timezone(result)
             except ValueError:
                 result = text.title()
 
@@ -984,7 +993,7 @@ class CourseDescriptor(CourseFields, SequenceDescriptor):
             return _('TBD')
         else:
             when = self.advertised_start or self.start
-            return self._with_timezone(strftime(when, "DATE_TIME"))
+            return strftime(when, format_string)
 
     @property
     def start_date_is_still_default(self):
@@ -996,6 +1005,18 @@ class CourseDescriptor(CourseFields, SequenceDescriptor):
 
     @property
     def end_date_text(self):
+        return self._end_date_text("SHORT_DATE")
+
+    @property
+    def end_date_time_text(self):
+        text = self._end_date_text("DATE_TIME")
+
+        if text:
+            return self._with_timezone(text)
+
+        return text
+
+    def _end_date_text(self, format_string):
         """
         Returns the end date and time for the course formatted as a string.
 
@@ -1005,7 +1026,7 @@ class CourseDescriptor(CourseFields, SequenceDescriptor):
             return ''
         else:
             strftime = self.runtime.service(self, "i18n").strftime
-            return self._with_timezone(strftime(self.end, "DATE_TIME"))
+            return strftime(self.end, format_string)
 
     def _with_timezone(self, date_time):
       """
