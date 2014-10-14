@@ -956,10 +956,16 @@ class CourseDescriptor(CourseFields, SequenceDescriptor):
 
     @property
     def start_date_time_text(self):
-        text = self._start_date("DATE_TIME")
+        """
+        Returns start date and time for the course.
+        """
+        return self._start_date("DATE_TIME")
 
     @property
     def start_date_text(self):
+        """
+        Returns start date for the course.
+        """
         return self._start_date("SHORT_DATE")
 
     def _start_date(self, format_string):
@@ -1005,10 +1011,16 @@ class CourseDescriptor(CourseFields, SequenceDescriptor):
 
     @property
     def end_date_text(self):
+        """
+        Returns the end date for the course.
+        """
         return self._end_date_text("SHORT_DATE")
 
     @property
     def end_date_time_text(self):
+        """
+        Returns the end date and time for the course.
+        """
         text = self._end_date_text("DATE_TIME")
 
         if text:
@@ -1018,7 +1030,7 @@ class CourseDescriptor(CourseFields, SequenceDescriptor):
 
     def _end_date_text(self, format_string):
         """
-        Returns the end date and time for the course formatted as a string.
+        Returns the end date or date_time for the course formatted as a string.
 
         If the course does not have an end date set (course.end is None), an empty string will be returned.
         """
@@ -1029,10 +1041,10 @@ class CourseDescriptor(CourseFields, SequenceDescriptor):
             return strftime(self.end, format_string)
 
     def _with_timezone(self, date_time):
-      """
-      Adds 'UTC' string to the end of start/end date and time texts.
-      """
-      return (date_time + u" UTC").strip()
+        """
+        Adds 'UTC' string to the end of start/end date and time texts.
+        """
+        return (date_time + u" UTC").strip()
 
     @property
     def forum_posts_allowed(self):
