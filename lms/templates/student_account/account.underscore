@@ -11,4 +11,9 @@
         <input type="submit" id="email-change-submit" value="<%- gettext('Change My Email Address') %>">
     </div>
     <div id="request-email-status" />
+
+    <div id="password-reset">
+        <a href><%- gettext('Reset Password') %></a>
+    </div>
+    <div id="password-reset-status" />
 </form>

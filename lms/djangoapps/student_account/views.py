@@ -47,6 +47,9 @@ def index(request):
 def email_change_request_handler(request):
     """Handle a request to change the user's email address.
 
+    Sends an email to the newly specified address containing a link
+    to a confirmation page.
+
     Args:
         request (HttpRequest)
 
@@ -130,7 +133,7 @@ def email_change_confirmation_handler(request, key):
 
     Example usage:
 
-        GET /account/email_change_confirm/{key}
+        GET /account/email/confirmation/{key}
 
     """
     try:
@@ -179,3 +182,53 @@ def email_change_confirmation_handler(request, key):
             'disable_courseware_js': True,
         }
     )
+
+
+@login_required
+@require_http_methods(['POST'])
+@ensure_csrf_cookie
+def password_change_request_handler(request):
+    """Handle a request to change the user's password.
+
+    Sends an email to the user containing a link to a password reset page.
+
+    Args:
+        request (HttpRequest)
+
+    Returns:
+        HttpResponse: 200 if the email was sent successfully
+        HttpResponse: 302 if not logged in (redirect to login page)
+        HttpResponse: 405 if using an unsupported HTTP method
+        HttpResponse: 500 if the user to which the email change will be applied
+                          does not exist
+
+    Example usage:
+
+        POST /account/password
+
+    """
+
+@login_required
+@require_http_methods(['GET'])
+def password_change_confirmation_handler(request):
+    """Complete a change of the user's password.
+
+    This is called when the activation link included in the confirmation
+    email is clicked.
+
+    Args:
+        request (HttpRequest)
+
+    Returns:
+        HttpResponse: 200 if the email change is successful, the activation key
+                          is invalid, the new email is already in use, or the
+                          user to which the email change will be applied does
+                          not exist
+        HttpResponse: 302 if not logged in (redirect to login page)
+        HttpResponse: 405 if using an unsupported HTTP method
+
+    Example usage:
+
+        GET /account/password/confirmation/{key}
+
+    """

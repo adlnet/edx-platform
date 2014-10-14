@@ -89,6 +89,25 @@ var edx = edx || {};
             this.$emailStatus = $('#new-email-status', this.$el);
             this.$passwordStatus = $('#password-status', this.$el);
             this.$requestStatus = $('#request-email-status', this.$el);
+            this.$passwordReset = $('#password-reset', this.$el);
+            this.$passwordResetStatus = $('#password-reset-status', this.$el);
+
+            var self = this;
+            this.$passwordReset.click(function(event) {
+                event.preventDefault();
+                $.post('password_reset')
+                    .done(function() {
+                        self.$passwordResetStatus
+                            .addClass('success')
+                            .text(gettext("Password reset email sent. Follow the link in the email to change your password."));
+                    })
+                    .fail(function() {
+                        self.$passwordResetStatus
+                            .addClass('error')
+                            .text(gettext("We weren't able to send you a password reset email."));
+                    });
+            });
+
             return this;
         },
 
