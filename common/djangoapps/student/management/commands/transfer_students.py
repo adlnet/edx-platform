@@ -1,6 +1,7 @@
 """
 Transfer Student Management Command
 """
+from django.db import transaction
 from opaque_keys.edx.keys import CourseKey
 from optparse import make_option
 from django.contrib.auth.models import User
@@ -50,6 +51,7 @@ class Command(TrackedCommand):
                     help="If True, try to transfer certificate items to the new course.")
     )
 
+    @transaction.commit_on_success()
     def handle(self, *args, **options):
         source_key = CourseKey.from_string(options.get('source_course', ''))
         dest_keys = []
