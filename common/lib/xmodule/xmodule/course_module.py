@@ -999,6 +999,10 @@ class CourseDescriptor(CourseFields, SequenceDescriptor):
             return _('TBD')
         else:
             when = self.advertised_start or self.start
+
+            if format_string == "DATE_TIME":
+                return self._with_timezone(strftime(when, format_string))
+
             return strftime(when, format_string)
 
     @property
