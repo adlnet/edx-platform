@@ -205,10 +205,10 @@ class IsNewCourseTestCase(unittest.TestCase):
     @patch('xmodule.course_module.datetime.now')
     def test_start_date_time_text(self, gmtime_mock):
         gmtime_mock.return_value = NOW
-        for s in self.start_advertised_settings:
-            d = get_dummy_course(start=s[0], advertised_start=s[1])
-            print "Checking start=%s advertised=%s" % (s[0], s[1])
-            self.assertEqual(d.start_date_time_text, s[4])
+        for setting in self.start_advertised_settings:
+            course = get_dummy_course(start=setting[0], advertised_start=setting[1])
+            print "Checking start=%s advertised=%s" % (setting[0], setting[1])
+            self.assertEqual(course.start_date_time_text, setting[4])
 
     def test_start_date_is_default(self):
         for s in self.start_advertised_settings:
@@ -257,11 +257,11 @@ class IsNewCourseTestCase(unittest.TestCase):
 
     def test_end_date_time_text(self):
         # No end date set, returns empty string.
-        d = get_dummy_course('2012-12-02T12:00')
-        self.assertEqual('', d.end_date_time_text)
+        course = get_dummy_course('2012-12-02T12:00')
+        self.assertEqual('', course.end_date_time_text)
 
-        d = get_dummy_course('2012-12-02T12:00', end='2014-9-04T12:00')
-        self.assertEqual('Sep 04, 2014 at 12:00 UTC', d.end_date_time_text)
+        course = get_dummy_course('2012-12-02T12:00', end='2014-9-04T12:00')
+        self.assertEqual('Sep 04, 2014 at 12:00 UTC', course.end_date_time_text)
 
 
 class DiscussionTopicsTestCase(unittest.TestCase):
