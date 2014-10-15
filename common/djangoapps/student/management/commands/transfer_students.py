@@ -51,7 +51,7 @@ class Command(TrackedCommand):
                     help="If True, try to transfer certificate items to the new course.")
     )
 
-    @transaction.commit_on_success()
+    @transaction.commit_manually
     def handle(self, *args, **options):
         source_key = CourseKey.from_string(options.get('source_course', ''))
         dest_keys = []
@@ -71,36 +71,37 @@ class Command(TrackedCommand):
         )
 
         for user in source_students:
-            print("Moving {}.".format(user.username))
-            # Find the old enrollment.
-            enrollment = CourseEnrollment.objects.get(
-                user=user,
-                course_id=source_key
-            )
+            with transaction.commit_on_success():
+                print("Moving {}.".format(user.username))
+                # Find the old enrollment.
+                enrollment = CourseEnrollment.objects.get(
+                    user=user,
+                    course_id=source_key
+                )
 
-            # Move the Student between the classes.
-            mode = enrollment.mode
-            old_is_active = enrollment.is_active
-            CourseEnrollment.unenroll(user, source_key, emit_unenrollment_event=False)
-            print(u"Unenrolled {} from {}".format(user.username, unicode(source_key)))
+                # Move the Student between the classes.
+                mode = enrollment.mode
+                old_is_active = enrollment.is_active
+                CourseEnrollment.unenroll(user, source_key, emit_unenrollment_event=False)
+                print(u"Unenrolled {} from {}".format(user.username, unicode(source_key)))
 
-            for dest_key in dest_keys:
-                if CourseEnrollment.is_enrolled(user, dest_key):
-                    # Un Enroll from source course but don't mess
-                    # with the enrollment in the destination course.
-                    msg = u"Skipping {}, already enrolled in destination course {}"
-                    print(msg.format(user.username, unicode(dest_key)))
-                    continue
+                for dest_key in dest_keys:
+                    if CourseEnrollment.is_enrolled(user, dest_key):
+                        # Un Enroll from source course but don't mess
+                        # with the enrollment in the destination course.
+                        msg = u"Skipping {}, already enrolled in destination course {}"
+                        print(msg.format(user.username, unicode(dest_key)))
+                        continue
 
-                new_enrollment = CourseEnrollment.enroll(user, dest_key, mode=mode)
+                    new_enrollment = CourseEnrollment.enroll(user, dest_key, mode=mode)
 
-                # Un-enroll from the new course if the user had un-enrolled
-                # form the old course.
-                if not old_is_active:
-                    new_enrollment.update_enrollment(is_active=False, emit_unenrollment_event=False)
+                    # Un-enroll from the new course if the user had un-enrolled
+                    # form the old course.
+                    if not old_is_active:
+                        new_enrollment.update_enrollment(is_active=False, emit_unenrollment_event=False)
 
-                if transfer_certificates:
-                    self._transfer_certificate_item(source_key, enrollment, user, dest_keys, new_enrollment)
+                    if transfer_certificates:
+                        self._transfer_certificate_item(source_key, enrollment, user, dest_keys, new_enrollment)
 
     @staticmethod
     def _transfer_certificate_item(source_key, enrollment, user, dest_keys, new_enrollment):
