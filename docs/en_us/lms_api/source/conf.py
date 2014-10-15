@@ -9,21 +9,19 @@ from path import path
 
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 
-
-
 sys.path.append('../../../../')
 
 from docs.shared.conf import *
 
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path.append('source/_templates')
+#templates_path.append('source/_templates')
 
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path.append('source/_static')
+#html_static_path.append('source/_static')
 
 if not on_rtd:  # only import and set the theme if we're building docs locally
     import sphinx_rtd_theme
@@ -36,17 +34,6 @@ if not on_rtd:  # only import and set the theme if we're building docs locally
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 root = path('../../../..').abspath()
 sys.path.insert(0, root)
-sys.path.append(root / "common/djangoapps")
-sys.path.append(root / "common/lib")
-sys.path.append(root / "common/lib/capa")
-sys.path.append(root / "common/lib/chem")
-sys.path.append(root / "common/lib/sandbox-packages")
-sys.path.append(root / "common/lib/xmodule")
-sys.path.append(root / "common/lib/opaque_keys")
-sys.path.append(root / "lms/djangoapps")
-sys.path.append(root / "lms/lib")
-sys.path.append(root / "cms/djangoapps")
-sys.path.append(root / "cms/lib")
 sys.path.append(root / "lms/djangoapps/mobile_api")
 sys.path.append(root / "lms/djangoapps/mobile_api/course_info")
 sys.path.append(root / "lms/djangoapps/mobile_api/users")
@@ -58,7 +45,7 @@ sys.path.append('.')
 
 #  django configuration  - careful here
 if on_rtd:
-    os.environ['DJANGO_SETTINGS_MODULE'] = 'lms'
+    os.environ['DJANGO_SETTINGS_MODULE'] = 'lms.envs.test'
 else:
     os.environ['DJANGO_SETTINGS_MODULE'] = 'lms.envs.test'
 
