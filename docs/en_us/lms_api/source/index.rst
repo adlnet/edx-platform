@@ -1,5 +1,5 @@
 ################################################
-edX Learning Management System API Version 0
+edX Learning Management System API Version 0.5
 ################################################
 
 .. toctree::
