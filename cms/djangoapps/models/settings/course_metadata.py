@@ -1,6 +1,7 @@
 from xblock.fields import Scope
 from xmodule.modulestore.django import modulestore
 from django.utils.translation import ugettext as _
+from django.conf import settings
 
 
 class CourseMetadata(object):
@@ -43,6 +44,9 @@ class CourseMetadata(object):
                 continue
 
             if field.name in cls.FILTERED_LIST:
+                continue
+
+            if field.name == 'giturl' and not settings.FEATURES.get('ENABLE_EXPORT_GIT'):
                 continue
 
             result[field.name] = {
