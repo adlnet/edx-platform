@@ -45,7 +45,7 @@ sys.path.append('.')
 
 #  django configuration  - careful here
 if on_rtd:
-    os.environ['DJANGO_SETTINGS_MODULE'] = 'lms.envs.test'
+    os.environ['DJANGO_SETTINGS_MODULE'] = 'lms'
 else:
     os.environ['DJANGO_SETTINGS_MODULE'] = 'lms.envs.test'
 
