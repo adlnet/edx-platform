@@ -212,7 +212,7 @@ The values in this field are:
 * 'server'
 * 'task'
 
-**History**: Updated 15 Oct 2014 to identify events emitted from mobile
+**History**: Updated 16 Oct 2014 to identify events emitted from mobile
 devices.
 
 =====================
@@ -546,20 +546,21 @@ The browser or mobile device emits these events when a user works with a video.
 
 **Event Source**: Browser or mobile
 
-**History**: Updated 15 Oct 2014 to include data applicable when the
+**History**: Updated 16 Oct 2014 to include data applicable when the
 ``event_source`` is a mobile device.
 
 ``play_video``, ``pause_video``
 ---------------------------------
 
-* The browser emits ``play_video`` events when the user clicks the video
-  **play** control.
+* The browser or mobile device emits ``play_video`` events when the user clicks
+  the video **play** control.
 
-* The browser emits  ``pause_video`` events when the user clicks the video
-  **pause** control. The browser also emits these events when the video player
-  reaches the end of the video file and play automatically stops.
+* The browser or mobile device emits  ``pause_video`` events when the user
+  clicks the video **pause** control. The browser or mobile device also emits
+  these events when the video player reaches the end of the video file and play
+  automatically stops.
 
-**History**: Updated 15 Oct 2014 to include fields that apply to events with an
+**History**: Updated 16 Oct 2014 to include fields that apply to events with an
 ``event_source`` of mobile only.
 
 ``context`` **Member Fields**: 
@@ -576,15 +577,17 @@ The browser or mobile device emits these events when a user works with a video.
      - Applies to events with an ``event_source`` of mobile only. Includes
        member dictionaries and fields for special context data passed from
        Segment.io. The data in this field reflects a third party integration
-       and is subject to change at any time without notice.
+       and is subject to change at any time without notice. **History**: Added
+       16 Oct 2014.
    * - ``received_at``
      - float
      - Applies to events with an ``event_source`` of mobile only. Indicates the
        time at which Segment.io received the event. The data in this field
        reflects a third party integration and is subject to change at any time
-       without notice.
+       without notice. **History**: Added 16 Oct 2014.
 
-``event`` **Member Fields**: These events have the same ``event`` fields.
+``event`` **Member Fields**: These events have the same additional ``event``
+member fields.
 
 .. list-table::
    :widths: 15 15 60
@@ -595,7 +598,8 @@ The browser or mobile device emits these events when a user works with a video.
      - Details
    * - ``current_time``
      - integer
-     - Applies to events with an ``event_source`` of mobile only.
+     - Applies to events with an ``event_source`` of mobile only. **History**:
+       Added 16 Oct 2014.
    * - ``code``
      - string
      - For YouTube videos, the ID of the video being loaded (for example,
@@ -609,7 +613,7 @@ The browser or mobile device emits these events when a user works with a video.
      - string
      - For events with an ``event_source`` of 'mobile', the full identifier for
        the video component (for example, i4x://MITx/4.605x_2/video/
-       8b375e7e9c6d419c92a5cdc32f47d4f2).
+       8b375e7e9c6d419c92a5cdc32f47d4f2). **History**: Added 16 Oct 2014.
    * - ``currentTime``
      - float
      - Time the video was played, in seconds. 
@@ -619,7 +623,8 @@ The browser or mobile device emits these events when a user works with a video.
    * - ``name``
      - string
      - Applies to events with an ``event_source`` of mobile only:
-       ``edx.video.played`` or ``edx.video.paused``
+       ``edx.video.played`` or ``edx.video.paused``. **History**: Added 16 Oct
+       2014.
 
 
 Example 
@@ -655,9 +660,9 @@ Example
             "app": {
               "name": "edX",
               "packageName": "org.edx.mobile",
-              "version": "0.1.5 Mobile3",
+              "version": "0.1.5 MobileN",
               "build": "org.edx.mobile@22",
-              "versionName": "0.1.5 Mobile3",
+              "versionName": "0.1.5 MobileN",
               "versionCode": 22
             },
             "integrations": {
@@ -702,16 +707,16 @@ Example
           "path": "\/segmentio\/event"
         },
         "time": "2014-10-10T13:05:00+00:00",
-        "page": "http:\/\/mobile3.m.sandbox.edx.org\/courses\/MITx\/4.605x_2\/3T2014\/courseware\/37568827279b4f70884c996e8d39f3aa\/74d6463a1b2d4a88a4e954a0dfacaf87\/4"
+        "page": "http:\/\/mobileN.m.edx.org\/courses\/MITx\/4.605x_2\/3T2014\/courseware\/37568827279b4f70884c996e8d39f3aa\/74d6463a1b2d4a88a4e954a0dfacaf87\/4"
     }
 
 ``stop_video``
 --------------------
 
-The browser emits  ``stop_video`` events when the video player reaches the end
+The browser or mobile device emits  ``stop_video`` events when the video player reaches the end
 of the video file and play automatically stops.
 
-**History**: Added 25 June 2014. Updated 15 Oct 2014 to include fields that
+**History**: Added 25 June 2014. Updated 16 Oct 2014 to include fields that
 apply to events with an ``event_source`` of mobile only.
 
 ``context`` **Member Fields**: 
@@ -728,13 +733,14 @@ apply to events with an ``event_source`` of mobile only.
      - Applies to events with an ``event_source`` of mobile only. Includes
        member dictionaries and fields for special context data passed from
        Segment.io. The data in this field reflects a third party integration
-       and is subject to change at any time without notice.
+       and is subject to change at any time without notice. **History**: Added
+       16 Oct 2014.
    * - ``received_at``
      - float
      - Applies to events with an ``event_source`` of mobile only. Indicates the
        time at which Segment.io received the event. The data in this field
        reflects a third party integration and is subject to change at any time
-       without notice.
+       without notice. **History**: Added 16 Oct 2014.
 
 ``event`` **Member Fields**: 
 
@@ -747,23 +753,24 @@ apply to events with an ``event_source`` of mobile only.
      - Details
    * - ``current_time``
      - integer
-     - Applies to events with an ``event_source`` of mobile only.
+     - Applies to events with an ``event_source`` of mobile only. **History**:
+       Added 16 Oct 2014.
    * - ``currentTime``
      - float
      - Time the video ended, in seconds. 
    * - ``name``
      - string
      - Applies to events with an ``event_source`` of mobile only:
-       ``edx.video.stopped``
+       ``edx.video.stopped``. **History**: Added 16 Oct 2014.
 
 ``seek_video``
 -----------------
 
-The browser emits ``seek_video`` events when a user clicks the playback bar or
+The browser or mobile device emits ``seek_video`` events when a user clicks the playback bar or
 transcript to go to a different point in the video file.
 
 **History**: Prior to 25 Jun 2014, the ``old_time`` and ``new_time`` were set
-to the same value. Updated 15 Oct 2014 to include fields that apply to events
+to the same value. Updated 16 Oct 2014 to include fields that apply to events
 with an ``event_source`` of mobile only.
 
 ``context`` **Member Fields**: 
@@ -780,13 +787,14 @@ with an ``event_source`` of mobile only.
      - Applies to events with an ``event_source`` of mobile only. Includes
        member dictionaries and fields for special context data passed from
        Segment.io. The data in this field reflects a third party integration
-       and is subject to change at any time without notice.
+       and is subject to change at any time without notice. **History**: Added
+       16 Oct 2014.
    * - ``received_at``
      - float
      - Applies to events with an ``event_source`` of mobile only. Indicates the
        time at which Segment.io received the event. The data in this field
        reflects a third party integration and is subject to change at any time
-       without notice.
+       without notice. **History**: Added 16 Oct 2014.
 
 ``event`` **Member Fields**: 
 
@@ -799,8 +807,8 @@ with an ``event_source`` of mobile only.
      - Details
    * - ``name``
      - string
-     - Applies to events with an ``event_source`` of mobile only.
-       ``edx.video.seeked``
+     - Applies to events with an ``event_source`` of mobile only. **History**:
+       Added 16 Oct 2014. ``edx.video.seeked``
    * - ``old_time``
      - integer
      - The time in the video, in seconds, at which the user chose to go to a
@@ -817,11 +825,11 @@ with an ``event_source`` of mobile only.
 ``speed_change_video`` 
 ------------------------
 
-The browser emits ``speed_change_video`` events when a user selects a different
+The browser or mobile device emits ``speed_change_video`` events when a user selects a different
 playing speed for the video.
 
 **History**: Prior to 12 Feb 2014, this event was emitted when the user
-selected either the same speed or a different speed. Updated 15 Oct 2014 to
+selected either the same speed or a different speed. Updated 16 Oct 2014 to
 include fields that apply to events with an ``event_source`` of mobile only.
 
 ``context`` **Member Fields**: 
@@ -838,13 +846,14 @@ include fields that apply to events with an ``event_source`` of mobile only.
      - Applies to events with an ``event_source`` of mobile only. Includes
        member dictionaries and fields for special context data passed from
        Segment.io. The data in this field reflects a third party integration
-       and is subject to change at any time without notice.
+       and is subject to change at any time without notice. **History**: Added
+       16 Oct 2014.
    * - ``received_at``
      - float
      - Applies to events with an ``event_source`` of mobile only. Indicates the
        time at which Segment.io received the event. The data in this field
        reflects a third party integration and is subject to change at any time
-       without notice.
+       without notice. **History**: Added 16 Oct 2014.
 
 ``event`` **Member Fields**: 
 
@@ -867,15 +876,15 @@ include fields that apply to events with an ``event_source`` of mobile only.
    * - ``name``
      - string
      - Applies to events with an ``event_source`` of mobile only.
-       ``edx.video.speed.changed``
+       ``edx.video.speed.changed``. **History**: Added 16 Oct 2014.
 
 ``load_video``
 -----------------
 
-The browser emits  ``load_video`` events when the video is fully rendered and
+The browser or mobile device emits  ``load_video`` events when the video is fully rendered and
 ready to play.
 
-**History**: Updated 15 Oct 2014 to include fields that apply to events with an
+**History**: Updated 16 Oct 2014 to include fields that apply to events with an
 ``event_source`` of mobile only.
 
 ``context`` **Member Fields**: 
@@ -892,13 +901,14 @@ ready to play.
      - Applies to events with an ``event_source`` of mobile only. Includes
        member dictionaries and fields for special context data passed from
        Segment.io. The data in this field reflects a third party integration
-       and is subject to change at any time without notice.
+       and is subject to change at any time without notice. **History**: Added
+       16 Oct 2014.
    * - ``received_at``
      - float
      - Applies to events with an ``event_source`` of mobile only. Indicates the
        time at which Segment.io received the event. The data in this field
        reflects a third party integration and is subject to change at any time
-       without notice.
+       without notice. **History**: Added 16 Oct 2014.
 
 ``event`` **Member Fields**: 
 
@@ -916,15 +926,15 @@ ready to play.
    * - ``name``
      - string
      - Applies to events with an ``event_source`` of mobile only.
-       ``edx.video.loaded``
+       ``edx.video.loaded``. **History**: Added 16 Oct 2014.
 
 ``hide_transcript``
 -------------------
 
-The browser emits  ``hide_transcript`` events when the user clicks **CC** to
+The browser or mobile device emits  ``hide_transcript`` events when the user clicks **CC** to
 suppress display of the video transcript.
 
-**History**: Updated 15 Oct 2014 to include fields that apply to events with an
+**History**: Updated 16 Oct 2014 to include fields that apply to events with an
 ``event_source`` of mobile only.
 
 ``context`` **Member Fields**: 
@@ -941,13 +951,14 @@ suppress display of the video transcript.
      - Applies to events with an ``event_source`` of mobile only. Includes
        member dictionaries and fields for special context data passed from
        Segment.io. The data in this field reflects a third party integration
-       and is subject to change at any time without notice.
+       and is subject to change at any time without notice. **History**: Added
+       16 Oct 2014.
    * - ``received_at``
      - float
      - Applies to events with an ``event_source`` of mobile only. Indicates the
        time at which Segment.io received the event. The data in this field
        reflects a third party integration and is subject to change at any time
-       without notice.
+       without notice. **History**: Added 16 Oct 2014.
 
 ``event`` **Member Fields**: 
 
@@ -960,7 +971,8 @@ suppress display of the video transcript.
      - Details
    * - ``current_time``
      - integer
-     - Applies to events with an ``event_source`` of mobile only.
+     - Applies to events with an ``event_source`` of mobile only. **History**:
+       Added 16 Oct 2014.
    * - ``code``
      - string
      - For YouTube videos, the ID of the video being loaded (for example,
@@ -972,15 +984,15 @@ suppress display of the video transcript.
    * - ``name``
      - string
      - Applies to events with an ``event_source`` of mobile only.
-       ``edx.video.transcript.hide.clicked``
+       ``edx.video.transcript.hide.clicked``. **History**: Added 16 Oct 2014.
 
 ``show_transcript``
 --------------------
 
-The browser emits  ``show_transcript`` events when the user clicks **CC** to
-display the video transcript.
+The browser or mobile device emits  ``show_transcript`` events when the user
+clicks **CC** to display the video transcript.
 
-**History**: Updated 15 Oct 2014 to include fields that apply to events with an
+**History**: Updated 16 Oct 2014 to include fields that apply to events with an
 ``event_source`` of mobile only.
 
 ``context`` **Member Fields**: 
@@ -997,13 +1009,14 @@ display the video transcript.
      - Applies to events with an ``event_source`` of mobile only. Includes
        member dictionaries and fields for special context data passed from
        Segment.io. The data in this field reflects a third party integration
-       and is subject to change at any time without notice.
+       and is subject to change at any time without notice. **History**: Added
+       16 Oct 2014.
    * - ``received_at``
      - float
      - Applies to events with an ``event_source`` of mobile only. Indicates the
        time at which Segment.io received the event. The data in this field
        reflects a third party integration and is subject to change at any time
-       without notice.
+       without notice. **History**: Added 16 Oct 2014.
 
 ``event`` **Member Fields**: 
 
@@ -1016,7 +1029,8 @@ display the video transcript.
      - Details
    * - ``current_time``
      - integer
-     - Applies to events with an ``event_source`` of mobile only.
+     - Applies to events with an ``event_source`` of mobile only. **History**:
+       Added 16 Oct 2014.
    * - ``code``
      - string
      - For YouTube videos, the ID of the video being loaded (for example,
@@ -1028,7 +1042,7 @@ display the video transcript.
    * - ``name``
      - string
      - Applies to events with an ``event_source`` of mobile only.
-       ``edx.video.transcript.show.clicked``
+       ``edx.video.transcript.show.clicked``. **History**: Added 16 Oct 2014.
 
 .. _pdf:
 
