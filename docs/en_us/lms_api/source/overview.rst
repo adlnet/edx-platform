@@ -5,7 +5,8 @@ edX Learning Management System API Overview
 ################################################
 
 The edX Learning Management System (LMS) API Overview enables you to build
-applications for students to view course information and videos. 
+applications for students to view course information and videos for courses on
+your instance of Open edX.
 
 The edX LMS API uses Representational State Transfer (REST) design principles
 and supports JavaScript Object Notation (JSON) data-interchange format. Our
