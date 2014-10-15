@@ -108,7 +108,6 @@ def email_change_request_handler(request):
     # Send a confirmation email to the new address containing the activation key
     send_mail(subject, message, from_address, [new_email])
 
-    # Send a 200 response code to the client to indicate that the email was sent successfully.
     return HttpResponse(status=200)
 
 
@@ -188,9 +187,9 @@ def email_change_confirmation_handler(request, key):
 @require_http_methods(['POST'])
 @ensure_csrf_cookie
 def password_change_request_handler(request):
-    """Handle a request to change the user's password.
+    """Handle password change requests originating from the account page.
 
-    Sends an email to the user containing a link to a password reset page.
+    Uses the Account API to email the user a link to the password reset page.
 
     Args:
         request (HttpRequest)
@@ -199,14 +198,24 @@ def password_change_request_handler(request):
         HttpResponse: 200 if the email was sent successfully
         HttpResponse: 302 if not logged in (redirect to login page)
         HttpResponse: 405 if using an unsupported HTTP method
-        HttpResponse: 500 if the user to which the email change will be applied
-                          does not exist
+        HttpResponse: 500 if no user with the provided email exists
 
     Example usage:
 
         POST /account/password
 
     """
+    # Better to pack this into the request or keep it separate?
+    # (i.e., request.POST = QueryDict('email={}'.format(request.user.email)))
+    email_dict = QueryDict('email={}'.format(request.user.email))
+    
+    try:
+        account_api.request_password_change(email_dict, request)
+    except account_api.AccountUserNotFound:
+        return HttpResponseServerError()
+
+    return HttpResponse(status=200)
+
 
 @login_required
 @require_http_methods(['GET'])
@@ -232,3 +241,4 @@ def password_change_confirmation_handler(request):
         GET /account/password/confirmation/{key}
 
     """
+    pass

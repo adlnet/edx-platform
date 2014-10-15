@@ -9,4 +9,5 @@ urlpatterns = patterns(
     url(r'^password/confirmation/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)$',
         'password_change_confirmation_handler', 
         name='password_change_confirm'),
+    # url(r'^password/complete$', 'password_change_complete', name='password_change_complete'),
 )

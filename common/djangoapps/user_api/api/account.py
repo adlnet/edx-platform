@@ -5,8 +5,11 @@ address, but does NOT include user profile information (i.e., demographic
 information and preferences).
 
 """
+from django.conf import settings
 from django.db import transaction, IntegrityError
 from django.core.validators import validate_email, validate_slug, ValidationError
+from django.contrib.auth.forms import PasswordResetForm
+
 from user_api.models import User, UserProfile, Registration, PendingEmailChange
 from user_api.helpers import intercept_errors
 
@@ -298,6 +301,50 @@ def confirm_email_change(activation_key):
         # This allows the caller of the function to notify users at both
         # the new and old email, which is necessary for security reasons.
         return (old_email, new_email)
+
+
+@intercept_errors(AccountInternalError, ignore_errors=[AccountRequestError])
+def request_password_change(email_dict, request):
+    """Email a single-use link for performing a password reset.
+
+    Users must confirm the password change before we update their information.
+
+    Args:
+        email_dict (QueryDict): Contains an email address, keyed on 'email'
+        request (HttpRequest): Needed in order to save the PasswordResetForm
+
+    Returns:
+        None
+
+    Raises:
+        AccountUserNotFound
+        AccountRequestError
+
+    """
+    # What about rate limiting?
+    if 'email' in email_dict:
+        form = PasswordResetForm(email_dict)
+
+        # Validate that an active user exists with the given email address.
+        if form.is_valid():
+            # Generate a single-use link for performing a password reset
+            # and email it to the user.
+            # We may want to edit the template in order to provide a nicer URL
+            form.save(
+                use_https=request.is_secure(),
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                request=request,
+                domain_override=request.get_host()
+            )
+        else:
+            # No active user with the provided email address exists.
+            raise AccountUserNotFound
+    else:
+        raise AccountRequestError(
+            "No key 'email' exists in the provided QueryDict object: {email_dict}".format(
+                email_dict=email_dict
+            )
+        )
 
 
 def _validate_username(username):

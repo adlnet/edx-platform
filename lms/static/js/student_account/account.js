@@ -71,11 +71,12 @@ var edx = edx || {};
 
         events: {
             'submit': 'submit',
-            'change': 'change'
+            'change': 'change',
+            'click #password-reset': 'click'
         },
 
         initialize: function() {
-            _.bindAll(this, 'render', 'submit', 'change', 'clearStatus', 'invalid', 'error', 'sync');
+            _.bindAll(this, 'render', 'submit', 'change', 'click', 'clearStatus', 'invalid', 'error', 'sync');
             this.model = new edx.student.account.AccountModel();
             this.model.on('invalid', this.invalid);
             this.model.on('error', this.error);
@@ -92,22 +93,6 @@ var edx = edx || {};
             this.$passwordReset = $('#password-reset', this.$el);
             this.$passwordResetStatus = $('#password-reset-status', this.$el);
 
-            var self = this;
-            this.$passwordReset.click(function(event) {
-                event.preventDefault();
-                $.post('password_reset')
-                    .done(function() {
-                        self.$passwordResetStatus
-                            .addClass('success')
-                            .text(gettext("Password reset email sent. Follow the link in the email to change your password."));
-                    })
-                    .fail(function() {
-                        self.$passwordResetStatus
-                            .addClass('error')
-                            .text(gettext("We weren't able to send you a password reset email."));
-                    });
-            });
-
             return this;
         },
 
@@ -121,6 +106,31 @@ var edx = edx || {};
             this.model.set({
                 email: this.$email.val(),
                 password: this.$password.val()
+            });
+        },
+
+        click: function(event) {
+            event.preventDefault();
+
+            var headers = {
+                'X-CSRFToken': $.cookie('csrftoken')
+            };
+
+            self = this;
+            $.ajax({
+                url: 'password',
+                type: 'POST',
+                headers: headers
+            })
+            .done(function() {
+                self.$passwordResetStatus
+                    .addClass('success')
+                    .text(gettext("Password reset email sent. Follow the link in the email to change your password."));
+            })
+            .fail(function() {
+                self.$passwordResetStatus
+                    .addClass('error')
+                    .text(gettext("We weren't able to send you a password reset email."));
             });
         },
 
