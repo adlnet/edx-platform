@@ -5,10 +5,10 @@ Tracking Logs
 ######################
 
 This chapter provides reference information about the event data that is
-delivered in data packages. Events are emitted by the server or the browser to
-capture information about interactions with the courseware and the Instructor
-Dashboard in the LMS, and are stored in JSON documents. In the data package,
-event data is delivered in a log file.
+delivered in data packages. Events are emitted by the server, the browser, or
+the mobile device to capture information about interactions with the courseware
+and the Instructor Dashboard in the LMS, and are stored in JSON documents. In
+the data package, event data is delivered in a log file.
 
 The sections in this chapter describe:
 
@@ -174,6 +174,7 @@ identify:
 * The ``course_id`` of the course that generated the event.
 * The ``org_id`` of the organization that lists the course. 
 * The ``user_id`` of the individual who is performing the action. 
+* The URL ``path`` that generated the event. 
   
 When included, ``course_user_tags`` contains a dictionary with the key(s) and
 value(s) from the ``user_api_usercoursetag`` table for the user. See
@@ -184,7 +185,8 @@ field can also contain additional member fields that apply to specific events
 only: see the description for each type of event.
 
 **History**: Added 23 Oct 2013; ``user_id`` added 6 Nov 2013. Other event
-fields may duplicate this data. ``course_user_tags`` added 12 Mar 2014.
+fields may duplicate this data. ``course_user_tags`` added 12 Mar 2014,
+``path`` added 07 May 2014.
 
 ===================
 ``event`` Field
@@ -206,11 +208,11 @@ the description for each type of event.
 The values in this field are:
 
 * 'browser'
+* 'mobile'
 * 'server'
 * 'task'
-* 'mobile'
 
-**History**: Updated 10 Oct 2014 to identify events emitted from mobile
+**History**: Updated 15 Oct 2014 to identify events emitted from mobile
 devices.
 
 =====================
@@ -250,7 +252,10 @@ that originate on mobile devices.
 **Type:** string
 
 **Details:** The '$URL' of the page the user was visiting when the event was
-emitted. For events that originate on mobile devices, identifies the view into the browser page.
+emitted. 
+
+For video events that originate on mobile devices, identifies the URL for the
+video component.
 
 ===================
 ``session`` Field
@@ -295,8 +300,6 @@ outside the Instructor Dashboard.
 * :ref:`navigational`
 
 * :ref:`video`
-
-* :ref:`mobile`
 
 * :ref:`pdf`
 
@@ -350,20 +353,6 @@ that result in these events, see :ref:`instructor_enrollment`.
 **Event Source**: Server
 
 **History**: These enrollment events were added on 03 Dec 2013.
-
-``context`` **Member Fields**: 
-
-.. list-table::
-   :widths: 15 15 60
-   :header-rows: 1
-
-   * - Field
-     - Type
-     - Details and Member Fields
-   * - ``path``
-     - string
-     - The URL path that generated the event: '/change_enrollment'.
-       **History**: Added 07 May 2014.
 
 ``event`` **Member Fields**: 
 
@@ -557,8 +546,8 @@ The browser or mobile device emits these events when a user works with a video.
 
 **Event Source**: Browser or mobile
 
-**History**: Updated 10 Oct 2014 to include data applicable when the
-``event.source`` is a mobile device.
+**History**: Updated 15 Oct 2014 to include data applicable when the
+``event_source`` is a mobile device.
 
 ``play_video``, ``pause_video``
 ---------------------------------
@@ -570,8 +559,8 @@ The browser or mobile device emits these events when a user works with a video.
   **pause** control. The browser also emits these events when the video player
   reaches the end of the video file and play automatically stops.
 
-**History**: Updated 10 Oct 2014 to include fields that apply to events with an
-``event.source`` of mobile only.
+**History**: Updated 15 Oct 2014 to include fields that apply to events with an
+``event_source`` of mobile only.
 
 ``context`` **Member Fields**: 
 
@@ -584,16 +573,13 @@ The browser or mobile device emits these events when a user works with a video.
      - Details and Member Fields
    * - ``client``
      - dict
-     - Applies to events with an ``event.source`` of mobile only. Includes
+     - Applies to events with an ``event_source`` of mobile only. Includes
        member dictionaries and fields for special context data passed from
        Segment.io, including ``network``, ``locale``, ``app``, ``device``, and
        ``userAgent``.
    * - ``received_at``
      - float
-     - Applies to events with an ``event.source`` of mobile only.
-   * - ``path``
-     - string
-     - Applies to events with an ``event.source`` of mobile only.
+     - Applies to events with an ``event_source`` of mobile only.
 
 ``event`` **Member Fields**: These events have the same ``event`` fields.
 
@@ -606,15 +592,21 @@ The browser or mobile device emits these events when a user works with a video.
      - Details
    * - ``current_time``
      - integer
-     - Applies to events with an ``event.source`` of mobile only.
+     - Applies to events with an ``event_source`` of mobile only.
    * - ``code``
      - string
      - For YouTube videos, the ID of the video being loaded (for example,
        OEyXaRPEzfM). For non-YouTube videos, 'html5'.
    * - ``id``
      - string
-     - EdX ID of the video being watched (for example, i4x-HarvardX-PH207x-
-       video-Simple_Random_Sample).
+     - For events with an ``event_source`` of 'browser', the edX ID of the
+       video being watched (for example, i4x-HarvardX-PH207x-video-
+       Simple_Random_Sample).
+   * - ``module_id``
+     - string
+     - For events with an ``event_source`` of 'mobile', the full identifier for
+       the video component (for example, i4x://MITx/4.605x_2/video/
+       8b375e7e9c6d419c92a5cdc32f47d4f2).
    * - ``currentTime``
      - float
      - Time the video was played, in seconds. 
@@ -623,8 +615,92 @@ The browser or mobile device emits these events when a user works with a video.
      - Video speed in use: '0.75', '1.0', '1.25', '1.50'.
    * - ``name``
      - string
-     - Applies to events with an ``event.source`` of mobile only:
-       ``edx.video.played`` or  ``edx.video.paused``
+     - Applies to events with an ``event_source`` of mobile only:
+       ``edx.video.played`` or ``edx.video.paused``
+
+
+Example 
+-----------
+
+.. code-block:: json
+
+    {
+       "username": "xxx",
+        "event_type": "play_video",
+        "ip": "",
+        "agent": "Dalvik\/1.6.0 (Linux; U; Android 4.4.2; SM-G900H Build\/KOT49H)",
+        "host": "mobile3.m.sandbox.edx.org",
+        "event": {
+          "current_time": 0,
+          "code": "html5",
+          "module_id": "i4x:\/\/MITx\/4.605x_2\/video\/8b375e7e9c6d419c92a5cdc32f47d4f2",
+          "currentTime": 0
+        },
+        "event_source": "mobile",
+        "name": "edx.video.played",
+        "context": {
+          "user_id": 11,
+          "org_id": "MITx",
+          "client": {
+            "network": {
+              "carrier": "",
+              "wifi": true,
+              "cellular": false,
+              "bluetooth": false
+            },
+            "locale": "en-GB",
+            "app": {
+              "name": "edX",
+              "packageName": "org.edx.mobile",
+              "version": "0.1.5 Mobile3",
+              "build": "org.edx.mobile@22",
+              "versionName": "0.1.5 Mobile3",
+              "versionCode": 22
+            },
+            "integrations": {
+              "all": true
+            },
+            "library": {
+              "version": 203,
+              "name": "analytics-android",
+              "versionName": "2.0.3"
+            },
+            "traits": {
+              "username": "xxx",
+              "event_source": "mobile",
+              "name": "abcd",
+              "userId": "11",
+              "anonymousId": "4483e039-77a1-44d7-a68a-d18fcde8345d",
+              "email": "abcd@gmail.com"
+            },
+            "device": {
+              "model": "SM-G900H",
+              "userId": "ae5ada65ad732397",
+              "name": "k3g",
+              "manufacturer": "samsung"
+            },
+            "userAgent": "Dalvik\/1.6.0 (Linux; U; Android 4.4.2; SM-G900H Build\/KOT49H)",
+            "os": {
+              "version": "4.4.2",
+              "name": "REL",
+              "sdk": 19
+            },
+            "screen": {
+              "densityBucket": "xxhdpi",
+              "density": 3,
+              "height": 1920,
+              "width": 1080,
+              "densityDpi": 480,
+              "scaledDensity": 3
+            }
+          },
+          "received_at": "2014-10-10T13:06:50.641000+00:00",
+          "course_id": "MITx\/4.605x_2\/3T2014",
+          "path": "\/segmentio\/event"
+        },
+        "time": "2014-10-10T13:05:00+00:00",
+        "page": "http:\/\/mobile3.m.sandbox.edx.org\/courses\/MITx\/4.605x_2\/3T2014\/courseware\/37568827279b4f70884c996e8d39f3aa\/74d6463a1b2d4a88a4e954a0dfacaf87\/4"
+    }
 
 ``stop_video``
 --------------------
@@ -632,8 +708,8 @@ The browser or mobile device emits these events when a user works with a video.
 The browser emits  ``stop_video`` events when the video player reaches the end
 of the video file and play automatically stops.
 
-**History**: Added 25 June 2014. Updated 10 Oct 2014 to include fields that
-apply to events with an ``event.source`` of mobile only.
+**History**: Added 25 June 2014. Updated 15 Oct 2014 to include fields that
+apply to events with an ``event_source`` of mobile only.
 
 ``context`` **Member Fields**: 
 
@@ -646,16 +722,13 @@ apply to events with an ``event.source`` of mobile only.
      - Details and Member Fields
    * - ``client``
      - dict
-     - Applies to events with an ``event.source`` of mobile only. Includes
+     - Applies to events with an ``event_source`` of mobile only. Includes
        member dictionaries and fields for special context data passed from
        Segment.io, including ``network``, ``locale``, ``app``, ``device``, and
        ``userAgent``.
    * - ``received_at``
      - float
-     - Applies to events with an ``event.source`` of mobile only.
-   * - ``path``
-     - string
-     - Applies to events with an ``event.source`` of mobile only.
+     - Applies to events with an ``event_source`` of mobile only.
 
 ``event`` **Member Fields**: 
 
@@ -668,13 +741,13 @@ apply to events with an ``event.source`` of mobile only.
      - Details
    * - ``current_time``
      - integer
-     - Applies to events with an ``event.source`` of mobile only.
+     - Applies to events with an ``event_source`` of mobile only.
    * - ``currentTime``
      - float
      - Time the video ended, in seconds. 
    * - ``name``
      - string
-     - Applies to events with an ``event.source`` of mobile only:
+     - Applies to events with an ``event_source`` of mobile only:
        ``edx.video.stopped``
 
 ``seek_video``
@@ -684,8 +757,8 @@ The browser emits ``seek_video`` events when a user clicks the playback bar or
 transcript to go to a different point in the video file.
 
 **History**: Prior to 25 Jun 2014, the ``old_time`` and ``new_time`` were set
-to the same value. Updated 10 Oct 2014 to include fields that apply to events
-with an ``event.source`` of mobile only.
+to the same value. Updated 15 Oct 2014 to include fields that apply to events
+with an ``event_source`` of mobile only.
 
 ``context`` **Member Fields**: 
 
@@ -698,16 +771,13 @@ with an ``event.source`` of mobile only.
      - Details and Member Fields
    * - ``client``
      - dict
-     - Applies to events with an ``event.source`` of mobile only. Includes
+     - Applies to events with an ``event_source`` of mobile only. Includes
        member dictionaries and fields for special context data passed from
        Segment.io, including ``network``, ``locale``, ``app``, ``device``, and
        ``userAgent``.
    * - ``received_at``
      - float
-     - Applies to events with an ``event.source`` of mobile only.
-   * - ``path``
-     - string
-     - Applies to events with an ``event.source`` of mobile only.
+     - Applies to events with an ``event_source`` of mobile only.
 
 ``event`` **Member Fields**: 
 
@@ -720,7 +790,7 @@ with an ``event.source`` of mobile only.
      - Details
    * - ``name``
      - string
-     - Applies to events with an ``event.source`` of mobile only.
+     - Applies to events with an ``event_source`` of mobile only.
        ``edx.video.seeked``
    * - ``old_time``
      - integer
@@ -742,8 +812,8 @@ The browser emits ``speed_change_video`` events when a user selects a different
 playing speed for the video.
 
 **History**: Prior to 12 Feb 2014, this event was emitted when the user
-selected either the same speed or a different speed. Updated 10 Oct 2014 to
-include fields that apply to events with an ``event.source`` of mobile only.
+selected either the same speed or a different speed. Updated 15 Oct 2014 to
+include fields that apply to events with an ``event_source`` of mobile only.
 
 ``context`` **Member Fields**: 
 
@@ -756,16 +826,13 @@ include fields that apply to events with an ``event.source`` of mobile only.
      - Details and Member Fields
    * - ``client``
      - dict
-     - Applies to events with an ``event.source`` of mobile only. Includes
+     - Applies to events with an ``event_source`` of mobile only. Includes
        member dictionaries and fields for special context data passed from
        Segment.io, including ``network``, ``locale``, ``app``, ``device``, and
        ``userAgent``.
    * - ``received_at``
      - float
-     - Applies to events with an ``event.source`` of mobile only.
-   * - ``path``
-     - string
-     - Applies to events with an ``event.source`` of mobile only.
+     - Applies to events with an ``event_source`` of mobile only.
 
 ``event`` **Member Fields**: 
 
@@ -787,7 +854,7 @@ include fields that apply to events with an ``event.source`` of mobile only.
      - The speed that the user selected for the video to play. 
    * - ``name``
      - string
-     - Applies to events with an ``event.source`` of mobile only.
+     - Applies to events with an ``event_source`` of mobile only.
        ``edx.video.speed.changed``
 
 ``load_video``
@@ -796,8 +863,8 @@ include fields that apply to events with an ``event.source`` of mobile only.
 The browser emits  ``load_video`` events when the video is fully rendered and
 ready to play.
 
-**History**: Updated 10 Oct 2014 to include fields that apply to events with an
-``event.source`` of mobile only.
+**History**: Updated 15 Oct 2014 to include fields that apply to events with an
+``event_source`` of mobile only.
 
 ``context`` **Member Fields**: 
 
@@ -810,16 +877,13 @@ ready to play.
      - Details and Member Fields
    * - ``client``
      - dict
-     - Applies to events with an ``event.source`` of mobile only. Includes
+     - Applies to events with an ``event_source`` of mobile only. Includes
        member dictionaries and fields for special context data passed from
        Segment.io, including ``network``, ``locale``, ``app``, ``device``, and
        ``userAgent``.
    * - ``received_at``
      - float
-     - Applies to events with an ``event.source`` of mobile only.
-   * - ``path``
-     - string
-     - Applies to events with an ``event.source`` of mobile only.
+     - Applies to events with an ``event_source`` of mobile only.
 
 ``event`` **Member Fields**: 
 
@@ -836,7 +900,7 @@ ready to play.
        OEyXaRPEzfM). For non-YouTube videos, 'html5'.
    * - ``name``
      - string
-     - Applies to events with an ``event.source`` of mobile only.
+     - Applies to events with an ``event_source`` of mobile only.
        ``edx.video.loaded``
 
 ``hide_transcript``
@@ -845,8 +909,8 @@ ready to play.
 The browser emits  ``hide_transcript`` events when the user clicks **CC** to
 suppress display of the video transcript.
 
-**History**: Updated 10 Oct 2014 to include fields that apply to events with an
-``event.source`` of mobile only.
+**History**: Updated 15 Oct 2014 to include fields that apply to events with an
+``event_source`` of mobile only.
 
 ``context`` **Member Fields**: 
 
@@ -859,16 +923,13 @@ suppress display of the video transcript.
      - Details and Member Fields
    * - ``client``
      - dict
-     - Applies to events with an ``event.source`` of mobile only. Includes
+     - Applies to events with an ``event_source`` of mobile only. Includes
        member dictionaries and fields for special context data passed from
        Segment.io, including ``network``, ``locale``, ``app``, ``device``, and
        ``userAgent``.
    * - ``received_at``
      - float
-     - Applies to events with an ``event.source`` of mobile only.
-   * - ``path``
-     - string
-     - Applies to events with an ``event.source`` of mobile only.
+     - Applies to events with an ``event_source`` of mobile only.
 
 ``event`` **Member Fields**: 
 
@@ -881,7 +942,7 @@ suppress display of the video transcript.
      - Details
    * - ``current_time``
      - integer
-     - Applies to events with an ``event.source`` of mobile only.
+     - Applies to events with an ``event_source`` of mobile only.
    * - ``code``
      - string
      - For YouTube videos, the ID of the video being loaded (for example,
@@ -892,7 +953,7 @@ suppress display of the video transcript.
        seconds.
    * - ``name``
      - string
-     - Applies to events with an ``event.source`` of mobile only.
+     - Applies to events with an ``event_source`` of mobile only.
        ``edx.video.transcript.hide.clicked``
 
 ``show_transcript``
@@ -901,8 +962,8 @@ suppress display of the video transcript.
 The browser emits  ``show_transcript`` events when the user clicks **CC** to
 display the video transcript.
 
-**History**: Updated 10 Oct 2014 to include fields that apply to events with an
-``event.source`` of mobile only.
+**History**: Updated 15 Oct 2014 to include fields that apply to events with an
+``event_source`` of mobile only.
 
 ``context`` **Member Fields**: 
 
@@ -915,16 +976,13 @@ display the video transcript.
      - Details and Member Fields
    * - ``client``
      - dict
-     - Applies to events with an ``event.source`` of mobile only. Includes
+     - Applies to events with an ``event_source`` of mobile only. Includes
        member dictionaries and fields for special context data passed from
        Segment.io, including ``network``, ``locale``, ``app``, ``device``, and
        ``userAgent``.
    * - ``received_at``
      - float
-     - Applies to events with an ``event.source`` of mobile only.
-   * - ``path``
-     - string
-     - Applies to events with an ``event.source`` of mobile only.
+     - Applies to events with an ``event_source`` of mobile only.
 
 ``event`` **Member Fields**: 
 
@@ -937,7 +995,7 @@ display the video transcript.
      - Details
    * - ``current_time``
      - integer
-     - Applies to events with an ``event.source`` of mobile only.
+     - Applies to events with an ``event_source`` of mobile only.
    * - ``code``
      - string
      - For YouTube videos, the ID of the video being loaded (for example,
@@ -948,167 +1006,8 @@ display the video transcript.
        seconds.
    * - ``name``
      - string
-     - Applies to events with an ``event.source`` of mobile only.
+     - Applies to events with an ``event_source`` of mobile only.
        ``edx.video.transcript.show.clicked``
-
-.. _mobile:
-
-==============================
-Mobile Interaction Events
-==============================
-
-The mobile device emits these events when a user works with a video.
-
-**Component**: Video
-
-**Event Source**: Mobile
-
-**History**: Added 10 Oct 2014.
-
-``edx.app.browser.launched``
-----------------------------------------
-
-The mobile device emits ``edx.app.browser.launched`` events when
-a user starts the mobile app.
-
-**History**: Added 10 Oct 2014.
-
-``event`` **Member Fields**: 
-
-.. list-table::
-   :widths: 15 15 60
-   :header-rows: 1
-
-   * - Field
-     - Type
-     - Details
-   * - ``source``
-     - string
-     - 'courseware', 'video', etc.
-   * - ``screen/page``
-     - 
-     - Additional data to identify where in the course content the video is
-       located.
-   * - ``target_url``
-     - string
-     - Identifies the URL to open in a (non-mobile) browser.
-   * - ``name``
-     - string
-     - ``edx.app.browser.launched``
-
-``edx.video.download.requested``
-----------------------------------------
-
-The mobile device emits ``edx.video.download.requested`` events when a user
-selects the **Download** option for a video file.
-
-**History**: Added 10 Oct 2014.
-
-``event`` **Member Fields**: 
-
-.. list-table::
-   :widths: 15 15 60
-   :header-rows: 1
-
-   * - Field
-     - Type
-     - Details
-   * - ``source``
-     - string
-     - 'fromVideo' or 'fromLocker'
-   * - ``locker.download.type``
-     - string
-     - 'one', 'allInSection', or 'selection' (if the user selects several
-       videos from a list)
-   * - ``number``
-     - string
-     - The number of videos files selected for download. '1',
-       'numberOfVideosInSection', or 'other'
-   * - ``video_list``
-     - dict
-     - Contains member fields ``id``, ``code``, ``usage_key``, and
-       ``resolution``.
-   * - ``name``
-     - string
-     - ``edx.video.download.requested``
-
-``edx.video.downloaded``
-----------------------------------------
-
-The mobile device emits ``edx.video.downloaded`` events when a video file is
-completely downloaded.
-
-**History**: Added 10 Oct 2014.
-
-``event`` **Member Fields**: 
-
-.. list-table::
-   :widths: 15 15 60
-   :header-rows: 1
-
-   * - Field
-     - Type
-     - Details
-   * - ``name``
-     - string
-     - ``edx.video.downloaded``
-
-``edx.video.screen.fullscreen.toggled``
-----------------------------------------
-
-The mobile device emits ``edx.video.screen.fullscreen.toggled`` events when
-a user changes the display mode for a video file.
-
-**History**: Added 10 Oct 2014.
-
-``event`` **Member Fields**: 
-
-.. list-table::
-   :widths: 15 15 60
-   :header-rows: 1
-
-   * - Field
-     - Type
-     - Details
-   * - ``current_time``
-     - integer
-     - The time in the video that the user chose to change display mode.  
-   * - ``settings.video.fullscreen``
-     - 
-     - 'true' 'false'
-   * - ``name``
-     - 
-     - ``edx.video.screen.fullscreen.toggled``
-
-``edx.video.transcript.language.selected``
--------------------------------------------
-
-The mobile device emits ``edx.video.transcript.language.selected`` events when
-a user selects a language for a video file's transcript.
-
-**History**: Added 10 Oct 2014.
-
-``event`` **Member Fields**: 
-
-.. list-table::
-   :widths: 15 15 60
-   :header-rows: 1
-
-   * - Field
-     - Type
-     - Details
-   * - ``language``
-     - integer
-     - Set to a two-digit language code.
-   * - ``file``
-     - 
-     - transcriptFile
-   * - ``current_time``
-     - integer
-     - The time in the video that the user chose to change the language.  
-   * - ``name``
-     - string
-     - ``edx.video.transcript.language.selected``
 
 .. _pdf:
 
@@ -2149,12 +2048,12 @@ Jun 2014. The ``group_id`` field was added 7 October 2014.
    * - ``group_id``
      - integer
      - The numeric ID of the cohort group to which the user's search is
-       restricted, or ``null`` if the search is not restricted in this way. In a
-       course with cohorts enabled, a student's searches will always be
-       restricted to the student's cohort group. Discussion Admins, Moderators, and
-       Community TAs in such a course can search all discussions
-       without specifying a cohort group, which leaves this field
-       ``null`, or they can specify a single cohort group to search.
+       restricted, or ``null`` if the search is not restricted in this way. In
+       a course with cohorts enabled, a student's searches will always be
+       restricted to the student's cohort group. Discussion admins, moderators,
+       and Community TAs in such a course can search all discussions without
+       specifying a cohort group, which leaves this field ``null``, or they can
+       specify a single cohort group to search.
    * - ``page``
      - integer
      - Results are returned in sets of 20 per page. Identifies the page of
