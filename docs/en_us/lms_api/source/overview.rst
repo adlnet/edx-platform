@@ -19,8 +19,8 @@ You can use the edX LMS API for web, desktop, and mobile applications.
 edX LMS API Version 0.5, Alpha
 **********************************
 
- The edX LMS API is currently at version 0.5 and is an Alpha release. We
- plan on making significant enhancements and changes to the API. 
+The edX LMS API is currently at version 0.5 and is an Alpha release. We
+plan on making significant enhancements and changes to the API. 
 
 .. caution::
  As this is a new and rapidly evolving API, at this time edX does not guarantee
