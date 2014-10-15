@@ -1,4 +1,5 @@
 <%! from django.utils.translation import ugettext as _ %>
+<%! from microsite_configuration import microsite %>
 <%page args="section_data"/>
 
 <script type="text/template" id="member-list-widget-template">
@@ -64,8 +65,20 @@
     <input type="button" name="enrollment-button" class="enrollment-button" value="${_("Enroll")}" data-endpoint="${ section_data['enroll_button_url'] }" data-action="enroll" >
     <input type="button" name="enrollment-button" class="enrollment-button" value="${_("Unenroll")}" data-endpoint="${ section_data['unenroll_button_url'] }" data-action="unenroll" >
   </div>
-  <div class="request-response"></div>
-  <div class="request-response-error"></div>
+  %if microsite.get_value('ALLOW_AUTOMATED_SIGNEDUPS', settings.FEATURES.get('ALLOW_AUTOMATED_SIGNEDUPS', False)):
+        <div>
+            <p>
+            ${_("Choose a CSV file that must contain the following columns: email, username, name and country in order to register and enroll a list of users in this course.")}
+            </p>
+            <form method="post" action="${ section_data['upload_student_csv_button_url'] }" enctype="multipart/form-data">
+              <input type="submit" name="enrollment-signup-button" value="${_("Upload a CSV")}" >
+              <input type="file" name="students_list" accept=".csv">
+              <input type="hidden" name="csrfmiddlewaretoken" value="${ csrf_token }">
+            </form>
+        </div>
+    %endif
+    <div class="request-response"></div>
+    <div class="request-response-error"></div>
 </div>
 
 <hr class="divider" />
