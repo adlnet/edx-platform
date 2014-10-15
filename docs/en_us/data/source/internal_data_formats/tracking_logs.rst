@@ -265,8 +265,8 @@ video component.
 
 **Details:** This 32-character value is a key that identifies the user's
 session. All browser events and the server :ref:`enrollment<enrollment>` events
-include a value for the session. Other server events do not include a session
-value.
+include a value for the session. Other server events and mobile events do not
+include a session value.
 
 ===================
 ``time`` Field
@@ -575,11 +575,14 @@ The browser or mobile device emits these events when a user works with a video.
      - dict
      - Applies to events with an ``event_source`` of mobile only. Includes
        member dictionaries and fields for special context data passed from
-       Segment.io, including ``network``, ``locale``, ``app``, ``device``, and
-       ``userAgent``.
+       Segment.io. The data in this field reflects a third party integration
+       and is subject to change at any time without notice.
    * - ``received_at``
      - float
-     - Applies to events with an ``event_source`` of mobile only.
+     - Applies to events with an ``event_source`` of mobile only. Indicates the
+       time at which Segment.io received the event. The data in this field
+       reflects a third party integration and is subject to change at any time
+       without notice.
 
 ``event`` **Member Fields**: These events have the same ``event`` fields.
 
@@ -724,11 +727,14 @@ apply to events with an ``event_source`` of mobile only.
      - dict
      - Applies to events with an ``event_source`` of mobile only. Includes
        member dictionaries and fields for special context data passed from
-       Segment.io, including ``network``, ``locale``, ``app``, ``device``, and
-       ``userAgent``.
+       Segment.io. The data in this field reflects a third party integration
+       and is subject to change at any time without notice.
    * - ``received_at``
      - float
-     - Applies to events with an ``event_source`` of mobile only.
+     - Applies to events with an ``event_source`` of mobile only. Indicates the
+       time at which Segment.io received the event. The data in this field
+       reflects a third party integration and is subject to change at any time
+       without notice.
 
 ``event`` **Member Fields**: 
 
@@ -773,11 +779,14 @@ with an ``event_source`` of mobile only.
      - dict
      - Applies to events with an ``event_source`` of mobile only. Includes
        member dictionaries and fields for special context data passed from
-       Segment.io, including ``network``, ``locale``, ``app``, ``device``, and
-       ``userAgent``.
+       Segment.io. The data in this field reflects a third party integration
+       and is subject to change at any time without notice.
    * - ``received_at``
      - float
-     - Applies to events with an ``event_source`` of mobile only.
+     - Applies to events with an ``event_source`` of mobile only. Indicates the
+       time at which Segment.io received the event. The data in this field
+       reflects a third party integration and is subject to change at any time
+       without notice.
 
 ``event`` **Member Fields**: 
 
@@ -828,11 +837,14 @@ include fields that apply to events with an ``event_source`` of mobile only.
      - dict
      - Applies to events with an ``event_source`` of mobile only. Includes
        member dictionaries and fields for special context data passed from
-       Segment.io, including ``network``, ``locale``, ``app``, ``device``, and
-       ``userAgent``.
+       Segment.io. The data in this field reflects a third party integration
+       and is subject to change at any time without notice.
    * - ``received_at``
      - float
-     - Applies to events with an ``event_source`` of mobile only.
+     - Applies to events with an ``event_source`` of mobile only. Indicates the
+       time at which Segment.io received the event. The data in this field
+       reflects a third party integration and is subject to change at any time
+       without notice.
 
 ``event`` **Member Fields**: 
 
@@ -879,11 +891,14 @@ ready to play.
      - dict
      - Applies to events with an ``event_source`` of mobile only. Includes
        member dictionaries and fields for special context data passed from
-       Segment.io, including ``network``, ``locale``, ``app``, ``device``, and
-       ``userAgent``.
+       Segment.io. The data in this field reflects a third party integration
+       and is subject to change at any time without notice.
    * - ``received_at``
      - float
-     - Applies to events with an ``event_source`` of mobile only.
+     - Applies to events with an ``event_source`` of mobile only. Indicates the
+       time at which Segment.io received the event. The data in this field
+       reflects a third party integration and is subject to change at any time
+       without notice.
 
 ``event`` **Member Fields**: 
 
@@ -925,11 +940,14 @@ suppress display of the video transcript.
      - dict
      - Applies to events with an ``event_source`` of mobile only. Includes
        member dictionaries and fields for special context data passed from
-       Segment.io, including ``network``, ``locale``, ``app``, ``device``, and
-       ``userAgent``.
+       Segment.io. The data in this field reflects a third party integration
+       and is subject to change at any time without notice.
    * - ``received_at``
      - float
-     - Applies to events with an ``event_source`` of mobile only.
+     - Applies to events with an ``event_source`` of mobile only. Indicates the
+       time at which Segment.io received the event. The data in this field
+       reflects a third party integration and is subject to change at any time
+       without notice.
 
 ``event`` **Member Fields**: 
 
@@ -978,11 +996,14 @@ display the video transcript.
      - dict
      - Applies to events with an ``event_source`` of mobile only. Includes
        member dictionaries and fields for special context data passed from
-       Segment.io, including ``network``, ``locale``, ``app``, ``device``, and
-       ``userAgent``.
+       Segment.io. The data in this field reflects a third party integration
+       and is subject to change at any time without notice.
    * - ``received_at``
      - float
-     - Applies to events with an ``event_source`` of mobile only.
+     - Applies to events with an ``event_source`` of mobile only. Indicates the
+       time at which Segment.io received the event. The data in this field
+       reflects a third party integration and is subject to change at any time
+       without notice.
 
 ``event`` **Member Fields**: 
 
