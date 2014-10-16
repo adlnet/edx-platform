@@ -5,4 +5,4 @@ pytz
 lxml
 sphinxcontrib-napoleon==0.2.6
 stevedore==0.14.1
-rest-framework
+djangorestframework>=2.3.11
