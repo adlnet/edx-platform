@@ -368,9 +368,6 @@ that result in these events, see :ref:`instructor_enrollment`.
      - **History**: Maintained for backward compatibility. As of 23 Oct 2013,
        replaced by the ``context`` ``course_id`` field. See the description of
        the :ref:`context`.
-   * - ``user_id``
-     - integer
-     - Identifies the user who was enrolled or unenrolled. 
    * - ``mode``
      - string
      - 'audit', 'honor', 'verified'
@@ -383,6 +380,9 @@ that result in these events, see :ref:`instructor_enrollment`.
      - string
      - The Django session ID, if available. Can be used to identify events for
        a specific user within a session. **History**: Added 07 May 2014.
+   * - ``user_id``
+     - integer
+     - Identifies the user who was enrolled or unenrolled. 
 
 Example
 --------
@@ -505,18 +505,18 @@ All of the navigational events add the same fields to the ``event`` dict field:
    * - Field
      - Type
      - Details
-   * - ``old``
-     - integer
-     - For ``seq_goto``, the index of the unit being jumped from. For
-       ``seq_next`` and ``seq_prev``, the index of the unit being navigated away
-       from.
-   * - ``new``
-     - integer
-     - For ``seq_goto``, the index of the unit being jumped to. For ``seq_next``
-       and ``seq_prev``, the index of the unit being navigated to. 
    * - ``id``
      - integer
      - The edX ID of the sequence. 
+   * - ``new``
+     - integer
+     - For ``seq_goto``, the index of the unit being jumped to. For
+       ``seq_next`` and ``seq_prev``, the index of the unit being navigated to.
+   * - ``old``
+     - integer
+     - For ``seq_goto``, the index of the unit being jumped from. For
+       ``seq_next`` and ``seq_prev``, the index of the unit being navigated
+       away from.
 
 ``page_close``
 ---------------
@@ -1079,13 +1079,10 @@ fields ``name`` and ``chapter``.
    * - Field
      - Type
      - Details
-   * - ``type``
+   * - ``chapter``
      - string
-     -  
-       * 'gotopage' is emitted when a page loads after the student manually enters its number.
-       * 'prevpage' is emitted when the next page button is clicked.
-       * 'nextpage' is emitted when the previous page button is clicked.
-
+     - The name of the PDF file. 
+       **History**: Added for events produced by the PDF Viewer on 16 Apr 2014.
    * - ``name``
      - string
      -  
@@ -1094,16 +1091,20 @@ fields ``name`` and ``chapter``.
        * For 'nextpage', set to ``textbook.pdf.page.navigatednext``. 
        
        **History**: Added for events produced by the PDF Viewer on 16 Apr 2014.
-   * - ``chapter``
-     - string
-     - The name of the PDF file. 
-       **History**: Added for events produced by the PDF Viewer on 16 Apr 2014.
-   * - ``old``
-     - integer
-     - The original page number. Applies to 'gotopage' event types only.   
    * - ``new``
      - integer
      - Destination page number.
+   * - ``old``
+     - integer
+     - The original page number. Applies to 'gotopage' event types only. 
+   * - ``type``
+     - string
+     -  
+       * 'gotopage' is emitted when a page loads after the student manually
+         enters its number.
+       * 'prevpage' is emitted when the next page button is clicked.
+       * 'nextpage' is emitted when the previous page button is clicked.
+
 
 ``textbook.pdf.thumbnails.toggled``
 ------------------------------------
@@ -1126,12 +1127,12 @@ on the icon to show or hide page thumbnails.
    * - Field
      - Type
      - Details
-   * - ``name``
-     - string
-     - ``textbook.pdf.thumbnails.toggled``
    * - ``chapter``
      -  string
      -  The name of the PDF file.
+   * - ``name``
+     - string
+     - ``textbook.pdf.thumbnails.toggled``
    * -  ``page``
      -  integer
      -  The number of the page that is open when the user clicks this icon. 
@@ -1157,18 +1158,19 @@ clicks on a thumbnail image to navigate to a page.
    * - Field
      - Type
      - Details
-   * - ``name``
-     - string
-     - ``textbook.pdf.thumbnail.navigated``
    * - ``chapter`` 
      - string
      - The name of the PDF file. 
+   * - ``name``
+     - string
+     - ``textbook.pdf.thumbnail.navigated``
    * - ``page``
      - integer
      - The page number of the thumbnail clicked.
    * - ``thumbnail_title``
      - string
-     - The identifying name for the destination of the thumbnail. For example, Page 2. 
+     - The identifying name for the destination of the thumbnail. For example,
+       Page 2.
 
 ``textbook.pdf.outline.toggled``
 ------------------------------------
@@ -1191,12 +1193,12 @@ the outline icon to show or hide a list of the book's chapters.
    * - Field
      - Type
      - Details
-   * - ``name``
-     - string
-     - ``textbook.pdf.outline.toggled``
    * - ``chapter`` 
      - string
      - The name of the PDF file.
+   * - ``name``
+     - string
+     - ``textbook.pdf.outline.toggled``
    * - ``page`` 
      - integer
      - The number of the page that is open when the user clicks this link.
@@ -1222,15 +1224,15 @@ on a link in the outline to navigate to a chapter.
    * - Field
      - Type
      - Details
-   * - ``name``
-     - string
-     - ``textbook.pdf.chapter.navigated``
    * - ``chapter``
      - string
      - The name of the PDF file.
    * - ``chapter_title``
      - string
      - The identifying name for the destination of the outline link. 
+   * - ``name``
+     - string
+     - ``textbook.pdf.chapter.navigated``
      
 ``textbook.pdf.page.navigated``
 ------------------------------------
@@ -1253,12 +1255,12 @@ enters a page number.
    * - Field
      - Type
      - Details
-   * - ``name``
-     - string
-     - ``textbook.pdf.page.navigated``
    * - ``chapter``
      - string
      - The name of the PDF file.
+   * - ``name``
+     - string
+     - ``textbook.pdf.page.navigated``
    * - ``page``
      - integer
      - The destination page number entered by the user.
@@ -1284,15 +1286,15 @@ clicks either the Zoom In or Zoom Out icon.
    * - Field
      - Type
      - Details
-   * - ``name``
-     - string
-     - ``textbook.pdf.zoom.buttons.changed``
-   * - ``direction``
-     -  string
-     -  'in', 'out'
    * - ``chapter``
      - string
      - The name of the PDF file.
+   * - ``direction``
+     -  string
+     -  'in', 'out'
+   * - ``name``
+     - string
+     - ``textbook.pdf.zoom.buttons.changed``
    * - ``page``
      - integer
      - The number of the page that is open when the user clicks the icon.
@@ -1318,15 +1320,16 @@ a magnification setting.
    * - Field
      - Type
      - Details
-   * - ``name``
-     - string
-     - ``textbook.pdf.zoom.menu.changed``
    * - ``amount``
      - string
-     - '1', '0.75', '1.5', 'custom', 'page_actual', 'auto', 'page_width', 'page_fit'.
+     - '1', '0.75', '1.5', 'custom', 'page_actual', 'auto', 'page_width',
+       'page_fit'.
    * - ``chapter``
      - string
      - The name of the PDF file.
+   * - ``name``
+     - string
+     - ``textbook.pdf.zoom.menu.changed``
    * - ``page``
      - integer
      - The number of the page that is open when the user selects this value.
@@ -1353,15 +1356,15 @@ magnification setting from the zoom menu or resizes the browser window.
    * - Field
      - Type
      - Details
-   * - ``name``
-     - string
-     - ``textbook.pdf.display.scaled``
    * - ``amount``
      - string
      - The magnification setting; for example, 0.95 or 1.25.
    * - ``chapter``
      - string
      - The name of the PDF file. 
+   * - ``name``
+     - string
+     - ``textbook.pdf.display.scaled``
    * - ``page`` 
      - integer
      - The number of the page that is open when the scaling takes place.
@@ -1387,18 +1390,18 @@ displayed page changes while a user scrolls up or down.
    * - Field
      - Type
      - Details
-   * - ``name``
-     - string
-     - ``textbook.pdf.display.scrolled``
    * - ``chapter``
      - string
      - The name of the PDF file. 
-   * - ``page``
-     - integer
-     - The number of the page that is open when the scrolling takes place.
    * - ``direction``
      - string
      - 'up', 'down' 
+   * - ``name``
+     - string
+     - ``textbook.pdf.display.scrolled``
+   * - ``page``
+     - integer
+     - The number of the page that is open when the scrolling takes place.
 
 ``textbook.pdf.search.executed``
 ------------------------------------
@@ -1425,27 +1428,30 @@ within 500ms of each other.
    * - Field
      - Type
      - Details
-   * - ``name``
-     - string
-     - ``textbook.pdf.search.executed``
-   * - ``query``
-     - string
-     - The value in the search field.
    * - ``caseSensitive``
      - boolean
-     - 'true' if the case sensitive option is selected, 'false' if this option is not selected.
-   * - ``highlightAll``
-     - boolean
-     - 'true' if the option to highlight all matches is selected, 'false' if this option is not selected.
-   * - ``status``
-     - string
-     - A "not found" status phrase for a search string that is unsuccessful. Blank for successful search strings.
+     - 'true' if the case sensitive option is selected, 'false' if this option
+       is not selected.
    * - ``chapter``
      - string
      - The name of the PDF file. 
+   * - ``highlightAll``
+     - boolean
+     - 'true' if the option to highlight all matches is selected, 'false' if
+       this option is not selected.
+   * - ``name``
+     - string
+     - ``textbook.pdf.search.executed``
    * - ``page``
      - integer
      - The number of the page that is open when the search takes place.
+   * - ``query``
+     - string
+     - The value in the search field.
+   * - ``status``
+     - string
+     - A "not found" status phrase for a search string that is unsuccessful.
+       Blank for successful search strings.
 
 ``textbook.pdf.search.navigatednext``
 ---------------------------------------------
@@ -1468,30 +1474,34 @@ clicks on the Find Next or Find Previous icons for an entered search string.
    * - Field
      - Type
      - Details
-   * - ``name``
-     - string
-     - ``textbook.pdf.search.navigatednext`` 
-   * - ``findprevious``
-     - boolean
-     - 'true' if the user clicks the Find Previous icon, 'false' if the user clicks the Find Next icon.
-   * - ``query``
-     - string
-     - The value in the search field.
    * - ``caseSensitive``
      - boolean
-     - 'true' if the case sensitive option is selected, 'false' if this option is not selected.  
-   * - ``highlightAll``
-     - boolean
-     - 'true' if the option to highlight all matches is selected, 'false' if this option is not selected. 
-   * - ``status``
-     -  string
-     - A "not found" status phrase for a search string that is unsuccessful. Blank for successful search strings.   
+     - 'true' if the case sensitive option is selected, 'false' if this option
+       is not selected.
    * - ``chapter``
      - string
      - The name of the PDF file. 
+   * - ``findprevious``
+     - boolean
+     - 'true' if the user clicks the Find Previous icon, 'false' if the user
+       clicks the Find Next icon.
+   * - ``highlightAll``
+     - boolean
+     - 'true' if the option to highlight all matches is selected, 'false' if
+       this option is not selected.
+   * - ``name``
+     - string
+     - ``textbook.pdf.search.navigatednext`` 
    * - ``page``
      - integer
      - The number of the page that is open when the search takes place.
+   * - ``query``
+     - string
+     - The value in the search field.
+   * - ``status``
+     -  string
+     - A "not found" status phrase for a search string that is unsuccessful.
+       Blank for successful search strings.
 
 ``textbook.pdf.search.highlight.toggled``
 ---------------------------------------------
@@ -1514,27 +1524,30 @@ selects or clears the **Highlight All** option for a search.
    * - Field
      - Type
      - Details
-   * - ``name``
-     - string
-     - ``textbook.pdf.search.highlight.toggled``
-   * - ``query``
-     - string
-     - The value in the search field. 
    * - ``caseSensitive``
      - boolean
-     - 'true' if the case sensitive option is selected, false' if this option is not selected. 
-   * - ``highlightAll``
-     - boolean
-     - 'true' if the option to highlight all matches is selected, 'false' if this option is not selected.
-   * - ``status``
-     - string
-     - A "not found" status phrase for a search string that is unsuccessful. Blank for successful search strings.
+     - 'true' if the case sensitive option is selected, false' if this option
+       is not selected.
    * - ``chapter``
      - string
      - The name of the PDF file. 
+   * - ``highlightAll``
+     - boolean
+     - 'true' if the option to highlight all matches is selected, 'false' if
+       this option is not selected.
+   * - ``name``
+     - string
+     - ``textbook.pdf.search.highlight.toggled``
    * - ``page``
      - integer
      - The number of the page that is open when the search takes place.
+   * - ``query``
+     - string
+     - The value in the search field. 
+   * - ``status``
+     - string
+     - A "not found" status phrase for a search string that is unsuccessful.
+       Blank for successful search strings.
 
 ``textbook.pdf.search.casesensitivity.toggled``
 ------------------------------------------------------
@@ -1557,27 +1570,30 @@ user selects or clears the **Match Case** option for a search.
    * - Field
      - Type
      - Details
-   * - ``name``
-     - string
-     - ``textbook.pdf.search.casesensitivity.toggled``
-   * - ``query``
-     - string
-     - The value in the search field.
    * - ``caseSensitive``
      - boolean
-     - 'true' if the case sensitive option is selected, 'false' if this option is not selected.
-   * - ``highlightAll``
-     - boolean
-     - 'true' if the option to highlight all matches is selected, 'false' if this option is not selected. 
-   * - ``status``
-     -  string
-     - A "not found" status phrase for a search string that is unsuccessful. Blank for successful search strings.
+     - 'true' if the case sensitive option is selected, 'false' if this option
+       is not selected.
    * - ``chapter``
      - string
      - The name of the PDF file. 
+   * - ``highlightAll``
+     - boolean
+     - 'true' if the option to highlight all matches is selected, 'false' if
+       this option is not selected.
+   * - ``name``
+     - string
+     - ``textbook.pdf.search.casesensitivity.toggled``
    * - ``page``
      - integer
      - The number of the page that is open when the search takes place.
+   * - ``query``
+     - string
+     - The value in the search field.
+   * - ``status``
+     -  string
+     - A "not found" status phrase for a search string that is unsuccessful.
+       Blank for successful search strings.
 
 .. _problem:
 
