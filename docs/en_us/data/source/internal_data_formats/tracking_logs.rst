@@ -365,21 +365,30 @@ that result in these events, see :ref:`instructor_enrollment`.
      - Details
    * - ``course_id``
      - string
-     - **History**: Maintained for backward compatibility. As of 23 Oct 2013,
-       replaced by the ``context`` ``course_id`` field. See the description of
-       the :ref:`context`.
+     - **History**: Maintained for backward compatibility. 
+       
+       As of 23 Oct 2013, replaced by the ``context`` ``course_id`` field.
+
+       See the description of the :ref:`context`.
+
    * - ``mode``
      - string
      - 'audit', 'honor', 'verified'
    * - ``name``
      - string
      - Identifies the type of event: 'edx.course.enrollment.activated' or
-       'edx.course.enrollment.deactivated'. **History**: Added 07 May 2014 to
-       replace the ``event`` ``event_type`` field.
+       'edx.course.enrollment.deactivated'. 
+
+       **History**: Added 07 May 2014 to replace the ``event`` ``event_type``
+       field.
+
    * - ``session``
      - string
      - The Django session ID, if available. Can be used to identify events for
-       a specific user within a session. **History**: Added 07 May 2014.
+       a specific user within a session. 
+
+       **History**: Added 07 May 2014.
+
    * - ``user_id``
      - integer
      - Identifies the user who was enrolled or unenrolled. 
@@ -510,13 +519,18 @@ All of the navigational events add the same fields to the ``event`` dict field:
      - The edX ID of the sequence. 
    * - ``new``
      - integer
-     - For ``seq_goto``, the index of the unit being jumped to. For
-       ``seq_next`` and ``seq_prev``, the index of the unit being navigated to.
+     - For ``seq_goto``, the index of the unit being jumped to. 
+       
+       For ``seq_next`` and ``seq_prev``, the index of the unit being navigated
+       to.
+
    * - ``old``
      - integer
-     - For ``seq_goto``, the index of the unit being jumped from. For
-       ``seq_next`` and ``seq_prev``, the index of the unit being navigated
+     - For ``seq_goto``, the index of the unit being jumped from. 
+       
+       For ``seq_next`` and ``seq_prev``, the index of the unit being navigated
        away from.
+
 
 ``page_close``
 ---------------
@@ -574,17 +588,27 @@ The browser or mobile device emits these events when a user works with a video.
      - Details and Member Fields
    * - ``client``
      - dict
-     - Applies to events with an ``event_source`` of mobile only. Includes
-       member dictionaries and fields for special context data passed from
-       Segment.io. The data in this field reflects a third party integration
-       and is subject to change at any time without notice. **History**: Added
-       16 Oct 2014.
+     - Applies to events with an ``event_source`` of mobile only. 
+       
+       Includes member dictionaries and fields for special context data passed
+       from Segment.io.
+
+       The data in this field reflects a third party integration and is subject
+       to change at any time without notice.
+
+       **History**: Added 16 Oct 2014.
+
    * - ``received_at``
      - float
-     - Applies to events with an ``event_source`` of mobile only. Indicates the
-       time at which Segment.io received the event. The data in this field
-       reflects a third party integration and is subject to change at any time
-       without notice. **History**: Added 16 Oct 2014.
+     - Applies to events with an ``event_source`` of mobile only. 
+       
+       Indicates the time at which Segment.io received the event.
+
+       The data in this field reflects a third party integration and is subject
+       to change at any time without notice.
+
+       **History**: Added 16 Oct 2014.
+
 
 ``event`` **Member Fields**: These events have the same additional ``event``
 member fields.
@@ -599,29 +623,45 @@ member fields.
    * - ``code``
      - string
      - For YouTube videos, the ID of the video being loaded (for example,
-       OEyXaRPEzfM). For non-YouTube videos, 'html5'.
+       OEyXaRPEzfM). 
+
+       For non-YouTube videos, 'html5'.
+
    * - ``currentTime``
      - float
      - Time the video was played, in seconds. To be deprecated.
    * - ``current_time``
      - integer
-     - Applies to events with an ``event_source`` of mobile only. **History**:
+     - Applies to events with an ``event_source`` of mobile only. 
+       
+       **History**:
        Added 16 Oct 2014.
+
    * - ``id``
      - string
      - For events with an ``event_source`` of 'browser', the edX ID of the
-       video being watched (for example, i4x-HarvardX-PH207x-video-
-       Simple_Random_Sample).
+       video being watched. 
+
+       For example, i4x-HarvardX-PH207x-video-Simple_Random_Sample.
+
    * - ``module_id``
      - string
      - For events with an ``event_source`` of 'mobile', the full identifier for
-       the video component (for example, i4x://MITx/4.605x_2/video/
-       8b375e7e9c6d419c92a5cdc32f47d4f2). **History**: Added 16 Oct 2014.
+       the video component.
+
+       For example,
+       i4x://MITx/4.605x_2/video/8b375e7e9c6d419c92a5cdc32f47d4f2.
+
+       **History**: Added 16 Oct 2014.
+
    * - ``name``
      - string
-     - Applies to events with an ``event_source`` of mobile only:
-       ``edx.video.played`` or ``edx.video.paused``. **History**: Added 16 Oct
-       2014.
+     - ``edx.video.played`` or ``edx.video.paused``
+       
+       Applies to events with an ``event_source`` of mobile only.
+
+       **History**: Added 16 Oct 2014.
+
    * - ``speed``
      - string
      - Video speed in use: '0.75', '1.0', '1.25', '1.50'.
@@ -730,17 +770,27 @@ apply to events with an ``event_source`` of mobile only.
      - Details and Member Fields
    * - ``client``
      - dict
-     - Applies to events with an ``event_source`` of mobile only. Includes
-       member dictionaries and fields for special context data passed from
-       Segment.io. The data in this field reflects a third party integration
-       and is subject to change at any time without notice. **History**: Added
-       16 Oct 2014.
+     - Applies to events with an ``event_source`` of mobile only. 
+       
+       Includes member dictionaries and fields for special context data passed
+       from Segment.io.
+
+       The data in this field reflects a third party integration and is subject
+       to change at any time without notice.
+
+       **History**: Added 16 Oct 2014.
+
    * - ``received_at``
      - float
-     - Applies to events with an ``event_source`` of mobile only. Indicates the
-       time at which Segment.io received the event. The data in this field
-       reflects a third party integration and is subject to change at any time
-       without notice. **History**: Added 16 Oct 2014.
+     - Applies to events with an ``event_source`` of mobile only. 
+       
+       Indicates the time at which Segment.io received the event.
+
+       The data in this field reflects a third party integration and is subject
+       to change at any time without notice.
+
+       **History**: Added 16 Oct 2014.
+
 
 ``event`` **Member Fields**: 
 
@@ -756,12 +806,18 @@ apply to events with an ``event_source`` of mobile only.
      - Time the video ended, in seconds. To be deprecated.
    * - ``current_time``
      - integer
-     - Applies to events with an ``event_source`` of mobile only. **History**:
-       Added 16 Oct 2014.
+     - Applies to events with an ``event_source`` of mobile only. 
+       
+       **History**: Added 16 Oct 2014.
+
    * - ``name``
      - string
-     - Applies to events with an ``event_source`` of mobile only:
-       ``edx.video.stopped``. **History**: Added 16 Oct 2014.
+     - ``edx.video.stopped``
+       
+       Applies to events with an ``event_source`` of mobile only. 
+
+       **History**: Added 16 Oct 2014.
+
 
 ``seek_video``
 -----------------
@@ -784,17 +840,27 @@ with an ``event_source`` of mobile only.
      - Details and Member Fields
    * - ``client``
      - dict
-     - Applies to events with an ``event_source`` of mobile only. Includes
-       member dictionaries and fields for special context data passed from
-       Segment.io. The data in this field reflects a third party integration
-       and is subject to change at any time without notice. **History**: Added
-       16 Oct 2014.
+     - Applies to events with an ``event_source`` of mobile only. 
+       
+       Includes member dictionaries and fields for special context data passed
+       from Segment.io.
+
+       The data in this field reflects a third party integration and is subject
+       to change at any time without notice.
+
+       **History**: Added 16 Oct 2014.
+
    * - ``received_at``
      - float
-     - Applies to events with an ``event_source`` of mobile only. Indicates the
-       time at which Segment.io received the event. The data in this field
-       reflects a third party integration and is subject to change at any time
-       without notice. **History**: Added 16 Oct 2014.
+     - Applies to events with an ``event_source`` of mobile only. 
+       
+       Indicates the time at which Segment.io received the event.
+
+       The data in this field reflects a third party integration and is subject
+       to change at any time without notice.
+
+       **History**: Added 16 Oct 2014.
+
 
 ``event`` **Member Fields**: 
 
@@ -807,8 +873,12 @@ with an ``event_source`` of mobile only.
      - Details
    * - ``name``
      - string
-     - Applies to events with an ``event_source`` of mobile only. **History**:
-       Added 16 Oct 2014. ``edx.video.seeked``.
+     - ``edx.video.seeked``
+       
+       Applies to events with an ``event_source`` of mobile only.
+       
+       **History**: Added 16 Oct 2014.
+
    * - ``new_time``
      - integer
      - The time in the video, in seconds, that the user selected as the
@@ -820,7 +890,9 @@ with an ``event_source`` of mobile only.
    * - ``type``
      - string
      - The navigational method used to change position within the video.
+       
        'onCaptionSeek', 'onSlideSeek', or 'onSkipSeek'.
+
 
 ``speed_change_video`` 
 ------------------------
@@ -843,17 +915,27 @@ include fields that apply to events with an ``event_source`` of mobile only.
      - Details and Member Fields
    * - ``client``
      - dict
-     - Applies to events with an ``event_source`` of mobile only. Includes
-       member dictionaries and fields for special context data passed from
-       Segment.io. The data in this field reflects a third party integration
-       and is subject to change at any time without notice. **History**: Added
-       16 Oct 2014.
+     - Applies to events with an ``event_source`` of mobile only. 
+       
+       Includes member dictionaries and fields for special context data passed
+       from Segment.io.
+
+       The data in this field reflects a third party integration and is subject
+       to change at any time without notice.
+
+       **History**: Added 16 Oct 2014.
+
    * - ``received_at``
      - float
-     - Applies to events with an ``event_source`` of mobile only. Indicates the
-       time at which Segment.io received the event. The data in this field
-       reflects a third party integration and is subject to change at any time
-       without notice. **History**: Added 16 Oct 2014.
+     - Applies to events with an ``event_source`` of mobile only. 
+       
+       Indicates the time at which Segment.io received the event.
+
+       The data in this field reflects a third party integration and is subject
+       to change at any time without notice.
+
+       **History**: Added 16 Oct 2014.
+
 
 ``event`` **Member Fields**: 
 
@@ -869,11 +951,15 @@ include fields that apply to events with an ``event_source`` of mobile only.
      - The time in the video that the user chose to change the playing speed. 
    * - ``name``
      - string
-     - Applies to events with an ``event_source`` of mobile only.
+     - ``edx.video.speed.changed``
+       
+       Applies to events with an ``event_source`` of mobile only. 
+
+       **History**: Added 16 Oct 2014. 
+
    * - ``new_speed``
      - 
      - The speed that the user selected for the video to play. 
-       ``edx.video.speed.changed``. **History**: Added 16 Oct 2014. 
    * - ``old_speed``
      - 
      - The speed at which the video was playing. 
@@ -898,17 +984,27 @@ fully rendered and ready to play.
      - Details and Member Fields
    * - ``client``
      - dict
-     - Applies to events with an ``event_source`` of mobile only. Includes
-       member dictionaries and fields for special context data passed from
-       Segment.io. The data in this field reflects a third party integration
-       and is subject to change at any time without notice. **History**: Added
-       16 Oct 2014.
+     - Applies to events with an ``event_source`` of mobile only. 
+       
+       Includes member dictionaries and fields for special context data passed
+       from Segment.io.
+
+       The data in this field reflects a third party integration and is subject
+       to change at any time without notice.
+
+       **History**: Added 16 Oct 2014.
+
    * - ``received_at``
      - float
-     - Applies to events with an ``event_source`` of mobile only. Indicates the
-       time at which Segment.io received the event. The data in this field
-       reflects a third party integration and is subject to change at any time
-       without notice. **History**: Added 16 Oct 2014.
+     - Applies to events with an ``event_source`` of mobile only. 
+       
+       Indicates the time at which Segment.io received the event.
+
+       The data in this field reflects a third party integration and is subject
+       to change at any time without notice.
+
+       **History**: Added 16 Oct 2014.
+
 
 ``event`` **Member Fields**: 
 
@@ -922,11 +1018,18 @@ fully rendered and ready to play.
    * - ``code``
      - string
      - For YouTube videos, the ID of the video being loaded (for example,
-       OEyXaRPEzfM). For non-YouTube videos, 'html5'.
+       OEyXaRPEzfM). 
+
+       For non-YouTube videos, 'html5'.
+
    * - ``name``
      - string
-     - Applies to events with an ``event_source`` of mobile only.
-       ``edx.video.loaded``. **History**: Added 16 Oct 2014.
+     - ``edx.video.loaded``
+
+       Applies to events with an ``event_source`` of mobile only.
+
+       **History**: Added 16 Oct 2014.
+
 
 ``hide_transcript``
 -------------------
@@ -948,17 +1051,27 @@ clicks **CC** to suppress display of the video transcript.
      - Details and Member Fields
    * - ``client``
      - dict
-     - Applies to events with an ``event_source`` of mobile only. Includes
-       member dictionaries and fields for special context data passed from
-       Segment.io. The data in this field reflects a third party integration
-       and is subject to change at any time without notice. **History**: Added
-       16 Oct 2014.
+     - Applies to events with an ``event_source`` of mobile only. 
+       
+       Includes member dictionaries and fields for special context data passed
+       from Segment.io.
+
+       The data in this field reflects a third party integration and is subject
+       to change at any time without notice.
+
+       **History**: Added 16 Oct 2014.
+
    * - ``received_at``
      - float
-     - Applies to events with an ``event_source`` of mobile only. Indicates the
-       time at which Segment.io received the event. The data in this field
-       reflects a third party integration and is subject to change at any time
-       without notice. **History**: Added 16 Oct 2014.
+     - Applies to events with an ``event_source`` of mobile only. 
+       
+       Indicates the time at which Segment.io received the event.
+
+       The data in this field reflects a third party integration and is subject
+       to change at any time without notice.
+
+       **History**: Added 16 Oct 2014.
+
 
 ``event`` **Member Fields**: 
 
@@ -983,8 +1096,12 @@ clicks **CC** to suppress display of the video transcript.
        Added 16 Oct 2014.
    * - ``name``
      - string
-     - Applies to events with an ``event_source`` of mobile only.
-       ``edx.video.transcript.hide.clicked``. **History**: Added 16 Oct 2014.
+     - ``edx.video.transcript.hide.clicked``
+       
+       Applies to events with an ``event_source`` of mobile only.
+
+       **History**: Added 16 Oct 2014.
+
 
 ``show_transcript``
 --------------------
@@ -1006,17 +1123,27 @@ clicks **CC** to display the video transcript.
      - Details and Member Fields
    * - ``client``
      - dict
-     - Applies to events with an ``event_source`` of mobile only. Includes
-       member dictionaries and fields for special context data passed from
-       Segment.io. The data in this field reflects a third party integration
-       and is subject to change at any time without notice. **History**: Added
-       16 Oct 2014.
+     - Applies to events with an ``event_source`` of mobile only. 
+       
+       Includes member dictionaries and fields for special context data passed
+       from Segment.io.
+
+       The data in this field reflects a third party integration and is subject
+       to change at any time without notice.
+
+       **History**: Added 16 Oct 2014.
+
    * - ``received_at``
      - float
-     - Applies to events with an ``event_source`` of mobile only. Indicates the
-       time at which Segment.io received the event. The data in this field
-       reflects a third party integration and is subject to change at any time
-       without notice. **History**: Added 16 Oct 2014.
+     - Applies to events with an ``event_source`` of mobile only. 
+       
+       Indicates the time at which Segment.io received the event.
+
+       The data in this field reflects a third party integration and is subject
+       to change at any time without notice.
+
+       **History**: Added 16 Oct 2014.
+
 
 ``event`` **Member Fields**: 
 
@@ -1030,19 +1157,28 @@ clicks **CC** to display the video transcript.
    * - ``code``
      - string
      - For YouTube videos, the ID of the video being loaded (for example,
-       OEyXaRPEzfM). For non-YouTube videos, 'html5'.
+       OEyXaRPEzfM). 
+
+       For non-YouTube videos, 'html5'.
+
    * - ``currentTime``
      - float
      - The point in the video file at which the transcript was opened, in
        seconds. To be deprecated.
    * - ``current_time``
      - integer
-     - Applies to events with an ``event_source`` of mobile only. **History**:
-       Added 16 Oct 2014.
+     - Applies to events with an ``event_source`` of mobile only. 
+       
+       **History**: Added 16 Oct 2014.
+
    * - ``name``
      - string
-     - Applies to events with an ``event_source`` of mobile only.
-       ``edx.video.transcript.show.clicked``. **History**: Added 16 Oct 2014.
+     - ``edx.video.transcript.show.clicked``
+       
+       Applies to events with an ``event_source`` of mobile only.
+       
+       **History**: Added 16 Oct 2014.
+
 
 .. _pdf:
 
@@ -1430,15 +1566,19 @@ within 500ms of each other.
      - Details
    * - ``caseSensitive``
      - boolean
-     - 'true' if the case sensitive option is selected, 'false' if this option
-       is not selected.
+     - 'true' if the case sensitive option is selected. 
+       
+       'false' if this option is not selected.
+
    * - ``chapter``
      - string
      - The name of the PDF file. 
    * - ``highlightAll``
      - boolean
-     - 'true' if the option to highlight all matches is selected, 'false' if
-       this option is not selected.
+     - 'true' if the option to highlight all matches is selected. 
+       
+       'false' if this option is not selected.
+
    * - ``name``
      - string
      - ``textbook.pdf.search.executed``
@@ -1451,7 +1591,9 @@ within 500ms of each other.
    * - ``status``
      - string
      - A "not found" status phrase for a search string that is unsuccessful.
+       
        Blank for successful search strings.
+
 
 ``textbook.pdf.search.navigatednext``
 ---------------------------------------------
@@ -1476,19 +1618,25 @@ clicks on the Find Next or Find Previous icons for an entered search string.
      - Details
    * - ``caseSensitive``
      - boolean
-     - 'true' if the case sensitive option is selected, 'false' if this option
-       is not selected.
+     - 'true' if the case sensitive option is selected. 
+       
+       'false' if this option is not selected.
+
    * - ``chapter``
      - string
      - The name of the PDF file. 
    * - ``findprevious``
      - boolean
-     - 'true' if the user clicks the Find Previous icon, 'false' if the user
-       clicks the Find Next icon.
+     - 'true' if the user clicks the Find Previous icon. 
+       
+       'false' if the user clicks the Find Next icon.
+
    * - ``highlightAll``
      - boolean
-     - 'true' if the option to highlight all matches is selected, 'false' if
-       this option is not selected.
+     - 'true' if the option to highlight all matches is selected. 
+       
+       'false' if this option is not selected.
+
    * - ``name``
      - string
      - ``textbook.pdf.search.navigatednext`` 
@@ -1501,7 +1649,9 @@ clicks on the Find Next or Find Previous icons for an entered search string.
    * - ``status``
      -  string
      - A "not found" status phrase for a search string that is unsuccessful.
+       
        Blank for successful search strings.
+
 
 ``textbook.pdf.search.highlight.toggled``
 ---------------------------------------------
@@ -1526,15 +1676,19 @@ selects or clears the **Highlight All** option for a search.
      - Details
    * - ``caseSensitive``
      - boolean
-     - 'true' if the case sensitive option is selected, false' if this option
-       is not selected.
+     - 'true' if the case sensitive option is selected. 
+       
+       'false' if this option is not selected.
+
    * - ``chapter``
      - string
      - The name of the PDF file. 
    * - ``highlightAll``
      - boolean
-     - 'true' if the option to highlight all matches is selected, 'false' if
-       this option is not selected.
+     - 'true' if the option to highlight all matches is selected. 
+       
+       'false' if this option is not selected.
+
    * - ``name``
      - string
      - ``textbook.pdf.search.highlight.toggled``
@@ -1547,7 +1701,9 @@ selects or clears the **Highlight All** option for a search.
    * - ``status``
      - string
      - A "not found" status phrase for a search string that is unsuccessful.
+       
        Blank for successful search strings.
+
 
 ``textbook.pdf.search.casesensitivity.toggled``
 ------------------------------------------------------
@@ -1572,15 +1728,19 @@ user selects or clears the **Match Case** option for a search.
      - Details
    * - ``caseSensitive``
      - boolean
-     - 'true' if the case sensitive option is selected, 'false' if this option
-       is not selected.
+     - 'true' if the case sensitive option is selected. 
+       
+       'false' if this option is not selected.
+
    * - ``chapter``
      - string
      - The name of the PDF file. 
    * - ``highlightAll``
      - boolean
-     - 'true' if the option to highlight all matches is selected, 'false' if
-       this option is not selected.
+     - 'true' if the option to highlight all matches is selected.
+       
+       'false' if this option is not selected.
+
    * - ``name``
      - string
      - ``textbook.pdf.search.casesensitivity.toggled``
@@ -1593,7 +1753,9 @@ user selects or clears the **Match Case** option for a search.
    * - ``status``
      -  string
      - A "not found" status phrase for a search string that is unsuccessful.
+       
        Blank for successful search strings.
+
 
 .. _problem:
 
@@ -1654,9 +1816,11 @@ checked.
      - Details
    * - ``module``
      - dict
-     - Provides the specific problem component as part of the context. Contains
-       the member field ``display_name``, which is the string value for the
-       **Display Name** given to the problem component.
+     - Provides the specific problem component as part of the context. 
+       
+       Contains the member field ``display_name``, which is the string value
+       for the **Display Name** given to the problem component.
+
 
 ``event`` **Member Fields**: 
 
@@ -1702,13 +1866,16 @@ checked.
      - Current problem state.
    * - ``submission``
      - object
-     - Provides data about the response made. For components that include
-       multiple problems, a separate submission object is provided for each one.
+     - Provides data about the response made. 
+       
+       For components that include multiple problems, a separate submission
+       object is provided for each one.
 
-       * ``answer``: string; The value that the student entered, or the display name of the value selected.
+       * ``answer``: string; The value that the student entered, or the display
+         name of the value selected.
        * ``correct``: Boolean; 'true', 'false'
-       * ``input_type``: string; The type of value that the student supplies for
-         the ``response_type``. Based on the XML element names used in the
+       * ``input_type``: string; The type of value that the student supplies
+         for the ``response_type``. Based on the XML element names used in the
          Advanced Editor. Examples include 'checkboxgroup', 'radiogroup',
          'choicegroup', and 'textline'.
        * ``question``: string; Provides the text of the question.
@@ -1745,18 +1912,18 @@ successfully.
    * - Field
      - Type
      - Details
-   * - ``state``  
-     - dict
-     - Current problem state.
-   * - ``problem_id``
-     - string
-     - ID of the problem being checked.
    * - ``answers`` 
      - dict
      - 
    * - ``failure`` 
      - string
      - 'closed', 'unreset'
+   * - ``problem_id``
+     - string
+     - ID of the problem being checked.
+   * - ``state``  
+     - dict
+     - Current problem state.
 
 ``problem_reset``
 --------------------
@@ -1800,33 +1967,33 @@ rescored.
    * - Field
      - Type
      - Details
-   * - ``state``
+   * - ``attempts``
+     - integer
+     - 
+   * - ``correct_map``
      - dict
-     - Current problem state.
-   * - ``problem_id``
-     - string
-     - ID of the problem being rescored.
-   * - ``orig_score``
-     - integer
-     - 
-   * - ``orig_total``
-     - integer
-     - 
+     - See the fields for the ``problem_check`` server event above.
    * - ``new_score`` 
      - integer
      - 
    * - ``new_total``
      - integer
      - 
-   * - ``correct_map``
+   * - ``orig_score``
+     - integer
+     - 
+   * - ``orig_total``
+     - integer
+     - 
+   * - ``problem_id``
+     - string
+     - ID of the problem being rescored.
+   * - ``state``
      - dict
-     - See the fields for the ``problem_check`` server event above.
+     - Current problem state.
    * - ``success``
      - string
      - 'correct', 'incorrect'
-   * - ``attempts``
-     - integer
-     - 
 
 ``problem_rescore_fail``
 -----------------------------
@@ -1847,15 +2014,15 @@ successfully rescored.
    * - Field
      - Type
      - Details
-   * - ``state``
-     - dict
-     - Current problem state. 
-   * - ``problem_id``
-     - string
-     - ID of the problem being checked.
    * - ``failure`` 
      - string
      - 'unsupported', 'unanswered', 'input_error', 'unexpected'
+   * - ``problem_id``
+     - string
+     - ID of the problem being checked.
+   * - ``state``
+     - dict
+     - Current problem state. 
 
 ``problem_save``
 -----------------------------
@@ -1890,8 +2057,10 @@ The browser emits ``problem_show`` events when a problem is shown.
      - Details
    * - ``problem``
      - string
-     - ID of the problem being shown. For example,
-       i4x://MITx/6.00x/problem/L15:L15_Problem_2).
+     - ID of the problem being shown. 
+       
+       For example, i4x://MITx/6.00x/problem/L15:L15_Problem_2.
+
 
 ``reset_problem``
 ------------------------------------------------
@@ -1914,15 +2083,15 @@ successfully.
    * - Field
      - Type
      - Details
+   * - ``new_state``
+     - dict
+     - New problem state.  
    * - ``old_state``
      - dict
      - The state of the problem before the reset was performed. 
    * - ``problem_id``
      - string
      - ID of the problem being reset.
-   * - ``new_state``
-     - dict
-     - New problem state.  
 
 ``reset_problem_fail`` 
 ------------------------------------------------
@@ -1942,16 +2111,16 @@ successfully.
 
    * - Field
      - Type
-     - Details
+     - Details 
+   * - ``failure``
+     - string
+     - 'closed', 'not_done'
    * - ``old_state``
      - dict
      - The state of the problem before the reset was requested.
    * - ``problem_id``
      - string
-     - ID of the problem being reset.  
-   * - ``failure``
-     - string
-     - 'closed', 'not_done'
+     - ID of the problem being reset. 
 
 ``show_answer`` 
 ------------------------------------------------
@@ -1998,18 +2167,18 @@ successfully.
    * - Field
      - Type
      - Details
-   * - ``state``
-     - dict
-     - Current problem state.
-   * - ``problem_id``
-     - string
-     - ID of the problem being saved. 
-   * - ``failure`` 
-     - string
-     - 'closed', 'done' 
    * - ``answers`` 
      - dict
      - 
+   * - ``failure`` 
+     - string
+     - 'closed', 'done' 
+   * - ``problem_id``
+     - string
+     - ID of the problem being saved. 
+   * - ``state``
+     - dict
+     - Current problem state.
 
 ``save_problem_success`` 
 ------------------------------------------------
@@ -2030,15 +2199,15 @@ successfully.
    * - Field
      - Type
      - Details
-   * - ``state``
-     - dict
-     - Current problem state. 
-   * - ``problem_id``
-     - string
-     - ID of the problem being saved. 
    * - ``answers``
      -  dict
      -  
+   * - ``problem_id``
+     - string
+     - ID of the problem being saved. 
+   * - ``state``
+     - dict
+     - Current problem state. 
 
 ``problem_graded``
 -------------------
@@ -2059,11 +2228,15 @@ for a problem and it is graded successfully.
      - Details
    * - ``[answers, contents]``
      - array
-     - ``answers`` provides the value checked by the user. ``contents``
-       delivers HTML using data entered for the problem in Studio, including
-       the display name, problem text, and choices or response field labels.
+     - ``answers`` provides the value checked by the user. 
+       
+       ``contents`` delivers HTML using data entered for the problem in Studio,
+       including the display name, problem text, and choices or response field
+       labels.
+
        The array includes each problem in a problem component that has multiple
        problems.
+
 
 .. _forum_events:
 
@@ -2084,7 +2257,7 @@ After a user executes a text search in the navigation sidebar of the course
 **History**: Added 16 May 2014.  The ``corrected_text`` field was added 5
 Jun 2014. The ``group_id`` field was added 7 October 2014.
 
-``event`` **Fields**:
+``event`` **Member Fields**:
 
 .. list-table::
    :widths: 15 15 60
@@ -2093,31 +2266,41 @@ Jun 2014. The ``group_id`` field was added 7 October 2014.
    * - Field
      - Type
      - Details
-   * - ``query``
-     - string
-     - The text entered into the search box by the user.
-   * - ``group_id``
-     - integer
-     - The numeric ID of the cohort group to which the user's search is
-       restricted, or ``null`` if the search is not restricted in this way. In
-       a course with cohorts enabled, a student's searches will always be
-       restricted to the student's cohort group. Discussion admins, moderators,
-       and Community TAs in such a course can search all discussions without
-       specifying a cohort group, which leaves this field ``null``, or they can
-       specify a single cohort group to search.
-   * - ``page``
-     - integer
-     - Results are returned in sets of 20 per page. Identifies the page of
-       results requested by the user.
-   * - ``total_results``
-     - integer
-     - The total number of results matching the query.
    * - ``corrected_text``
      - string
      - A re-spelling of the query, suggested by the search engine, which was
-       automatically substituted for the original one.  This happens only when
-       there are no results for the original query, but the index contains
-       matches for a similar term or phrase.  Otherwise, this field is null.
+       automatically substituted for the original one. 
+
+       This happens only when there are no results for the original query, but
+       the index contains matches for a similar term or phrase.
+
+       Otherwise, this field is null.
+
+   * - ``group_id``
+     - integer
+     - The numeric ID of the cohort group to which the user's search is
+       restricted, or ``null`` if the search is not restricted in this way. 
+
+       In a course with cohorts enabled, a student's searches will always be
+       restricted to the student's cohort group. 
+
+       Discussion admins, moderators, and Community TAs in such a course can
+       search all discussions without specifying a cohort group, which leaves
+       this field ``null``, or they can specify a single cohort group to
+       search.
+
+   * - ``page``
+     - integer
+     - Results are returned in sets of 20 per page. 
+       
+       Identifies the page of results requested by the user.
+
+   * - ``query``
+     - string
+     - The text entered into the search box by the user.
+   * - ``total_results``
+     - integer
+     - The total number of results matching the query.
 
 .. _ora2:
 
@@ -2168,17 +2351,16 @@ this event when a response is delivered to a student for evaluation.
    * - ``item_id``
      - string
      - The i4x:// style locator that identifies the problem in the course. 
+   * - ``requesting_student_id``
+     - string
+     - The course-specific anonymized user ID of the student who requested the
+       response.
    * - ``submission_returned_uuid``
      - string
      - The unique identifer of the response that the student retrieved for
        assessment. 
 
        If no assessment is available, this is set to "None".
-
-   * - ``requesting_student_id``
-     - string
-     - The course-specific anonymized user ID of the student who requested the
-       response.
 
        
 openassessmentblock.peer_assess and openassessmentblock.self_assess
@@ -2191,7 +2373,7 @@ peer's response or submits a self-assessment of her own response.
 
 **History**: Added 3 April 2014.
 
-``event`` **Fields**:
+``event`` **Member Fields**:
 
 .. list-table::
    :widths: 15 15 60
@@ -2200,19 +2382,9 @@ peer's response or submits a self-assessment of her own response.
    * - Field
      - Type
      - Details
-   * - ``scorer_id``
-     - string
-     - The course-specific anonymized user ID of the student who submitted this
-       assessment.
    * - ``feedback``
      - string
      - The student's comments about the submitted response.
-   * - ``submission_uuid``
-     - string
-     - The unique identifier for the submitted response.
-   * - ``score_type``
-     - string
-     - "PE" for a peer evaluation, "SE" for a self evaluation.
    * - ``parts: [criterion, option, feedback]``
      - array
      - The ``parts`` field contains member fields for each ``criterion`` in the
@@ -2237,6 +2409,16 @@ peer's response or submits a self-assessment of her own response.
    * - ``scored_at``
      - datetime
      - Timestamp for when the assessment was submitted.
+   * - ``scorer_id``
+     - string
+     - The course-specific anonymized user ID of the student who submitted this
+       assessment.
+   * - ``score_type``
+     - string
+     - "PE" for a peer evaluation, "SE" for a self evaluation.
+   * - ``submission_uuid``
+     - string
+     - The unique identifier for the submitted response.
 
 openassessmentblock.submit_feedback_on_assessments
 ----------------------------------------------------
@@ -2248,7 +2430,7 @@ other feedback about the assessment process.
 
 **History**: Added 3 April 2014.
 
-``event`` **Fields**:
+``event`` **Member Fields**:
 
 .. list-table::
    :widths: 15 15 60
@@ -2260,13 +2442,13 @@ other feedback about the assessment process.
    * - ``feedback_text``
      - string
      - The student's comments about the assessment process.
-   * - ``submission_uuid``
-     - string
-     - The unique identifier of the feedback.
    * - ``options``
      - array
      - The label of each check box option that the student selected to evaluate
        the assessment process.
+   * - ``submission_uuid``
+     - string
+     - The unique identifier of the feedback.
 
 openassessment.create_submission
 --------------------------------
@@ -2279,7 +2461,7 @@ assessment.
 
 **History**: Added 3 April 2014.
 
-``event`` **Fields**:
+``event`` **Member Fields**:
 
 .. list-table::
    :widths: 15 15 60
@@ -2297,19 +2479,19 @@ assessment.
        identifies the location of the image file on the Amazon S3 storage
        service. This key is provided for reference only.
 
-   * - ``created_at``
-     - datetime
-     - Timestamp for when the student submitted the response.
    * - ``attempt_number``
      - int
      - This value is currently always set to 1.
-   * - ``submission_uuid``
-     - string
-     - The unique identifier of the response.
+   * - ``created_at``
+     - datetime
+     - Timestamp for when the student submitted the response.
    * - ``submitted_at``
      - datetime
      - Timestamp for when the student submitted the response. This value is
        currently always the same as ``created_at``.
+   * - ``submission_uuid``
+     - string
+     - The unique identifier of the response.
 
 openassessment.save_submission
 -------------------------------
@@ -2321,7 +2503,7 @@ save responses before they submit them for assessment.
 
 **History**: Added 3 April 2014.
 
-``event`` **Fields**:
+``event`` **Member Fields**:
 
 .. list-table::
    :widths: 15 15 60
@@ -2339,6 +2521,7 @@ save responses before they submit them for assessment.
        identifies the location of the image file on the Amazon S3 storage
        service.
 
+
 openassessment.student_training_assess_example
 -----------------------------------------------
 
@@ -2352,7 +2535,7 @@ scored differently than the instructor.
 
 **History**: Added 6 August 2014.
 
-``event`` **Fields**:
+``event`` **Member Fields**:
 
 .. list-table::
    :widths: 15 15 60
@@ -2366,15 +2549,15 @@ scored differently than the instructor.
      - A set of name/value pairs that identify criteria for which the student
        selected a different option than the instructor, in the format
        ``criterion_name: instructor-defined_option_name``.
-   * - ``submission_uuid``
-     - string
-     - The unique identifier of the response. Identifies the student who
-       is undergoing training.
    * - ``options_selected``
      - object
      - A set of name/value pairs that identify the option that the student
        selected for each criterion in the rubric, in the format
        ``'criterion_name': 'option_name'``.
+   * - ``submission_uuid``
+     - string
+     - The unique identifier of the response. Identifies the student who
+       is undergoing training.
 
 openassessment.upload_file 
 -----------------------------
@@ -2387,7 +2570,7 @@ the response.
 
 **History**: Added 6 August 2014.
 
-``event`` **Fields**:
+``event`` **Member Fields**:
 
 .. list-table::
    :widths: 15 15 60
@@ -2396,9 +2579,6 @@ the response.
    * - Field
      - Type
      - Details
-   * - ``fileType``
-     - string
-     - The MIME type of the uploaded file. Reported by the student's browser.
    * - ``fileName``
      - string
      - The name of the uploaded file, as stored on the student's client
@@ -2407,6 +2587,9 @@ the response.
      - int
      - The size of the uploaded file in bytes. Reported by the student's
        browser.
+   * - ``fileType``
+     - string
+     - The MIME type of the uploaded file. Reported by the student's browser.
 
 .. _AB_Event_Types:
 
@@ -2450,7 +2633,9 @@ If the student does not yet have an assignment, the server emits an
 ``user_api_usercoursetag`` table for the student. See
 :ref:`user_api_usercoursetag`.
 
-.. note:: After this event is emitted, the common ``context`` field in all subsequent events includes a ``course_user_tags`` member field with the student's assigned partition and group.
+.. note:: After this event is emitted, the common ``context`` field in all 
+ subsequent events includes a ``course_user_tags`` member field with the
+ student's assigned partition and group.
 
 **Component**: Split Test
 
@@ -2515,15 +2700,15 @@ Student Cohort Events
 When a cohort group is created, the server emits an ``edx.cohort.created``
 event. A member of the course staff can create a cohort group manually via the
 Instructor Dashboard (see :ref:`instructor_cohort_events`). The system
-automatically creates the default cohort group and cohort groups included in the
-course's ``auto_cohort_groups`` setting as they are needed (e.g. when a student
-is assigned to one).
+automatically creates the default cohort group and cohort groups included in
+the course's ``auto_cohort_groups`` setting as they are needed (e.g. when a
+student is assigned to one).
 
 **Event Source**: Server
 
 **History** Added 7 Oct 2014.
 
-``event`` **Fields**:
+``event`` **Member Fields**:
 
 .. list-table::
    :widths: 15 15 60
@@ -2545,16 +2730,16 @@ is assigned to one).
 When a user is added to a cohort group, the server emits an
 ``edx.cohort.user_added`` event. A member of the course staff can add a user to
 a cohort group manually via the Instructor Dashboard (see
-:ref:`instructor_cohort_events`). The system automatically adds a user to the default
-cohort group or a cohort group included in the course's ``auto_cohort_groups``
-setting if the user accesses a discussion but has not yet been assigned to a
-cohort group.
+:ref:`instructor_cohort_events`). The system automatically adds a user to the 
+default cohort group or a cohort group included in the course's 
+``auto_cohort_groups`` setting if the user accesses a discussion but has not 
+yet been assigned to a cohort group.
 
 **Event Source**: Server
 
 **History** Added 7 Oct 2014.
 
-``event`` **Fields**:
+``event`` **Member Fields**:
 
 .. list-table::
    :widths: 15 15 60
@@ -2563,15 +2748,15 @@ cohort group.
    * - Field
      - Type
      - Details
-   * - ``user_id``
-     - integer
-     - The numeric ID (from auth_user.id) of the added user.
    * - ``cohort_id``
      - integer
      - The numeric ID of the cohort group.
    * - ``cohort_name``
      - string
      - The display name of the cohort group.
+   * - ``user_id``
+     - integer
+     - The numeric ID (from auth_user.id) of the added user.
 
 ``edx.cohort.user_removed``
 ----------------------------------
@@ -2584,7 +2769,7 @@ cohort group via the Instructor Dashboard), the server emits an
 
 **History** Added 7 Oct 2014.
 
-``event`` **Fields**:
+``event`` **Member Fields**:
 
 .. list-table::
    :widths: 15 15 60
@@ -2593,15 +2778,15 @@ cohort group via the Instructor Dashboard), the server emits an
    * - Field
      - Type
      - Details
-   * - ``user_id``
-     - integer
-     - The numeric ID (from auth_user.id) of the removed user.
    * - ``cohort_id``
      - integer
      - The numeric ID of the cohort group.
    * - ``cohort_name``
      - string
      - The display name of the cohort group.
+   * - ``user_id``
+     - integer
+     - The numeric ID (from auth_user.id) of the removed user.
 
 .. _ora:
 
@@ -2656,15 +2841,15 @@ user hides or redisplays a combined open-ended problem.
    * - Field
      - Type
      - Details
+   * - ``category``
+     - integer
+     - Rubric category selected.
    * - ``location``
      - string
      - The location of the question whose rubric is being selected. 
    * - ``selection``
      - integer
      - Value selected on rubric. 
-   * - ``category``
-     - integer
-     - Rubric category selected.
 
 ``oe_show_full_feedback`` and ``oe_show_respond_to_feedback``
 ------------------------------------------------------------------
@@ -2786,7 +2971,7 @@ that are common to all events. See :ref:`common`.
 
 **Event Source**: Server
 
-``event`` **Fields**: 
+``event`` **Member Fields**: 
 
 .. list-table::
    :widths: 40 40
@@ -2794,9 +2979,9 @@ that are common to all events. See :ref:`common`.
 
    * - Field
      - Type
-   * - ``problem`` 
-     - string
    * - ``course``
+     - string
+   * - ``problem`` 
      - string
 
 .. _rescore_student:
@@ -2811,7 +2996,7 @@ that are common to all events. See :ref:`common`.
 
 **Event Source**: Server
 
-``event`` **Fields**: 
+``event`` **Member Fields**: 
 
 .. list-table::
    :widths: 40 40
@@ -2819,11 +3004,11 @@ that are common to all events. See :ref:`common`.
 
    * - Field
      - Type
+   * - ``course``
+     - string
    * - ``problem``
      - string
    * - ``student``
-     - string
-   * - ``course``
      - string
 
 .. _reset_attempts:
@@ -2836,7 +3021,7 @@ that are common to all events. See :ref:`common`.
 
 **Event Source**: Server
 
-``event`` **Fields**: 
+``event`` **Member Fields**: 
 
 .. list-table::
    :widths: 40 40
@@ -2844,13 +3029,13 @@ that are common to all events. See :ref:`common`.
 
    * - Field
      - Type
-   * - ``old_attempts``
+   * - ``course``
      - string
-   * - ``student``
+   * - ``old_attempts``
      - string
    * - ``problem``
      - string 
-   * - ``course``
+   * - ``student``
      - string
 
 .. _progress:
@@ -2863,7 +3048,7 @@ that are common to all events. See :ref:`common`.
 
 **Event Source**: Server
 
-``event`` **Fields**: 
+``event`` **Member Fields**: 
 
 .. list-table::
    :widths: 40 40
@@ -2871,11 +3056,11 @@ that are common to all events. See :ref:`common`.
 
    * - Field
      - Type
-   * - ``student``
+   * - ``course``
      - string
    * - ``instructor``
      - string
-   * - ``course``
+   * - ``student``
      - string
 
 ======================================================
@@ -2888,7 +3073,7 @@ that are common to all events. See :ref:`common`.
 
 **Event Source**: Server
 
-``event`` **Fields**: 
+``event`` **Member Fields**: 
 
 .. list-table::
    :widths: 40 40
@@ -2917,7 +3102,7 @@ List Discussion Staff Events
 
 **Event Source**: Server
 
-``event`` **Fields**: 
+``event`` **Member Fields**: 
 
 .. list-table::
    :widths: 40 40
@@ -2952,7 +3137,7 @@ Manage Discussion Staff Events
 
 **Event Source**: Server
 
-``event`` **Fields**: 
+``event`` **Member Fields**: 
 
 .. list-table::
    :widths: 40 40
@@ -2960,9 +3145,9 @@ Manage Discussion Staff Events
 
    * - Field
      - Type
-   * - ``username``
-     - string
    * - ``course``
+     - string
+   * - ``username``
      - string
 
 .. _histogram:
@@ -2975,7 +3160,7 @@ Manage Discussion Staff Events
 
 **Event Source**: Server
 
-``event`` **Fields**: 
+``event`` **Member Fields**: 
 
 .. list-table::
    :widths: 40 40
@@ -2996,7 +3181,7 @@ Manage Discussion Staff Events
 
 **Event Source**: Server
 
-``event`` **Fields**: 
+``event`` **Member Fields**: 
 
 .. list-table::
    :widths: 40 40
@@ -3004,11 +3189,11 @@ Manage Discussion Staff Events
 
    * - Field
      - Type
+   * - ``event``
+     - string
    * - ``event_name``
      - string
    * - ``user``
-     - string
-   * - ``event``
      - string
 
 .. _instructor_enrollment:
@@ -3059,7 +3244,7 @@ event.
 
 **History** Added 7 Oct 2014.
 
-``event`` **Fields**:
+``event`` **Member Fields**:
 
 .. list-table::
    :widths: 15 15 60
@@ -3086,7 +3271,7 @@ event.
 
 **History** Added 7 Oct 2014.
 
-``event`` **Fields**:
+``event`` **Member Fields**:
 
 .. list-table::
    :widths: 15 15 60
@@ -3095,9 +3280,6 @@ event.
    * - Field
      - Type
      - Details
-   * - ``user_id``
-     - integer
-     - The numeric ID (from auth_user.id) of the added user.
    * - ``cohort_id``
      - integer
      - The numeric ID of the cohort group.
@@ -3113,6 +3295,9 @@ event.
      - The display name of the cohort group that the user was previously
        assigned to (or null if the user was not previously assigned to a cohort
        group).
+   * - ``user_id``
+     - integer
+     - The numeric ID (from auth_user.id) of the added user.
 
 
 .. _Creating a Peer Assessment: http://edx.readthedocs.org/projects/edx-open-response-assessments/en/latest/
