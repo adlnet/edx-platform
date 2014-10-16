@@ -6,14 +6,14 @@
         };
 
         if (excludeCommonDeps) {
-            module.exclude = ${common};
+            module.exclude = {{common|safe}};
         }
 
         return module;
     };
 
     var getModulesList = function (modules) {
-        var common = ${common},
+        var common = {{common|safe}},
             commonDependenciesList = common.map(function (moduleName) {
                 return getModule(moduleName);
             });
@@ -29,7 +29,7 @@
          * dependencies will be included in the module's file when the build is
          * done.
          */
-        modules: getModulesList(${modules}),
+        modules: getModulesList({{modules|safe}}),
         /**
          * By default all the configuration for optimization happens from the command
          * line or by properties in the config file, and configuration that was
