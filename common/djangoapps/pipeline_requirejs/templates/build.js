@@ -6,15 +6,19 @@
         };
 
         if (excludeCommonDeps) {
-            module.exclude = ['js/factories/common_deps'];
+            module.exclude = ${common};
         }
 
         return module;
     };
 
     var getModulesList = function (modules) {
-        var result = [getModule('js/factories/common_deps')];
-        return result.concat(modules.map(function (moduleName) {
+        var common = ${common},
+            commonDependenciesList = common.map(function (moduleName) {
+                return getModule(moduleName);
+            });
+
+        return commonDependenciesList.concat(modules.map(function (moduleName) {
             return getModule(moduleName, true);
         }));
     };
@@ -25,28 +29,7 @@
          * dependencies will be included in the module's file when the build is
          * done.
          */
-        modules: getModulesList([
-            'js/factories/asset_index',
-            'js/factories/base',
-            'js/factories/checklists',
-            'js/factories/container',
-            'js/factories/course',
-            'js/factories/course_create_rerun',
-            'js/factories/course_info',
-            'js/factories/edit_tabs',
-            'js/factories/export',
-            'js/factories/group_configurations',
-            'js/factories/import',
-            'js/factories/index',
-            'js/factories/login',
-            'js/factories/manage_users',
-            'js/factories/outline',
-            'js/factories/register',
-            'js/factories/settings',
-            'js/factories/settings_advanced',
-            'js/factories/settings_graders',
-            'js/factories/textbooks'
-        ]),
+        modules: getModulesList(${modules}),
         /**
          * By default all the configuration for optimization happens from the command
          * line or by properties in the config file, and configuration that was
