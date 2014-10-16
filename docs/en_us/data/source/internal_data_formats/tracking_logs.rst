@@ -175,7 +175,7 @@ identify:
 * The ``org_id`` of the organization that lists the course. 
 * The ``user_id`` of the individual who is performing the action. 
 * The URL ``path`` that generated the event. 
-  
+
 When included, ``course_user_tags`` contains a dictionary with the key(s) and
 value(s) from the ``user_api_usercoursetag`` table for the user. See
 :ref:`user_api_usercoursetag`.
@@ -474,7 +474,7 @@ complete.
 .. _navigational:
 
 ==============================
-Navigational Events   
+Navigational Events 
 ==============================
 
 .. display_spec.coffee
@@ -535,7 +535,7 @@ JavaScript Logger itself.
 .. _video:
 
 ==============================
-Video Interaction Events   
+Video Interaction Events 
 ==============================
 
 .. video_player_spec.js, lms-modules.js
@@ -555,7 +555,7 @@ The browser or mobile device emits these events when a user works with a video.
 * The browser or mobile device emits ``play_video`` events when the user clicks
   the video **play** control.
 
-* The browser or mobile device emits  ``pause_video`` events when the user
+* The browser or mobile device emits ``pause_video`` events when the user
   clicks the video **pause** control. The browser or mobile device also emits
   these events when the video player reaches the end of the video file and play
   automatically stops.
@@ -596,14 +596,17 @@ member fields.
    * - Field
      - Type
      - Details
-   * - ``current_time``
-     - integer
-     - Applies to events with an ``event_source`` of mobile only. **History**:
-       Added 16 Oct 2014.
    * - ``code``
      - string
      - For YouTube videos, the ID of the video being loaded (for example,
        OEyXaRPEzfM). For non-YouTube videos, 'html5'.
+   * - ``currentTime``
+     - float
+     - Time the video was played, in seconds. To be deprecated.
+   * - ``current_time``
+     - integer
+     - Applies to events with an ``event_source`` of mobile only. **History**:
+       Added 16 Oct 2014.
    * - ``id``
      - string
      - For events with an ``event_source`` of 'browser', the edX ID of the
@@ -614,17 +617,14 @@ member fields.
      - For events with an ``event_source`` of 'mobile', the full identifier for
        the video component (for example, i4x://MITx/4.605x_2/video/
        8b375e7e9c6d419c92a5cdc32f47d4f2). **History**: Added 16 Oct 2014.
-   * - ``currentTime``
-     - float
-     - Time the video was played, in seconds. 
-   * - ``speed``
-     - string
-     - Video speed in use: '0.75', '1.0', '1.25', '1.50'.
    * - ``name``
      - string
      - Applies to events with an ``event_source`` of mobile only:
        ``edx.video.played`` or ``edx.video.paused``. **History**: Added 16 Oct
        2014.
+   * - ``speed``
+     - string
+     - Video speed in use: '0.75', '1.0', '1.25', '1.50'.
 
 
 Example 
@@ -713,8 +713,8 @@ Example
 ``stop_video``
 --------------------
 
-The browser or mobile device emits  ``stop_video`` events when the video player reaches the end
-of the video file and play automatically stops.
+The browser or mobile device emits  ``stop_video`` events when the video player
+reaches the end of the video file and play automatically stops.
 
 **History**: Added 25 June 2014. Updated 16 Oct 2014 to include fields that
 apply to events with an ``event_source`` of mobile only.
@@ -751,13 +751,13 @@ apply to events with an ``event_source`` of mobile only.
    * - Field
      - Type
      - Details
+   * - ``currentTime``
+     - float
+     - Time the video ended, in seconds. To be deprecated.
    * - ``current_time``
      - integer
      - Applies to events with an ``event_source`` of mobile only. **History**:
        Added 16 Oct 2014.
-   * - ``currentTime``
-     - float
-     - Time the video ended, in seconds. 
    * - ``name``
      - string
      - Applies to events with an ``event_source`` of mobile only:
@@ -766,8 +766,8 @@ apply to events with an ``event_source`` of mobile only.
 ``seek_video``
 -----------------
 
-The browser or mobile device emits ``seek_video`` events when a user clicks the playback bar or
-transcript to go to a different point in the video file.
+The browser or mobile device emits ``seek_video`` events when a user clicks the
+playback bar or transcript to go to a different point in the video file.
 
 **History**: Prior to 25 Jun 2014, the ``old_time`` and ``new_time`` were set
 to the same value. Updated 16 Oct 2014 to include fields that apply to events
@@ -808,25 +808,25 @@ with an ``event_source`` of mobile only.
    * - ``name``
      - string
      - Applies to events with an ``event_source`` of mobile only. **History**:
-       Added 16 Oct 2014. ``edx.video.seeked``
-   * - ``old_time``
-     - integer
-     - The time in the video, in seconds, at which the user chose to go to a
-       different point in the file.
+       Added 16 Oct 2014. ``edx.video.seeked``.
    * - ``new_time``
      - integer
      - The time in the video, in seconds, that the user selected as the
        destination point.
+   * - ``old_time``
+     - integer
+     - The time in the video, in seconds, at which the user chose to go to a
+       different point in the file.
    * - ``type``
      - string
      - The navigational method used to change position within the video.
-       'onCaptionSeek', 'onSlideSeek', or 'onSkipSeek'
+       'onCaptionSeek', 'onSlideSeek', or 'onSkipSeek'.
 
 ``speed_change_video`` 
 ------------------------
 
-The browser or mobile device emits ``speed_change_video`` events when a user selects a different
-playing speed for the video.
+The browser or mobile device emits ``speed_change_video`` events when a user
+selects a different playing speed for the video.
 
 **History**: Prior to 12 Feb 2014, this event was emitted when the user
 selected either the same speed or a different speed. Updated 16 Oct 2014 to
@@ -866,23 +866,23 @@ include fields that apply to events with an ``event_source`` of mobile only.
      - Details
    * - ``current_time``
      - integer
-     - The time in the video that the user chose to change the playing speed.  
-   * - ``old_speed``
-     - 
-     - The speed at which the video was playing. 
-   * - ``new_speed``
-     - 
-     - The speed that the user selected for the video to play. 
+     - The time in the video that the user chose to change the playing speed. 
    * - ``name``
      - string
      - Applies to events with an ``event_source`` of mobile only.
-       ``edx.video.speed.changed``. **History**: Added 16 Oct 2014.
+   * - ``new_speed``
+     - 
+     - The speed that the user selected for the video to play. 
+       ``edx.video.speed.changed``. **History**: Added 16 Oct 2014. 
+   * - ``old_speed``
+     - 
+     - The speed at which the video was playing. 
 
 ``load_video``
 -----------------
 
-The browser or mobile device emits  ``load_video`` events when the video is fully rendered and
-ready to play.
+The browser or mobile device emits  ``load_video`` events when the video is
+fully rendered and ready to play.
 
 **History**: Updated 16 Oct 2014 to include fields that apply to events with an
 ``event_source`` of mobile only.
@@ -931,8 +931,8 @@ ready to play.
 ``hide_transcript``
 -------------------
 
-The browser or mobile device emits  ``hide_transcript`` events when the user clicks **CC** to
-suppress display of the video transcript.
+The browser or mobile device emits  ``hide_transcript`` events when the user
+clicks **CC** to suppress display of the video transcript.
 
 **History**: Updated 16 Oct 2014 to include fields that apply to events with an
 ``event_source`` of mobile only.
@@ -969,10 +969,6 @@ suppress display of the video transcript.
    * - Field
      - Type
      - Details
-   * - ``current_time``
-     - integer
-     - Applies to events with an ``event_source`` of mobile only. **History**:
-       Added 16 Oct 2014.
    * - ``code``
      - string
      - For YouTube videos, the ID of the video being loaded (for example,
@@ -980,7 +976,11 @@ suppress display of the video transcript.
    * - ``currentTime``
      - float
      - The point in the video file at which the transcript was hidden, in
-       seconds.
+       seconds. To be deprecated.
+   * - ``current_time``
+     - integer
+     - Applies to events with an ``event_source`` of mobile only. **History**:
+       Added 16 Oct 2014.
    * - ``name``
      - string
      - Applies to events with an ``event_source`` of mobile only.
@@ -1027,10 +1027,6 @@ clicks **CC** to display the video transcript.
    * - Field
      - Type
      - Details
-   * - ``current_time``
-     - integer
-     - Applies to events with an ``event_source`` of mobile only. **History**:
-       Added 16 Oct 2014.
    * - ``code``
      - string
      - For YouTube videos, the ID of the video being loaded (for example,
@@ -1038,7 +1034,11 @@ clicks **CC** to display the video transcript.
    * - ``currentTime``
      - float
      - The point in the video file at which the transcript was opened, in
-       seconds.
+       seconds. To be deprecated.
+   * - ``current_time``
+     - integer
+     - Applies to events with an ``event_source`` of mobile only. **History**:
+       Added 16 Oct 2014.
    * - ``name``
      - string
      - Applies to events with an ``event_source`` of mobile only.
