@@ -46,6 +46,7 @@ class CourseMetadata(object):
             if field.name in cls.FILTERED_LIST:
                 continue
 
+            # Do not show giturl if feature is not enabled.
             if field.name == 'giturl' and not settings.FEATURES.get('ENABLE_EXPORT_GIT'):
                 continue
 
@@ -70,6 +71,10 @@ class CourseMetadata(object):
         # Don't filter on the tab attribute if filter_tabs is False.
         if not filter_tabs:
             filtered_list.remove("tabs")
+
+        # Filter giturl if feature is not enabled.
+        if not settings.FEATURES.get('ENABLE_EXPORT_GIT'):
+            filtered_list.append('giturl')
 
         # Validate the values before actually setting them.
         key_values = {}
@@ -105,6 +110,11 @@ class CourseMetadata(object):
         filtered_list = list(cls.FILTERED_LIST)
         if not filter_tabs:
             filtered_list.remove("tabs")
+
+        # Filter giturl if feature is not enabled.
+        if not settings.FEATURES.get('ENABLE_EXPORT_GIT'):
+            filtered_list.append('giturl')
+
         filtered_dict = dict((k, v) for k, v in jsondict.iteritems() if k not in filtered_list)
         did_validate = True
         errors = []
