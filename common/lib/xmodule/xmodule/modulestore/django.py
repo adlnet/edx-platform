@@ -48,6 +48,8 @@ def create_modulestore_instance(engine, content_store, doc_store_config, options
     """
     This will return a new instance of a modulestore given an engine and options
     """
+    # if engine == 'xmodule.modulestore.xml.XMLModuleStore':
+    # from nose.tools import set_trace; set_trace()
     class_ = load_function(engine)
 
     _options = {}
@@ -96,6 +98,7 @@ def modulestore():
     Returns the Mixed modulestore
     """
     global _MIXED_MODULESTORE  # pylint: disable=global-statement
+    # from nose.tools import set_trace; set_trace()
     if _MIXED_MODULESTORE is None:
         _MIXED_MODULESTORE = create_modulestore_instance(
             settings.MODULESTORE['default']['ENGINE'],

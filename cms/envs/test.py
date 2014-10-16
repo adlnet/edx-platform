@@ -46,6 +46,7 @@ STATIC_ROOT = TEST_ROOT / "staticfiles"
 
 GITHUB_REPO_ROOT = TEST_ROOT / "data"
 COMMON_TEST_DATA_ROOT = COMMON_ROOT / "test" / "data"
+COMMON_TEST_DATA_ROOT_EMPTY = COMMON_ROOT / "test" / "data" / "empty"
 
 # For testing "push to lms"
 FEATURES['ENABLE_EXPORT_GIT'] = True

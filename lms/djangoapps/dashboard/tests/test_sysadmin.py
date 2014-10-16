@@ -19,7 +19,7 @@ from django.utils.timezone import utc as UTC
 from util.date_utils import get_time_display, DEFAULT_DATE_TIME_FORMAT
 
 from student.roles import CourseStaffRole, GlobalStaff
-from courseware.tests.modulestore_config import TEST_DATA_XML_MODULESTORE
+from courseware.tests.modulestore_config import TEST_DATA_XML_EMPTY_MODULESTORE
 from dashboard.models import CourseImportLog
 from dashboard.sysadmin import Users
 from dashboard.git_import import GitImportError
@@ -113,7 +113,7 @@ class SysadminBaseTestCase(ModuleStoreTestCase):
         self.addCleanup(shutil.rmtree, path)
 
 
-@override_settings(MODULESTORE=TEST_DATA_XML_MODULESTORE)
+@override_settings(MODULESTORE=TEST_DATA_XML_EMPTY_MODULESTORE)
 @unittest.skipUnless(settings.FEATURES.get('ENABLE_SYSADMIN_DASHBOARD'),
                      "ENABLE_SYSADMIN_DASHBOARD not set")
 @override_settings(GIT_IMPORT_WITH_XMLMODULESTORE=True)
@@ -396,6 +396,7 @@ class TestSysadmin(SysadminBaseTestCase):
         """
 
         self._setstaff_login()
+        # from nose.tools import set_trace; set_trace()
         self._add_edx4edx()
         response = self.client.get(reverse('sysadmin_staffing'))
         self.assertIn('edx4edx', response.content)

@@ -8,7 +8,9 @@ from xmodule.modulestore.tests.django_utils import xml_store_config, \
 from django.conf import settings
 
 TEST_DATA_DIR = settings.COMMON_TEST_DATA_ROOT
+TEST_DATA_DIR_EMPTY = settings.COMMON_TEST_DATA_ROOT_EMPTY
 TEST_DATA_XML_MODULESTORE = xml_store_config(TEST_DATA_DIR)
+TEST_DATA_XML_EMPTY_MODULESTORE = xml_store_config(TEST_DATA_DIR_EMPTY)
 
 # Map all XML course fixtures so they are accessible through
 # the MixedModuleStore

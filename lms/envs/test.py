@@ -83,6 +83,7 @@ COURSES_ROOT = TEST_ROOT / "data"
 DATA_DIR = COURSES_ROOT
 
 COMMON_TEST_DATA_ROOT = COMMON_ROOT / "test" / "data"
+COMMON_TEST_DATA_ROOT_EMPTY = COMMON_ROOT / "test" / "data" / "empty"
 # Where the content data is checked out.  This may not exist on jenkins.
 GITHUB_REPO_ROOT = ENV_ROOT / "data"
 
@@ -121,7 +122,7 @@ STATICFILES_DIRS += [
 # http://stackoverflow.com/questions/12816941/unit-testing-with-django-pipeline
 STATICFILES_STORAGE='pipeline.storage.NonPackagingPipelineStorage'
 PIPELINE_ENABLED=False
-
+# from nose.tools import set_trace; set_trace()
 update_module_store_settings(
     MODULESTORE,
     module_store_options={

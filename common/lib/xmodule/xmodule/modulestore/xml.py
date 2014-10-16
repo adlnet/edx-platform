@@ -419,6 +419,8 @@ class XMLModuleStore(ModuleStoreReadBase):
         if course_dirs is None:
             course_dirs = sorted([d for d in os.listdir(self.data_dir) if
                                   os.path.exists(self.data_dir / d / "course.xml")])
+
+        # from nose.tools import set_trace; set_trace()
         for course_dir in course_dirs:
             self.try_load_course(course_dir, course_ids)
 
