@@ -361,7 +361,7 @@ function (HTML5Video, Resizer) {
         // the speed before playing the video.
         if (
           this.isHtml5Mode() && !(this.browserIsFirefox &&
-          (useCueVideoById || newSpeed === '1.0') && this.isYoutubeType())
+          (useCueVideoById && newSpeed === '1.0') && this.isYoutubeType())
         ) {
             this.videoPlayer.player.setPlaybackRate(newSpeed);
         } else {
