@@ -25,11 +25,16 @@ class OptimizedCachedRequireJsStorage(OptimizedFilesMixin, PipelineCachedStorage
         modules_path = os.path.join(settings.REQUIRE_STATIC_DIR, settings.REQUIRE_PAGE_FACTORIES_ROOT)
         build_file = os.path.join(settings.REQUIRE_STATIC_DIR, settings.REQUIRE_BUILD_PROFILE)
         modules, common_dependencies = self.get_modules(modules_path)
+
+        curdir = os.getcwd()
+        content = render_to_string("build.js", {
+            "modules": json.dumps(modules),
+            "common": json.dumps(common_dependencies),
+        })
+        os.chdir(settings.REQUIRE_STATIC_DIR)
         with open(build_file, 'w+') as build:
-            build.write(render_to_string("build.js", {
-                "modules": json.dumps(modules),
-                "common": json.dumps(common_dependencies),
-            }))
+            build.write(content)
+        os.chdir(curdir)
 
     def get_filename(self, name):
         """
