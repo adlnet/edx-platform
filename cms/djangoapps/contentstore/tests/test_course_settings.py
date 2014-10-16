@@ -5,9 +5,11 @@ import datetime
 import json
 import copy
 import mock
+from mock import patch
 
 from django.utils.timezone import UTC
 from django.test.utils import override_settings
+from django.conf import settings
 
 from models.settings.course_details import (CourseDetails, CourseSettingsEncoder)
 from models.settings.course_grading import CourseGradingModel
@@ -475,6 +477,16 @@ class CourseMetadataEditingTest(CourseTestCase):
         self.assertIn('rerandomize', test_model, 'Missing rerandomize metadata field')
         self.assertIn('showanswer', test_model, 'showanswer field ')
         self.assertIn('xqa_key', test_model, 'xqa_key field ')
+
+    @patch.dict(settings.FEATURES, {'ENABLE_EXPORT_GIT': True})
+    def test_fetch_giturl_present(self):
+        test_model = CourseMetadata.fetch(self.fullcourse)
+        self.assertIn('giturl', test_model)
+
+    @patch.dict(settings.FEATURES, {'ENABLE_EXPORT_GIT': False})
+    def test_fetch_giturl_not_present(self):
+        test_model = CourseMetadata.fetch(self.fullcourse)
+        self.assertNotIn('giturl', test_model)
 
     def test_validate_and_update_from_json_correct_inputs(self):
         is_valid, errors, test_model = CourseMetadata.validate_and_update_from_json(
