@@ -2,14 +2,18 @@
 Tests for split_migrator
 
 """
-import uuid
 import random
+import uuid
+
 import mock
+from nose.plugins.attrib import attr
+
 from xblock.fields import Reference, ReferenceList, ReferenceValueDict
 from xmodule.modulestore.split_migrator import SplitMigrator
 from xmodule.modulestore.tests.test_split_w_old_mongo import SplitWMongoCourseBoostrapper
 
 
+@attr('mongo')
 class TestMigration(SplitWMongoCourseBoostrapper):
     """
     Test the split migrator
@@ -151,7 +155,7 @@ class TestMigration(SplitWMongoCourseBoostrapper):
 
         # grab the detached items to compare they should be in both published and draft
         for category in ['conditional', 'about', 'course_info', 'static_tab']:
-            for conditional in presplit.get_items(self.old_course_key, category=category):
+            for conditional in presplit.get_items(self.old_course_key, qualifiers={'category': category}):
                 locator = new_course_key.make_usage_key(category, conditional.location.block_id)
                 self.compare_dags(presplit, conditional, self.split_mongo.get_item(locator), published)
 

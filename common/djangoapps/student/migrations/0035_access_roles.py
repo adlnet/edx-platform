@@ -97,7 +97,7 @@ class Migration(DataMigration):
                         if correct_course_key is None:
                             hold.setdefault(course_id_string, []).append(group)
                         else:
-                            _migrate_users(correct_course_key, role, course_key.org)
+                            _migrate_users(correct_course_key, role, correct_course_key.org)
 
         # see if any in hold were missed above
         for held_auth_scope, groups in hold.iteritems():
@@ -145,10 +145,10 @@ class Migration(DataMigration):
         if self.mongostore is not None:
             course_son = bson.son.SON([
                 ('_id.tag', 'i4x'),
-                ('_id.org', re.compile(r'^{}$'.format(downcased_ssck.org), re.IGNORECASE)),
-                ('_id.course', re.compile(r'^{}$'.format(downcased_ssck.course), re.IGNORECASE)),
+                ('_id.org', re.compile(ur'^{}$'.format(downcased_ssck.org), re.IGNORECASE | re.UNICODE)),
+                ('_id.course', re.compile(ur'^{}$'.format(downcased_ssck.course), re.IGNORECASE | re.UNICODE)),
                 ('_id.category', 'course'),
-                ('_id.name', re.compile(r'^{}$'.format(downcased_ssck.run), re.IGNORECASE)),
+                ('_id.name', re.compile(ur'^{}$'.format(downcased_ssck.run), re.IGNORECASE | re.UNICODE)),
             ])
             entry = self.mongostore.collection.find_one(course_son)
             if entry:

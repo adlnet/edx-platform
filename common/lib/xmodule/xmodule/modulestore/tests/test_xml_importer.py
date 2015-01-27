@@ -10,6 +10,7 @@ from opaque_keys.edx.locations import Location
 from xmodule.modulestore import ModuleStoreEnum
 from xmodule.modulestore.inheritance import InheritanceMixin
 from xmodule.modulestore.xml_importer import _import_module_and_update_references
+from xmodule.modulestore.tests.mongo_connection import MONGO_PORT_NUM, MONGO_HOST
 from opaque_keys.edx.locations import SlashSeparatedCourseKey
 from xmodule.tests import DATA_DIR
 from uuid import uuid4
@@ -21,8 +22,8 @@ class ModuleStoreNoSettings(unittest.TestCase):
     """
     A mixin to create a mongo modulestore that avoids settings
     """
-    HOST = 'localhost'
-    PORT = 27017
+    HOST = MONGO_HOST
+    PORT = MONGO_PORT_NUM
     DB = 'test_mongo_%s' % uuid4().hex[:5]
     COLLECTION = 'modulestore'
     FS_ROOT = DATA_DIR
@@ -36,6 +37,7 @@ class ModuleStoreNoSettings(unittest.TestCase):
     }
     DOC_STORE_CONFIG = {
         'host': HOST,
+        'port': PORT,
         'db': DB,
         'collection': COLLECTION,
     }
@@ -82,18 +84,18 @@ def modulestore():
         options.update(ModuleStoreNoSettings.MODULESTORE['OPTIONS'])
         options['render_template'] = render_to_template_mock
 
-        # pylint: disable=W0142
+        # pylint: disable=star-args
         ModuleStoreNoSettings.modulestore = class_(
             None,  # contentstore
             ModuleStoreNoSettings.MODULESTORE['DOC_STORE_CONFIG'],
-            branch_setting_func = lambda: ModuleStoreEnum.Branch.draft_preferred,
+            branch_setting_func=lambda: ModuleStoreEnum.Branch.draft_preferred,
             **options
         )
 
     return ModuleStoreNoSettings.modulestore
 
 
-# pylint: disable=W0613
+# pylint: disable=unused-argument
 def render_to_template_mock(*args):
     pass
 

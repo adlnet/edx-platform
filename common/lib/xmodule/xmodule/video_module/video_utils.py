@@ -1,5 +1,5 @@
 """
-Module containts utils specific for video_module but not for transcripts.
+Module contains utils specific for video_module but not for transcripts.
 """
 import json
 import logging
@@ -60,8 +60,7 @@ def get_video_from_cdn(cdn_base_url, original_video_url):
     try:
         cdn_response = requests.get(request_url, timeout=0.5)
     except RequestException as err:
-        log.warning("Error requesting from CDN server at %s", request_url)
-        log.exception(err)
+        log.info("Request timed out to CDN server: %s", request_url, exc_info=True)
         return None
 
     if cdn_response.status_code == 200:

@@ -5,7 +5,7 @@ so that we can run the lettuce acceptance tests.
 
 # We intentionally define lots of variables that aren't used, and
 # want to import all variables from base settings files
-# pylint: disable=W0401, W0614
+# pylint: disable=wildcard-import, unused-wildcard-import
 
 from .test import *
 from lms.envs.sauce import *
@@ -17,6 +17,9 @@ DEBUG = True
 # Output Django logs to a file
 import logging
 logging.basicConfig(filename=TEST_ROOT / "log" / "cms_acceptance.log", level=logging.ERROR)
+
+# set root logger level
+logging.getLogger().setLevel(logging.ERROR)
 
 import os
 
@@ -47,7 +50,8 @@ update_module_store_settings(
     module_store_options={
         'default_class': 'xmodule.raw_module.RawDescriptor',
         'fs_root': TEST_ROOT / "data",
-    }
+    },
+    default_store=os.environ.get('DEFAULT_STORE', 'draft'),
 )
 
 CONTENTSTORE = {
@@ -64,7 +68,7 @@ CONTENTSTORE = {
     }
 }
 
-# Set this up so that rake lms[acceptance] and running the
+# Set this up so that 'paver cms --settings=acceptance' and running the
 # harvest command both use the same (test) database
 # which they can flush without messing up your dev db
 DATABASES = {
@@ -77,12 +81,6 @@ DATABASES = {
         },
     }
 }
-
-# Enable asset pipeline
-# Our fork of django-pipeline uses `PIPELINE` instead of `PIPELINE_ENABLED`
-# PipelineFinder is explained here: http://django-pipeline.readthedocs.org/en/1.1.24/storages.html
-PIPELINE = True
-STATICFILES_FINDERS += ('pipeline.finders.PipelineFinder', )
 
 # Use the auto_auth workflow for creating users and logging them in
 FEATURES['AUTOMATIC_AUTH_FOR_TESTING'] = True
@@ -115,7 +113,7 @@ SELENIUM_GRID = {
 #####################################################################
 # Lastly, see if the developer has any local overrides.
 try:
-    from .private import *  # pylint: disable=F0401
+    from .private import *  # pylint: disable=import-error
 except ImportError:
     pass
 

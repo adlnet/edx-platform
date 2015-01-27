@@ -48,9 +48,12 @@ class NoseTestSuite(TestSuite):
             # will run the importable coverage rather than the
             # coverage that OS path finds.
 
+            if not cmd0.endswith('.py'):
+                cmd0 = "`which {}`".format(cmd0)
+
             cmd = (
                 "python -m coverage run --rcfile={root}/.coveragerc "
-                "`which {cmd0}` {cmd_rest}".format(
+                "{cmd0} {cmd_rest}".format(
                     root=self.root,
                     cmd0=cmd0,
                     cmd_rest=cmd_rest,
@@ -99,12 +102,6 @@ class SystemTestSuite(NoseTestSuite):
     def __enter__(self):
         super(SystemTestSuite, self).__enter__()
 
-        if not self.fasttest:
-            # TODO: Fix the tests so that collectstatic isn't needed ever
-            # add --skip-collect to this when the tests are fixed
-            args = [self.root, '--settings=test']
-            call_task('pavelib.assets.update_assets', args=args)
-
     @property
     def cmd(self):
         cmd = (
@@ -131,7 +128,7 @@ class SystemTestSuite(NoseTestSuite):
         # django-nose will import them early in the test process,
         # thereby making sure that we load any django models that are
         # only defined in test files.
-        default_test_id = "{system}/djangoapps/* common/djangoapps/*".format(
+        default_test_id = "{system}/djangoapps/* common/djangoapps/* openedx/core/djangoapps/*".format(
             system=self.root
         )
 
@@ -140,6 +137,9 @@ class SystemTestSuite(NoseTestSuite):
 
         if self.root == 'lms':
             default_test_id += " {system}/tests.py".format(system=self.root)
+        
+        if self.root == 'cms':
+            default_test_id += " {system}/tests/*".format(system=self.root)
 
         return default_test_id
 
