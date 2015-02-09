@@ -220,6 +220,9 @@ FEATURES = {
     # Enable flow for payments for course registration (DIFFERENT from verified student flow)
     'ENABLE_PAID_COURSE_REGISTRATION': False,
 
+    # Enable the display of cosmetic course price display (set in course advanced settings)
+    'ENABLE_COSMETIC_DISPLAY_PRICE': False,
+
     # Automatically approve student identity verification attempts
     'AUTOMATIC_VERIFY_STUDENT_IDENTITY_FOR_TESTING': False,
 
@@ -251,6 +254,10 @@ FEATURES = {
 
     # Toggles the embargo site functionality, which enable embargoing for the whole site
     'SITE_EMBARGOED': False,
+
+    # Toggle whether to replace the current embargo implementation with
+    # the more flexible "country access" feature.
+    'ENABLE_COUNTRY_ACCESS': False,
 
     # Whether the Wiki subsystem should be accessible via the direct /wiki/ paths. Setting this to True means
     # that people can submit content and modify the Wiki in any arbitrary manner. We're leaving this as True in the
@@ -311,9 +318,6 @@ FEATURES = {
     # Enable display of enrollment counts in instructor and legacy analytics dashboard
     'DISPLAY_ANALYTICS_ENROLLMENTS': True,
 
-    # Separate the verification flow from the payment flow
-    'SEPARATE_VERIFICATION_FROM_PAYMENT': False,
-
     # Show the mobile app links in the footer
     'ENABLE_FOOTER_MOBILE_APP_LINKS': False,
 
@@ -328,6 +332,9 @@ FEATURES = {
 
     # For easily adding modes to courses during acceptance testing
     'MODE_CREATION_FOR_TESTING': False,
+
+    # Courseware search feature
+    'ENABLE_COURSEWARE_SEARCH': False,
 }
 
 # Ignore static asset files on import which match this pattern
@@ -620,6 +627,16 @@ MODULESTORE = {
             'mappings': {},
             'stores': [
                 {
+                    'NAME': 'split',
+                    'ENGINE': 'xmodule.modulestore.split_mongo.split_draft.DraftVersioningModuleStore',
+                    'DOC_STORE_CONFIG': DOC_STORE_CONFIG,
+                    'OPTIONS': {
+                        'default_class': 'xmodule.hidden_module.HiddenDescriptor',
+                        'fs_root': DATA_DIR,
+                        'render_template': 'edxmako.shortcuts.render_to_string',
+                    }
+                },
+                {
                     'NAME': 'draft',
                     'ENGINE': 'xmodule.modulestore.mongo.DraftMongoModuleStore',
                     'DOC_STORE_CONFIG': DOC_STORE_CONFIG,
@@ -636,17 +653,7 @@ MODULESTORE = {
                         'data_dir': DATA_DIR,
                         'default_class': 'xmodule.hidden_module.HiddenDescriptor',
                     }
-                },
-                {
-                    'NAME': 'split',
-                    'ENGINE': 'xmodule.modulestore.split_mongo.split_draft.DraftVersioningModuleStore',
-                    'DOC_STORE_CONFIG': DOC_STORE_CONFIG,
-                    'OPTIONS': {
-                        'default_class': 'xmodule.hidden_module.HiddenDescriptor',
-                        'fs_root': DATA_DIR,
-                        'render_template': 'edxmako.shortcuts.render_to_string',
-                    }
-                },
+                }
             ]
         }
     }
@@ -1039,6 +1046,7 @@ courseware_js = (
         for pth in ['courseware', 'histogram', 'navigation', 'time']
     ] +
     ['js/' + pth + '.js' for pth in ['ajax-error']] +
+    ['js/search/main.js'] +
     sorted(rooted_glob(PROJECT_ROOT / 'static', 'coffee/src/modules/**/*.js'))
 )
 
@@ -1518,6 +1526,7 @@ INSTALLED_APPS = (
     'licenses',
     'openedx.core.djangoapps.course_groups',
     'bulk_email',
+    'branding',
 
     # External auth (OpenID, shib)
     'external_auth',
@@ -2010,3 +2019,8 @@ PDF_RECEIPT_LOGO_HEIGHT_MM = 12
 PDF_RECEIPT_COBRAND_LOGO_PATH = PROJECT_ROOT + '/static/images/default-theme/logo.png'
 # Height of the Co-brand Logo in mm
 PDF_RECEIPT_COBRAND_LOGO_HEIGHT_MM = 12
+
+# Use None for the default search engine
+SEARCH_ENGINE = None
+# Use the LMS specific result processor
+SEARCH_RESULT_PROCESSOR = "lms.lib.courseware_search.lms_result_processor.LmsSearchResultProcessor"

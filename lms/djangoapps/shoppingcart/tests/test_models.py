@@ -12,6 +12,7 @@ from mock import patch, MagicMock
 import pytz
 import ddt
 from django.core import mail
+from django.core.mail.message import EmailMessage
 from django.conf import settings
 from django.db import DatabaseError
 from django.test import TestCase
@@ -40,19 +41,12 @@ from shoppingcart.exceptions import (
 )
 
 from opaque_keys.edx.locator import CourseLocator
-from util.testing import UrlResetMixin
-
-# Since we don't need any XML course fixtures, use a modulestore configuration
-# that disables the XML modulestore.
-MODULESTORE_CONFIG = mixed_store_config(settings.COMMON_TEST_DATA_ROOT, {}, include_xml=False)
 
 
-@override_settings(MODULESTORE=MODULESTORE_CONFIG)
 @ddt.ddt
-class OrderTest(UrlResetMixin, ModuleStoreTestCase):
-    @patch.dict(settings.FEATURES, {'SEPARATE_VERIFICATION_FROM_PAYMENT': True})
+class OrderTest(ModuleStoreTestCase):
     def setUp(self):
-        super(OrderTest, self).setUp('verify_student.urls')
+        super(OrderTest, self).setUp()
 
         self.user = UserFactory.create()
         course = CourseFactory.create()
@@ -229,7 +223,6 @@ class OrderTest(UrlResetMixin, ModuleStoreTestCase):
             'STORE_BILLING_INFO': True,
         }
     )
-    @patch.dict(settings.FEATURES, {'SEPARATE_VERIFICATION_FROM_PAYMENT': False})
     def test_purchase(self):
         # This test is for testing the subclassing functionality of OrderItem, but in
         # order to do this, we end up testing the specific functionality of
@@ -237,21 +230,21 @@ class OrderTest(UrlResetMixin, ModuleStoreTestCase):
         cart = Order.get_cart_for_user(user=self.user)
         self.assertFalse(CourseEnrollment.is_enrolled(self.user, self.course_key))
         item = CertificateItem.add_to_order(cart, self.course_key, self.cost, 'honor')
-        # course enrollment object should be created but still inactive
+        # Course enrollment object should be created but still inactive
         self.assertFalse(CourseEnrollment.is_enrolled(self.user, self.course_key))
-        # the analytics client pipes output to stderr when using the default client
+        # Analytics client pipes output to stderr when using the default client
         with patch('sys.stderr', sys.stdout.write):
             cart.purchase()
         self.assertTrue(CourseEnrollment.is_enrolled(self.user, self.course_key))
 
-        # test e-mail sending
+        # Test email sending
         self.assertEquals(len(mail.outbox), 1)
         self.assertEquals('Order Payment Confirmation', mail.outbox[0].subject)
         self.assertIn(settings.PAYMENT_SUPPORT_EMAIL, mail.outbox[0].body)
         self.assertIn(unicode(cart.total_cost), mail.outbox[0].body)
         self.assertIn(item.additional_instruction_text(), mail.outbox[0].body)
 
-        # Assert Google Analytics event fired for purchase.
+        # Verify Google Analytics event fired for purchase
         self.mock_tracker.track.assert_called_once_with(  # pylint: disable=maybe-no-member
             self.user.id,
             'Completed Order',
@@ -272,15 +265,6 @@ class OrderTest(UrlResetMixin, ModuleStoreTestCase):
             },
             context={'Google Analytics': {'clientId': None}}
         )
-
-    def test_payment_separate_from_verification_email(self):
-        cart = Order.get_cart_for_user(user=self.user)
-        item = CertificateItem.add_to_order(cart, self.course_key, self.cost, 'honor')
-        cart.purchase()
-
-        self.assertEquals(len(mail.outbox), 1)
-        # Verify that the verification reminder appears in the sent email.
-        self.assertIn(item.additional_instruction_text(), mail.outbox[0].body)
 
     def test_purchase_item_failure(self):
         # once again, we're testing against the specific implementation of
@@ -315,7 +299,8 @@ class OrderTest(UrlResetMixin, ModuleStoreTestCase):
     def test_purchase_item_email_boto_failure(self, error_logger):
         cart = Order.get_cart_for_user(user=self.user)
         CertificateItem.add_to_order(cart, self.course_key, self.cost, 'honor')
-        with patch('shoppingcart.models.send_mail', side_effect=BotoServerError("status", "reason")):
+        with patch.object(EmailMessage, 'send') as mock_send:
+            mock_send.side_effect = BotoServerError("status", "reason")
             cart.purchase()
             self.assertTrue(error_logger.called)
 
@@ -387,9 +372,39 @@ class OrderTest(UrlResetMixin, ModuleStoreTestCase):
             cart.generate_receipt_instructions()
             mock_gen_inst.assert_called_with()
 
+    def test_confirmation_email_error(self):
+        CourseMode.objects.create(
+            course_id=self.course_key,
+            mode_slug="verified",
+            mode_display_name="Verified",
+            min_price=self.cost
+        )
+
+        cart = Order.get_cart_for_user(self.user)
+        CertificateItem.add_to_order(cart, self.course_key, self.cost, 'verified')
+
+        # Simulate an error when sending the confirmation
+        # email.  This should NOT raise an exception.
+        # If it does, then the implicit view-level
+        # transaction could cause a roll-back, effectively
+        # reversing order fulfillment.
+        with patch.object(mail.message.EmailMessage, 'send') as mock_send:
+            mock_send.side_effect = Exception("Kaboom!")
+            cart.purchase()
+
+        # Verify that the purchase completed successfully
+        self.assertEqual(cart.status, 'purchased')
+
+        # Verify that the user is enrolled as "verified"
+        mode, is_active = CourseEnrollment.enrollment_mode_for_user(self.user, self.course_key)
+        self.assertTrue(is_active)
+        self.assertEqual(mode, 'verified')
+
 
 class OrderItemTest(TestCase):
     def setUp(self):
+        super(OrderItemTest, self).setUp()
+
         self.user = UserFactory.create()
 
     def test_order_item_purchased_callback(self):
@@ -414,9 +429,10 @@ class OrderItemTest(TestCase):
         self.assertEquals(set([]), inst_set)
 
 
-@override_settings(MODULESTORE=MODULESTORE_CONFIG)
 class PaidCourseRegistrationTest(ModuleStoreTestCase):
     def setUp(self):
+        super(PaidCourseRegistrationTest, self).setUp()
+
         self.user = UserFactory.create()
         self.cost = 40
         self.course = CourseFactory.create()
@@ -553,12 +569,13 @@ class PaidCourseRegistrationTest(ModuleStoreTestCase):
         self.assertTrue(PaidCourseRegistration.contained_in_order(cart, self.course_key))
 
 
-@override_settings(MODULESTORE=MODULESTORE_CONFIG)
 class CertificateItemTest(ModuleStoreTestCase):
     """
     Tests for verifying specific CertificateItem functionality
     """
     def setUp(self):
+        super(CertificateItemTest, self).setUp()
+
         self.user = UserFactory.create()
         self.cost = 40
         course = CourseFactory.create()
@@ -621,13 +638,10 @@ class CertificateItemTest(ModuleStoreTestCase):
     def test_single_item_template(self):
         cart = Order.get_cart_for_user(user=self.user)
         cert_item = CertificateItem.add_to_order(cart, self.course_key, self.cost, 'verified')
-
-        self.assertEquals(cert_item.single_item_receipt_template,
-                          'shoppingcart/verified_cert_receipt.html')
+        self.assertEquals(cert_item.single_item_receipt_template, 'shoppingcart/receipt.html')
 
         cert_item = CertificateItem.add_to_order(cart, self.course_key, self.cost, 'honor')
-        self.assertEquals(cert_item.single_item_receipt_template,
-                          'shoppingcart/receipt.html')
+        self.assertEquals(cert_item.single_item_receipt_template, 'shoppingcart/receipt.html')
 
     @override_settings(
         SEGMENT_IO_LMS_KEY="foobar",
@@ -787,7 +801,6 @@ class CertificateItemTest(ModuleStoreTestCase):
         self.assertFalse(ret_val)
 
 
-@override_settings(MODULESTORE=MODULESTORE_CONFIG)
 class DonationTest(ModuleStoreTestCase):
     """Tests for the donation order item type. """
 

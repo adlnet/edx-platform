@@ -239,7 +239,7 @@ class PDFInvoice(object):
         y_pos = y_pos - font_size / 2 - vertical_padding
         # Draw Order/Invoice No.
         self.pdf.drawString(horizontal_padding_from_border, y_pos,
-                            _(u'{id_label} # {item_id}'.format(id_label=id_label, item_id=self.item_id)))
+                            _(u'{id_label} # {item_id}').format(id_label=id_label, item_id=self.item_id))
         y_pos = y_pos - font_size / 2 - vertical_padding
         # Draw Date
         self.pdf.drawString(
@@ -391,9 +391,9 @@ class PDFInvoice(object):
             # NOTE: since we are not printing the TaxID for Credit Card
             # based receipts, we need to change the cell range for
             # these formatting rules
-            ('RIGHTPADDING', (-1, 0), (-1, -2 if self.is_invoice else -1), 7 * mm),
-            ('GRID', (-1, 0), (-1, -2 if self.is_invoice else -1), 3.0, colors.white),
-            ('BACKGROUND', (-1, 0), (-1, -2 if self.is_invoice else -1), '#EEEEEE'),
+            ('RIGHTPADDING', (-1, 0), (-1, 2), 7 * mm),
+            ('GRID', (-1, 0), (-1, 2), 3.0, colors.white),
+            ('BACKGROUND', (-1, 0), (-1, 2), '#EEEEEE'),
         ]
 
         totals_table.setStyle(TableStyle(styles))

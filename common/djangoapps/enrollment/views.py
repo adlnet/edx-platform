@@ -3,6 +3,7 @@ The Enrollment API Views should be simple, lean HTTP endpoints for API access. T
 consist primarily of authentication, request validation, and serialization.
 
 """
+from opaque_keys import InvalidKeyError
 from rest_framework import status
 from rest_framework.authentication import OAuth2Authentication
 from rest_framework import permissions
@@ -12,6 +13,7 @@ from rest_framework.views import APIView
 from enrollment import api
 from enrollment.errors import CourseNotFoundError, CourseEnrollmentError, CourseModeNotFoundError
 from util.authentication import SessionAuthenticationAllowInactiveUser
+from util.disable_rate_limit import can_disable_rate_limit
 
 
 class EnrollmentUserThrottle(UserRateThrottle):
@@ -20,6 +22,7 @@ class EnrollmentUserThrottle(UserRateThrottle):
     rate = '50/second'
 
 
+@can_disable_rate_limit
 class EnrollmentView(APIView):
     """
         **Use Cases**
@@ -101,6 +104,7 @@ class EnrollmentView(APIView):
             )
 
 
+@can_disable_rate_limit
 class EnrollmentCourseDetailView(APIView):
     """
         **Use Cases**
@@ -169,6 +173,7 @@ class EnrollmentCourseDetailView(APIView):
             )
 
 
+@can_disable_rate_limit
 class EnrollmentListView(APIView):
     """
         **Use Cases**
@@ -298,5 +303,12 @@ class EnrollmentListView(APIView):
                         u"An error occurred while creating the new course enrollment for user "
                         u"'{user}' in course '{course_id}'"
                     ).format(user=user, course_id=course_id)
+                }
+            )
+        except InvalidKeyError:
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST,
+                data={
+                    "message": u"No course '{course_id}' found for enrollment".format(course_id=course_id)
                 }
             )

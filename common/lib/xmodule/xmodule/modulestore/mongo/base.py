@@ -71,6 +71,9 @@ BLOCK_TYPES_WITH_CHILDREN = list(set(
 # Allow us to call _from_deprecated_(son|string) throughout the file
 # pylint: disable=protected-access
 
+# at module level, cache one instance of OSFS per filesystem root.
+_OSFS_INSTANCE = {}
+
 
 class MongoRevisionKey(object):
     """
@@ -275,7 +278,9 @@ class CachingDescriptorSystem(MakoDescriptorSystem, EditInfoRuntimeMixin):
                     raw_metadata = json_data.get('metadata', {})
                     # published_on was previously stored as a list of time components instead of a datetime
                     if raw_metadata.get('published_date'):
-                        module._edit_info['published_date'] = datetime(*raw_metadata.get('published_date')[0:6]).replace(tzinfo=UTC)
+                        module._edit_info['published_date'] = datetime(
+                            *raw_metadata.get('published_date')[0:6]
+                        ).replace(tzinfo=UTC)
                     module._edit_info['published_by'] = raw_metadata.get('published_by')
 
                 # decache any computed pending field settings
@@ -836,10 +841,7 @@ class MongoModuleStore(ModuleStoreDraftAndPublished, ModuleStoreWriteBase, Mongo
         location = Location._from_deprecated_son(item['location'], course_key.run)
         data_dir = getattr(item, 'data_dir', location.course)
         root = self.fs_root / data_dir
-
-        root.makedirs_p()  # create directory if it doesn't exist
-
-        resource_fs = OSFS(root)
+        resource_fs = _OSFS_INSTANCE.setdefault(root, OSFS(root, create=True))
 
         cached_metadata = {}
         if apply_cached_metadata:
@@ -1804,3 +1806,25 @@ class MongoModuleStore(ModuleStoreDraftAndPublished, ModuleStoreWriteBase, Mongo
 
         # To allow prioritizing draft vs published material
         self.collection.create_index('_id.revision')
+
+    # Some overrides that still need to be implemented by subclasses
+    def convert_to_draft(self, location, user_id):
+        raise NotImplementedError()
+
+    def delete_item(self, location, user_id, **kwargs):
+        raise NotImplementedError()
+
+    def has_changes(self, xblock):
+        raise NotImplementedError()
+
+    def has_published_version(self, xblock):
+        raise NotImplementedError()
+
+    def publish(self, location, user_id):
+        raise NotImplementedError()
+
+    def revert_to_published(self, location, user_id):
+        raise NotImplementedError()
+
+    def unpublish(self, location, user_id):
+        raise NotImplementedError()
