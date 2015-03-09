@@ -23,16 +23,15 @@ from django.core.validators import validate_email
 from django.utils.translation import ugettext as _
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden, HttpResponseNotFound
 from django.utils.html import strip_tags
+from django.shortcuts import redirect
 import string  # pylint: disable=deprecated-module
 import random
 import unicodecsv
 import urllib
 import decimal
 from student import auth
-from student.roles import CourseSalesAdminRole
+from student.roles import GlobalStaff, CourseSalesAdminRole
 from util.file import store_uploaded_file, course_and_time_based_filename_generator, FileValidationException, UniversalNewlineIterator
-import datetime
-import pytz
 from util.json_request import JsonResponse
 from instructor.views.instructor_task_helpers import extract_email_features, extract_task_features
 
@@ -58,7 +57,10 @@ from shoppingcart.models import (
     CourseMode,
     CourseRegistrationCodeInvoiceItem,
 )
-from student.models import CourseEnrollment, unique_id_for_user, anonymous_id_for_user
+from student.models import (
+    CourseEnrollment, unique_id_for_user, anonymous_id_for_user,
+    UserProfile, Registration, EntranceExamConfiguration
+)
 import instructor_task.api
 from instructor_task.api_helper import AlreadyRunningError
 from instructor_task.models import ReportStore
@@ -82,6 +84,8 @@ from instructor.views import INVOICE_KEY
 
 from submissions import api as sub_api  # installed from the edx-submissions repository
 
+from certificates import api as certs_api
+
 from bulk_email.models import CourseEmail
 
 from .tools import (
@@ -100,7 +104,6 @@ from .tools import (
 from opaque_keys.edx.keys import CourseKey
 from opaque_keys.edx.locations import SlashSeparatedCourseKey
 from opaque_keys import InvalidKeyError
-from student.models import UserProfile, Registration
 
 log = logging.getLogger(__name__)
 
@@ -232,6 +235,20 @@ def require_level(level):
                 return HttpResponseForbidden()
         return wrapped
     return decorator
+
+
+def require_global_staff(func):
+    """View decorator that requires that the user have global staff permissions. """
+    def wrapped(request, *args, **kwargs):  # pylint: disable=missing-docstring
+        if GlobalStaff().has_user(request.user):
+            return func(request, *args, **kwargs)
+        else:
+            return HttpResponseForbidden(
+                u"Must be {platform_name} staff to perform this action.".format(
+                    platform_name=settings.PLATFORM_NAME
+                )
+            )
+    return wrapped
 
 
 def require_sales_admin(func):
@@ -1607,6 +1624,71 @@ def reset_student_attempts(request, course_id):
 
 @ensure_csrf_cookie
 @cache_control(no_cache=True, no_store=True, must_revalidate=True)
+@require_level('staff')
+@common_exceptions_400
+def reset_student_attempts_for_entrance_exam(request, course_id):  # pylint: disable=invalid-name
+    """
+
+    Resets a students attempts counter or starts a task to reset all students
+    attempts counters for entrance exam. Optionally deletes student state for
+    entrance exam. Limited to staff access. Some sub-methods limited to instructor access.
+
+    Following are possible query parameters
+        - unique_student_identifier is an email or username
+        - all_students is a boolean
+            requires instructor access
+            mutually exclusive with delete_module
+        - delete_module is a boolean
+            requires instructor access
+            mutually exclusive with all_students
+    """
+    course_id = SlashSeparatedCourseKey.from_deprecated_string(course_id)
+    course = get_course_with_access(
+        request.user, 'staff', course_id, depth=None
+    )
+
+    if not course.entrance_exam_id:
+        return HttpResponseBadRequest(
+            _("Course has no entrance exam section.")
+        )
+
+    student_identifier = request.GET.get('unique_student_identifier', None)
+    student = None
+    if student_identifier is not None:
+        student = get_student_from_identifier(student_identifier)
+    all_students = request.GET.get('all_students', False) in ['true', 'True', True]
+    delete_module = request.GET.get('delete_module', False) in ['true', 'True', True]
+
+    # parameter combinations
+    if all_students and student:
+        return HttpResponseBadRequest(
+            _("all_students and unique_student_identifier are mutually exclusive.")
+        )
+    if all_students and delete_module:
+        return HttpResponseBadRequest(
+            _("all_students and delete_module are mutually exclusive.")
+        )
+
+    # instructor authorization
+    if all_students or delete_module:
+        if not has_access(request.user, 'instructor', course):
+            return HttpResponseForbidden(_("Requires instructor access."))
+
+    try:
+        entrance_exam_key = course_id.make_usage_key_from_deprecated_string(course.entrance_exam_id)
+        if delete_module:
+            instructor_task.api.submit_delete_entrance_exam_state_for_student(request, entrance_exam_key, student)
+        else:
+            instructor_task.api.submit_reset_problem_attempts_in_entrance_exam(request, entrance_exam_key, student)
+    except InvalidKeyError:
+        return HttpResponseBadRequest(_("Course has no valid entrance exam section."))
+
+    response_payload = {'student': student_identifier or _('All Students'), 'task': 'created'}
+    return JsonResponse(response_payload)
+
+
+@ensure_csrf_cookie
+@cache_control(no_cache=True, no_store=True, must_revalidate=True)
 @require_level('instructor')
 @require_query_params(problem_to_reset="problem urlname to reset")
 @common_exceptions_400
@@ -1657,6 +1739,58 @@ def rescore_problem(request, course_id):
     else:
         return HttpResponseBadRequest()
 
+    return JsonResponse(response_payload)
+
+
+@ensure_csrf_cookie
+@cache_control(no_cache=True, no_store=True, must_revalidate=True)
+@require_level('instructor')
+@common_exceptions_400
+def rescore_entrance_exam(request, course_id):
+    """
+    Starts a background process a students attempts counter for entrance exam.
+    Optionally deletes student state for a problem. Limited to instructor access.
+
+    Takes either of the following query parameters
+        - unique_student_identifier is an email or username
+        - all_students is a boolean
+
+    all_students and unique_student_identifier cannot both be present.
+    """
+    course_id = SlashSeparatedCourseKey.from_deprecated_string(course_id)
+    course = get_course_with_access(
+        request.user, 'staff', course_id, depth=None
+    )
+
+    student_identifier = request.GET.get('unique_student_identifier', None)
+    student = None
+    if student_identifier is not None:
+        student = get_student_from_identifier(student_identifier)
+
+    all_students = request.GET.get('all_students') in ['true', 'True', True]
+
+    if not course.entrance_exam_id:
+        return HttpResponseBadRequest(
+            _("Course has no entrance exam section.")
+        )
+
+    if all_students and student:
+        return HttpResponseBadRequest(
+            _("Cannot rescore with all_students and unique_student_identifier.")
+        )
+
+    try:
+        entrance_exam_key = course_id.make_usage_key_from_deprecated_string(course.entrance_exam_id)
+    except InvalidKeyError:
+        return HttpResponseBadRequest(_("Course has no valid entrance exam section."))
+
+    response_payload = {}
+    if student:
+        response_payload['student'] = student_identifier
+    else:
+        response_payload['student'] = _("All Students")
+    instructor_task.api.submit_rescore_entrance_exam_for_student(request, entrance_exam_key, student)
+    response_payload['task'] = 'created'
     return JsonResponse(response_payload)
 
 
@@ -1734,6 +1868,40 @@ def list_instructor_tasks(request, course_id):
     else:
         # If no problem or student, just get currently running tasks
         tasks = instructor_task.api.get_running_instructor_tasks(course_id)
+
+    response_payload = {
+        'tasks': map(extract_task_features, tasks),
+    }
+    return JsonResponse(response_payload)
+
+
+@ensure_csrf_cookie
+@cache_control(no_cache=True, no_store=True, must_revalidate=True)
+@require_level('staff')
+def list_entrance_exam_instructor_tasks(request, course_id):  # pylint: disable=invalid-name
+    """
+    List entrance exam related instructor tasks.
+
+    Takes either of the following query parameters
+        - unique_student_identifier is an email or username
+        - all_students is a boolean
+    """
+    course_id = SlashSeparatedCourseKey.from_deprecated_string(course_id)
+    course = get_course_by_id(course_id)
+    student = request.GET.get('unique_student_identifier', None)
+    if student is not None:
+        student = get_student_from_identifier(student)
+
+    try:
+        entrance_exam_key = course_id.make_usage_key_from_deprecated_string(course.entrance_exam_id)
+    except InvalidKeyError:
+        return HttpResponseBadRequest(_("Course has no valid entrance exam section."))
+    if student:
+        # Specifying for a single student's entrance exam history
+        tasks = instructor_task.api.get_entrance_exam_instructor_task_history(course_id, entrance_exam_key, student)
+    else:
+        # Specifying for all student's entrance exam history
+        tasks = instructor_task.api.get_entrance_exam_instructor_task_history(course_id, entrance_exam_key)
 
     response_payload = {
         'tasks': map(extract_task_features, tasks),
@@ -2133,6 +2301,60 @@ def _split_input_list(str_list):
     return new_list
 
 
+def _instructor_dash_url(course_key, section=None):
+    """Return the URL for a section in the instructor dashboard.
+
+    Arguments:
+        course_key (CourseKey)
+
+    Keyword Arguments:
+        section (str): The name of the section to load.
+
+    Returns:
+        unicode: The URL of a section in the instructor dashboard.
+
+    """
+    url = reverse('instructor_dashboard', kwargs={'course_id': unicode(course_key)})
+    if section is not None:
+        url += u'#view-{section}'.format(section=section)
+    return url
+
+
+@require_global_staff
+@require_POST
+def generate_example_certificates(request, course_id=None):  # pylint: disable=unused-argument
+    """Start generating a set of example certificates.
+
+    Example certificates are used to verify that certificates have
+    been configured correctly for the course.
+
+    Redirects back to the intructor dashboard once certificate
+    generation has begun.
+
+    """
+    course_key = CourseKey.from_string(course_id)
+    certs_api.generate_example_certificates(course_key)
+    return redirect(_instructor_dash_url(course_key, section='certificates'))
+
+
+@require_global_staff
+@require_POST
+def enable_certificate_generation(request, course_id=None):
+    """Enable/disable self-generated certificates for a course.
+
+    Once self-generated certificates have been enabled, students
+    who have passed the course will be able to generate certificates.
+
+    Redirects back to the intructor dashboard once the
+    setting has been updated.
+
+    """
+    course_key = CourseKey.from_string(course_id)
+    is_enabled = (request.POST.get('certificates-enabled', 'false') == 'true')
+    certs_api.set_cert_generation_enabled(course_key, is_enabled)
+    return redirect(_instructor_dash_url(course_key, section='certificates'))
+
+
 #---- Gradebook (shown to small courses only) ----
 @cache_control(no_cache=True, no_store=True, must_revalidate=True)
 @require_level('staff')
@@ -2171,3 +2393,27 @@ def spoc_gradebook(request, course_id):
         'staff_access': True,
         'ordered_grades': sorted(course.grade_cutoffs.items(), key=lambda i: i[1], reverse=True),
     })
+
+
+@ensure_csrf_cookie
+@cache_control(no_cache=True, no_store=True, must_revalidate=True)
+@require_level('staff')
+@require_POST
+def mark_student_can_skip_entrance_exam(request, course_id):  # pylint: disable=invalid-name
+    """
+    Mark a student to skip entrance exam.
+    Takes `unique_student_identifier` as required POST parameter.
+    """
+    course_id = SlashSeparatedCourseKey.from_deprecated_string(course_id)
+    student_identifier = request.POST.get('unique_student_identifier')
+    student = get_student_from_identifier(student_identifier)
+
+    __, created = EntranceExamConfiguration.objects.get_or_create(user=student, course_id=course_id)
+    if created:
+        message = _('This student (%s) will skip the entrance exam.') % student_identifier
+    else:
+        message = _('This student (%s) is already allowed to skip the entrance exam.') % student_identifier
+    response_payload = {
+        'message': message,
+    }
+    return JsonResponse(response_payload)

@@ -16,6 +16,7 @@ Examples of html5 videos for manual testing:
 import copy
 import json
 import logging
+import random
 from collections import OrderedDict
 from operator import itemgetter
 
@@ -232,10 +233,26 @@ class VideoModule(VideoFields, VideoTranscriptsMixin, VideoStudentViewHandlers, 
 
         track_url, transcript_language, sorted_languages = self.get_transcripts_for_student()
 
+        # CDN_VIDEO_URLS is only to be used here and will be deleted
+        # TODO(ali@edx.org): Delete this after the CDN experiment has completed.
+        if getattr(settings, 'PERFORMANCE_GRAPHITE_URL', '') != '' and \
+                self.system.user_location == 'CN' and \
+                getattr(settings, 'ENABLE_VIDEO_BEACON', False) and \
+                self.edx_video_id in getattr(settings, 'CDN_VIDEO_URLS', {}).keys():
+            cdn_urls = getattr(settings, 'CDN_VIDEO_URLS', {})[self.edx_video_id]
+            cdn_exp_group, sources[0] = random.choice(zip(range(len(cdn_urls)), cdn_urls))
+            cdn_eval = True
+        else:
+            cdn_eval = False
+            cdn_exp_group = None
+
         return self.system.render_template('video.html', {
             'ajax_url': self.system.ajax_url + '/save_user_state',
             'autoplay': settings.FEATURES.get('AUTOPLAY_VIDEOS', False),
             'branding_info': branding_info,
+            'cdn_eval': cdn_eval,
+            'cdn_eval_endpoint': getattr(settings, 'PERFORMANCE_GRAPHITE_URL', ''),
+            'cdn_exp_group': cdn_exp_group,
             # This won't work when we move to data that
             # isn't on the filesystem
             'data_dir': getattr(self, 'data_dir', None),
@@ -304,14 +321,7 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
             self._field_data.set_many(self, field_data)
             del self.data
 
-        editable_fields = super(VideoDescriptor, self).editable_metadata_fields
-
         self.source_visible = False
-        # Set download_video field to default value if its not explicitly set for backward compatibility.
-        download_video = editable_fields['download_video']
-        if not download_video['explicitly_set']:
-            self.download_video = self.download_video
-
         if self.source:
             # If `source` field value exist in the `html5_sources` field values,
             # then delete `source` field value and use value from `html5_sources` field.
@@ -320,14 +330,17 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
                 self.download_video = True
             else:  # Otherwise, `source` field value will be used.
                 self.source_visible = True
-                if not download_video['explicitly_set']:
+                if not self.fields['download_video'].is_set_on(self):
                     self.download_video = True
+
+        # Set download_video field to default value if its not explicitly set for backward compatibility.
+        if not self.fields['download_video'].is_set_on(self):
+            self.download_video = self.download_video
 
         # for backward compatibility.
         # If course was existed and was not re-imported by the moment of adding `download_track` field,
         # we should enable `download_track` if following is true:
-        download_track = editable_fields['download_track']
-        if not download_track['explicitly_set'] and self.track:
+        if not self.fields['download_track'].is_set_on(self) and self.track:
             self.download_track = True
 
     def editor_saved(self, user, old_metadata, old_content):

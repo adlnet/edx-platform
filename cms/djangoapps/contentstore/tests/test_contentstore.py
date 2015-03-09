@@ -52,6 +52,7 @@ from course_action_state.models import CourseRerunState, CourseRerunUIStateManag
 
 from course_action_state.managers import CourseActionStateItemNotFoundError
 from xmodule.contentstore.content import StaticContent
+from xmodule.modulestore.django import modulestore
 
 
 TEST_DATA_CONTENTSTORE = copy.deepcopy(settings.CONTENTSTORE)
@@ -386,6 +387,32 @@ class ImportRequiredTestCases(ContentStoreTestCase):
         export_to_xml(self.store, content_store, course_id, root_dir, 'test_export')
 
         shutil.rmtree(root_dir)
+
+    def test_import_after_renaming_xml_data(self):
+        """
+        Test that import works fine on split mongo after renaming the blocks url.
+        """
+        split_store = modulestore()._get_modulestore_by_type(ModuleStoreEnum.Type.split)  # pylint: disable=W0212
+        import_from_xml(
+            split_store, self.user.id, TEST_DATA_DIR,
+            ['course_before_rename'],
+            create_course_if_not_present=True
+        )
+        course_after_rename = import_from_xml(
+            split_store, self.user.id, TEST_DATA_DIR,
+            ['course_after_rename'],
+            create_course_if_not_present=True
+        )
+        all_items = split_store.get_items(course_after_rename[0].id, qualifiers={'category': 'chapter'})
+        renamed_chapter = [item for item in all_items if item.location.block_id == 'renamed_chapter'][0]
+        self.assertIsNotNone(renamed_chapter.published_on)
+        self.assertIsNotNone(renamed_chapter.parent)
+        self.assertTrue(renamed_chapter.location in course_after_rename[0].children)
+        original_chapter = [item for item in all_items
+                            if item.location.block_id == 'b9870b9af59841a49e6e02765d0e3bbf'][0]
+        self.assertIsNone(original_chapter.published_on)
+        self.assertIsNone(original_chapter.parent)
+        self.assertFalse(original_chapter.location in course_after_rename[0].children)
 
     def test_empty_data_roundtrip(self):
         """
@@ -1679,24 +1706,23 @@ class RerunCourseTest(ContentStoreTestCase):
         self.verify_rerun_course(rerun_course_key, rerun_of_rerun_course_key, rerun_of_rerun_data['display_name'])
 
     def test_rerun_course_fail_no_source_course(self):
-        with mock.patch.dict('django.conf.settings.FEATURES', {'ALLOW_COURSE_RERUNS': True}):
-            existent_course_key = CourseFactory.create().id
-            non_existent_course_key = CourseLocator("org", "non_existent_course", "non_existent_run")
-            destination_course_key = self.post_rerun_request(non_existent_course_key)
+        existent_course_key = CourseFactory.create().id
+        non_existent_course_key = CourseLocator("org", "non_existent_course", "non_existent_run")
+        destination_course_key = self.post_rerun_request(non_existent_course_key)
 
-            # Verify that the course rerun action is marked failed
-            rerun_state = CourseRerunState.objects.find_first(course_key=destination_course_key)
-            self.assertEquals(rerun_state.state, CourseRerunUIStateManager.State.FAILED)
-            self.assertIn("Cannot find a course at", rerun_state.message)
+        # Verify that the course rerun action is marked failed
+        rerun_state = CourseRerunState.objects.find_first(course_key=destination_course_key)
+        self.assertEquals(rerun_state.state, CourseRerunUIStateManager.State.FAILED)
+        self.assertIn("Cannot find a course at", rerun_state.message)
 
-            # Verify that the creator is not enrolled in the course.
-            self.assertFalse(CourseEnrollment.is_enrolled(self.user, non_existent_course_key))
+        # Verify that the creator is not enrolled in the course.
+        self.assertFalse(CourseEnrollment.is_enrolled(self.user, non_existent_course_key))
 
-            # Verify that the existing course continues to be in the course listings
-            self.assertInCourseListing(existent_course_key)
+        # Verify that the existing course continues to be in the course listings
+        self.assertInCourseListing(existent_course_key)
 
-            # Verify that the failed course is NOT in the course listings
-            self.assertInUnsucceededCourseActions(destination_course_key)
+        # Verify that the failed course is NOT in the course listings
+        self.assertInUnsucceededCourseActions(destination_course_key)
 
     def test_rerun_course_fail_duplicate_course(self):
         existent_course_key = CourseFactory.create().id

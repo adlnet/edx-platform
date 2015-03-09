@@ -10,7 +10,7 @@ from django.core.urlresolvers import reverse
 from django.core import mail
 from django.test import TestCase
 from django.test.utils import override_settings
-from unittest import SkipTest, skipUnless
+from unittest import skipUnless
 import ddt
 from pytz import UTC
 import mock
@@ -23,6 +23,7 @@ from django_comment_common import models
 from opaque_keys.edx.locations import SlashSeparatedCourseKey
 from third_party_auth.tests.testutil import simulate_running_pipeline
 
+from ..accounts.views import AccountView
 from ..api import account as account_api, profile as profile_api
 from ..models import UserOrgTag
 from ..tests.factories import UserPreferenceFactory
@@ -920,7 +921,7 @@ class RegistrationViewTest(ApiTestCase):
                     u"label": u"Full name",
                     u"instructions": u"The name that will appear on your certificates",
                     u"restrictions": {
-                        "max_length": profile_api.FULL_NAME_MAX_LENGTH
+                        "max_length": profile_api.FULL_NAME_MAX_LENGTH,
                     }
                 }
             )
@@ -1233,6 +1234,7 @@ class RegistrationViewTest(ApiTestCase):
             "honor_code": "true",
         })
         self.assertHttpOK(response)
+        self.assertIn(settings.EDXMKTG_COOKIE_NAME, self.client.cookies)
 
         # Verify that the user exists
         self.assertEqual(
@@ -1245,8 +1247,8 @@ class RegistrationViewTest(ApiTestCase):
         )
 
         # Verify that the user's full name is set
-        profile_info = profile_api.profile_info(self.USERNAME)
-        self.assertEqual(profile_info["full_name"], self.NAME)
+        account_settings = AccountView.get_serialized_account(self.USERNAME)
+        self.assertEqual(account_settings["name"], self.NAME)
 
         # Verify that we've been logged in
         # by trying to access a page that requires authentication
@@ -1259,7 +1261,6 @@ class RegistrationViewTest(ApiTestCase):
         "year_of_birth": "optional",
         "mailing_address": "optional",
         "goals": "optional",
-        "city": "optional",
         "country": "required",
     })
     def test_register_with_profile_info(self):
@@ -1273,20 +1274,18 @@ class RegistrationViewTest(ApiTestCase):
             "mailing_address": self.ADDRESS,
             "year_of_birth": self.YEAR_OF_BIRTH,
             "goals": self.GOALS,
-            "city": self.CITY,
             "country": self.COUNTRY,
             "honor_code": "true",
         })
         self.assertHttpOK(response)
 
-        # Verify the profile information
-        profile_info = profile_api.profile_info(self.USERNAME)
-        self.assertEqual(profile_info["level_of_education"], self.EDUCATION)
-        self.assertEqual(profile_info["mailing_address"], self.ADDRESS)
-        self.assertEqual(profile_info["year_of_birth"], int(self.YEAR_OF_BIRTH))
-        self.assertEqual(profile_info["goals"], self.GOALS)
-        self.assertEqual(profile_info["city"], self.CITY)
-        self.assertEqual(profile_info["country"], self.COUNTRY)
+        # Verify the user's account
+        account_settings = AccountView.get_serialized_account(self.USERNAME)
+        self.assertEqual(account_settings["level_of_education"], self.EDUCATION)
+        self.assertEqual(account_settings["mailing_address"], self.ADDRESS)
+        self.assertEqual(account_settings["year_of_birth"], int(self.YEAR_OF_BIRTH))
+        self.assertEqual(account_settings["goals"], self.GOALS)
+        self.assertEqual(account_settings["country"], self.COUNTRY)
 
     def test_activation_email(self):
         # Register, which should trigger an activation email
@@ -1367,11 +1366,19 @@ class RegistrationViewTest(ApiTestCase):
             "honor_code": "true",
         })
         self.assertEqual(response.status_code, 409)
+        response_json = json.loads(response.content)
         self.assertEqual(
-            response.content,
-            "It looks like {} belongs to an existing account. Try again with a different email address.".format(
-                self.EMAIL
-            )
+            response_json,
+            {
+                "email": [{
+                    "user_message": (
+                        "It looks like {} belongs to an existing account. "
+                        "Try again with a different email address."
+                    ).format(
+                        self.EMAIL
+                    )
+                }]
+            }
         )
 
     def test_register_duplicate_username(self):
@@ -1394,11 +1401,19 @@ class RegistrationViewTest(ApiTestCase):
             "honor_code": "true",
         })
         self.assertEqual(response.status_code, 409)
+        response_json = json.loads(response.content)
         self.assertEqual(
-            response.content,
-            "It looks like {} belongs to an existing account. Try again with a different username.".format(
-                self.USERNAME
-            )
+            response_json,
+            {
+                "username": [{
+                    "user_message": (
+                        "It looks like {} belongs to an existing account. "
+                        "Try again with a different username."
+                    ).format(
+                        self.USERNAME
+                    )
+                }]
+            }
         )
 
     def test_register_duplicate_username_and_email(self):
@@ -1421,11 +1436,46 @@ class RegistrationViewTest(ApiTestCase):
             "honor_code": "true",
         })
         self.assertEqual(response.status_code, 409)
+        response_json = json.loads(response.content)
         self.assertEqual(
-            response.content,
-            "It looks like {} and {} belong to an existing account. Try again with a different email address and username.".format(
-                self.EMAIL, self.USERNAME
-            )
+            response_json,
+            {
+                "username": [{
+                    "user_message": (
+                        "It looks like {} belongs to an existing account. "
+                        "Try again with a different username."
+                    ).format(
+                        self.USERNAME
+                    )
+                }],
+                "email": [{
+                    "user_message": (
+                        "It looks like {} belongs to an existing account. "
+                        "Try again with a different email address."
+                    ).format(
+                        self.EMAIL
+                    )
+                }]
+            }
+        )
+
+    def test_missing_fields(self):
+        response = self.client.post(
+            self.url,
+            {
+                "email": self.EMAIL,
+                "name": self.NAME,
+                "honor_code": "true",
+            }
+        )
+        self.assertEqual(response.status_code, 400)
+        response_json = json.loads(response.content)
+        self.assertEqual(
+            response_json,
+            {
+                "username": [{"user_message": "Username must be minimum of two characters long"}],
+                "password": [{"user_message": "A valid password is required"}],
+            }
         )
 
     def _assert_reg_field(self, extra_fields_setting, expected_field):
@@ -1547,4 +1597,3 @@ class UpdateEmailOptInTestCase(ApiTestCase, ModuleStoreTestCase):
         self.assertHttpBadRequest(response)
         with self.assertRaises(UserOrgTag.DoesNotExist):
             UserOrgTag.objects.get(user=self.user, org=self.course.id.org, key="email-optin")
-

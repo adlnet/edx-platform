@@ -16,11 +16,13 @@ import json
 import logging
 from pytz import UTC
 import uuid
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 import dogstats_wrapper as dog_stats_api
 from django.db.models import Q
 import pytz
+from urllib import urlencode
 
+from django.utils.translation import ugettext as _, ugettext_lazy
 from django.conf import settings
 from django.utils import timezone
 from django.contrib.auth.models import User
@@ -279,59 +281,6 @@ class UserProfile(models.Model):
         meta['session_id'] = session_id
         self.set_meta(meta)
         self.save()
-
-    @transaction.commit_on_success
-    def update_name(self, new_name):
-        """Update the user's name, storing the old name in the history.
-
-        Implicitly saves the model.
-        If the new name is not the same as the old name, do nothing.
-
-        Arguments:
-            new_name (unicode): The new full name for the user.
-
-        Returns:
-            None
-
-        """
-        if self.name == new_name:
-            return
-
-        if self.name:
-            meta = self.get_meta()
-            if 'old_names' not in meta:
-                meta['old_names'] = []
-            meta['old_names'].append([self.name, u"", datetime.now(UTC).isoformat()])
-            self.set_meta(meta)
-
-        self.name = new_name
-        self.save()
-
-    @transaction.commit_on_success
-    def update_email(self, new_email):
-        """Update the user's email and save the change in the history.
-
-        Implicitly saves the model.
-        If the new email is the same as the old email, do not update the history.
-
-        Arguments:
-            new_email (unicode): The new email for the user.
-
-        Returns:
-            None
-        """
-        if self.user.email == new_email:
-            return
-
-        meta = self.get_meta()
-        if 'old_emails' not in meta:
-            meta['old_emails'] = []
-        meta['old_emails'].append([self.user.email, datetime.now(UTC).isoformat()])
-        self.set_meta(meta)
-        self.save()
-
-        self.user.email = new_email
-        self.user.save()
 
 
 class UserSignupSource(models.Model):
@@ -1417,7 +1366,8 @@ def enforce_single_login(sender, request, user, signal, **kwargs):    # pylint: 
             key = request.session.session_key
         else:
             key = None
-        user.profile.set_login_session(key)
+        if user:
+            user.profile.set_login_session(key)
 
 
 class DashboardConfiguration(ConfigurationModel):
@@ -1435,3 +1385,158 @@ class DashboardConfiguration(ConfigurationModel):
     @property
     def recent_enrollment_seconds(self):
         return self.recent_enrollment_time_delta
+
+
+class LinkedInAddToProfileConfiguration(ConfigurationModel):
+    """
+    LinkedIn Add to Profile Configuration
+
+    This configuration enables the "Add to Profile" LinkedIn
+    button on the student dashboard.  The button appears when
+    users have a certificate available; when clicked,
+    users are sent to the LinkedIn site with a pre-filled
+    form allowing them to add the certificate to their
+    LinkedIn profile.
+    """
+
+    MODE_TO_CERT_NAME = {
+        "honor": ugettext_lazy(u"{platform_name} Honor Code Certificate for {course_name}"),
+        "verified": ugettext_lazy(u"{platform_name} Verified Certificate for {course_name}"),
+        "professional": ugettext_lazy(u"{platform_name} Professional Certificate for {course_name}"),
+    }
+
+    company_identifier = models.TextField(
+        help_text=ugettext_lazy(
+            u"The company identifier for the LinkedIn Add-to-Profile button "
+            u"e.g 0_0dPSPyS070e0HsE9HNz_13_d11_"
+        )
+    )
+
+    # Deprecated
+    dashboard_tracking_code = models.TextField(default="", blank=True)
+
+    trk_partner_name = models.CharField(
+        max_length=10,
+        default="",
+        blank=True,
+        help_text=ugettext_lazy(
+            u"Short identifier for the LinkedIn partner used in the tracking code.  "
+            u"(Example: 'edx')  "
+            u"If no value is provided, tracking codes will not be sent to LinkedIn."
+        )
+    )
+
+    def add_to_profile_url(self, course_key, course_name, cert_mode, cert_url, source="o", target="dashboard"):
+        """Construct the URL for the "add to profile" button.
+
+        Arguments:
+            course_key (CourseKey): The identifier for the course.
+            course_name (unicode): The display name of the course.
+            cert_mode (str): The course mode of the user's certificate (e.g. "verified", "honor", "professional")
+            cert_url (str): The download URL for the certificate.
+
+        Keyword Arguments:
+            source (str): Either "o" (for onsite/UI), "e" (for emails), or "m" (for mobile)
+            target (str): An identifier for the occurrance of the button.
+
+        """
+        params = OrderedDict([
+            ('_ed', self.company_identifier),
+            ('pfCertificationName', self._cert_name(course_name, cert_mode).encode('utf-8')),
+            ('pfCertificationUrl', cert_url),
+            ('source', source)
+        ])
+
+        tracking_code = self._tracking_code(course_key, cert_mode, target)
+        if tracking_code is not None:
+            params['trk'] = tracking_code
+
+        return u'http://www.linkedin.com/profile/add?{params}'.format(
+            params=urlencode(params)
+        )
+
+    def _cert_name(self, course_name, cert_mode):
+        """Name of the certification, for display on LinkedIn. """
+        return self.MODE_TO_CERT_NAME.get(
+            cert_mode,
+            _(u"{platform_name} Certificate for {course_name}")
+        ).format(
+            platform_name=settings.PLATFORM_NAME,
+            course_name=course_name
+        )
+
+    def _tracking_code(self, course_key, cert_mode, target):
+        """Create a tracking code for the button.
+
+        Tracking codes are used by LinkedIn to collect
+        analytics about certifications users are adding
+        to their profiles.
+
+        The tracking code format is:
+            &trk=[partner name]-[certificate type]-[date]-[target field]
+
+        In our case, we're sending:
+            &trk=edx-{COURSE ID}_{COURSE MODE}-{TARGET}
+
+        If no partner code is configured, then this will
+        return None, indicating that tracking codes are disabled.
+
+        Arguments:
+
+            course_key (CourseKey): The identifier for the course.
+            cert_mode (str): The enrollment mode for the course.
+            target (str): Identifier for where the button is located.
+
+        Returns:
+            unicode or None
+
+        """
+        return (
+            u"{partner}-{course_key}_{cert_mode}-{target}".format(
+                partner=self.trk_partner_name,
+                course_key=unicode(course_key),
+                cert_mode=cert_mode,
+                target=target
+            )
+            if self.trk_partner_name else None
+        )
+
+
+class EntranceExamConfiguration(models.Model):
+    """
+    Represents a Student's entrance exam specific data for a single Course
+    """
+
+    user = models.ForeignKey(User, db_index=True)
+    course_id = CourseKeyField(max_length=255, db_index=True)
+    created = models.DateTimeField(auto_now_add=True, null=True, db_index=True)
+    updated = models.DateTimeField(auto_now=True, db_index=True)
+
+    # if skip_entrance_exam is True, then student can skip entrance exam
+    # for the course
+    skip_entrance_exam = models.BooleanField(default=True)
+
+    class Meta(object):
+        """
+        Meta class to make user and course_id unique in the table
+        """
+        unique_together = (('user', 'course_id'), )
+
+    def __unicode__(self):
+        return "[EntranceExamConfiguration] %s: %s (%s) = %s" % (
+            self.user, self.course_id, self.created, self.skip_entrance_exam
+        )
+
+    @classmethod
+    def user_can_skip_entrance_exam(cls, user, course_key):
+        """
+        Return True if given user can skip entrance exam for given course otherwise False.
+        """
+        can_skip = False
+        if settings.FEATURES.get('ENTRANCE_EXAMS', False):
+            try:
+                record = EntranceExamConfiguration.objects.get(user=user, course_id=course_key)
+                can_skip = record.skip_entrance_exam
+            except EntranceExamConfiguration.DoesNotExist:
+                can_skip = False
+        return can_skip

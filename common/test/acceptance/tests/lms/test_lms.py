@@ -11,6 +11,7 @@ from bok_choy.promise import EmptyPromise
 from bok_choy.web_app_test import WebAppTest
 from ..helpers import (
     UniqueCourseTest,
+    EventsTestMixin,
     load_data_str,
     generate_course_key,
     select_option_by_value,
@@ -169,6 +170,10 @@ class RegisterFromCombinedPageTest(UniqueCourseTest):
         course_names = self.dashboard_page.wait_for_page().available_courses
         self.assertIn(self.course_info["display_name"], course_names)
 
+        self.assertEqual("Test User", self.dashboard_page.full_name)
+        self.assertEqual(email, self.dashboard_page.email)
+        self.assertEqual(username, self.dashboard_page.username)
+
     def test_register_failure(self):
         # Navigate to the registration page
         self.register_page.visit()
@@ -198,7 +203,7 @@ class RegisterFromCombinedPageTest(UniqueCourseTest):
 
 
 @attr('shard_1')
-class PayAndVerifyTest(UniqueCourseTest):
+class PayAndVerifyTest(EventsTestMixin, UniqueCourseTest):
     """Test that we can proceed through the payment and verification flow."""
     def setUp(self):
         """Initialize the test.
@@ -232,7 +237,7 @@ class PayAndVerifyTest(UniqueCourseTest):
     @skip("Flaky 02/02/2015")
     def test_immediate_verification_enrollment(self):
         # Create a user and log them in
-        AutoAuthPage(self.browser).visit()
+        student_id = AutoAuthPage(self.browser).visit().get_user_id()
 
         # Navigate to the track selection page
         self.track_selection_page.visit()
@@ -245,6 +250,22 @@ class PayAndVerifyTest(UniqueCourseTest):
 
         # Submit payment
         self.fake_payment_page.submit_payment()
+
+        # Expect enrollment activated event
+        self.assert_event_emitted_num_times(
+            "edx.course.enrollment.activated",
+            self.start_time,
+            student_id,
+            1
+        )
+
+        # Expect that one mode_changed enrollment event fired as part of the upgrade
+        self.assert_event_emitted_num_times(
+            "edx.course.enrollment.mode_changed",
+            self.start_time,
+            student_id,
+            1
+        )
 
         # Proceed to verification
         self.payment_and_verification_flow.immediate_verification()
@@ -269,7 +290,7 @@ class PayAndVerifyTest(UniqueCourseTest):
 
     def test_deferred_verification_enrollment(self):
         # Create a user and log them in
-        AutoAuthPage(self.browser).visit()
+        student_id = AutoAuthPage(self.browser).visit().get_user_id()
 
         # Navigate to the track selection page
         self.track_selection_page.visit()
@@ -283,6 +304,14 @@ class PayAndVerifyTest(UniqueCourseTest):
         # Submit payment
         self.fake_payment_page.submit_payment()
 
+        # Expect enrollment activated event
+        self.assert_event_emitted_num_times(
+            "edx.course.enrollment.activated",
+            self.start_time,
+            student_id,
+            1
+        )
+
         # Navigate to the dashboard
         self.dashboard_page.visit()
 
@@ -292,7 +321,7 @@ class PayAndVerifyTest(UniqueCourseTest):
 
     def test_enrollment_upgrade(self):
         # Create a user, log them in, and enroll them in the honor mode
-        AutoAuthPage(self.browser, course_id=self.course_id).visit()
+        student_id = AutoAuthPage(self.browser, course_id=self.course_id).visit().get_user_id()
 
         # Navigate to the dashboard
         self.dashboard_page.visit()
@@ -312,6 +341,22 @@ class PayAndVerifyTest(UniqueCourseTest):
 
         # Submit payment
         self.fake_payment_page.submit_payment()
+
+        # Expect that one mode_changed enrollment event fired as part of the upgrade
+        self.assert_event_emitted_num_times(
+            "edx.course.enrollment.mode_changed",
+            self.start_time,
+            student_id,
+            1
+        )
+
+        # Expect no enrollment activated event
+        self.assert_event_emitted_num_times(
+            "edx.course.enrollment.activated",
+            self.start_time,
+            student_id,
+            0
+        )
 
         # Navigate to the dashboard
         self.dashboard_page.visit()

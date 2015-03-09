@@ -8,6 +8,7 @@ import decimal
 import datetime
 from collections import namedtuple
 from pytz import UTC
+from ipware.ip import get_ip
 
 from edxmako.shortcuts import render_to_response, render_to_string
 
@@ -26,7 +27,9 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 
-from openedx.core.djangoapps.user_api.api import profile as profile_api
+from openedx.core.djangoapps.user_api.accounts.views import AccountView
+from openedx.core.djangoapps.user_api.accounts import NAME_MIN_LENGTH
+from openedx.core.djangoapps.user_api.api.account import AccountUserNotFound, AccountUpdateError
 
 from course_modes.models import CourseMode
 from student.models import CourseEnrollment
@@ -45,6 +48,8 @@ from opaque_keys.edx.keys import CourseKey
 from .exceptions import WindowExpiredException
 from xmodule.modulestore.django import modulestore
 from microsite_configuration import microsite
+
+from embargo import api as embargo_api
 
 from util.json_request import JsonResponse
 from util.date_utils import get_default_time_display
@@ -255,6 +260,17 @@ class PayAndVerifyView(View):
         if course is None:
             log.warn(u"No course specified for verification flow request.")
             raise Http404
+
+        # Check whether the user has access to this course
+        # based on country access rules.
+        redirect_url = embargo_api.redirect_if_blocked(
+            course_key,
+            user=request.user,
+            ip_address=get_ip(request),
+            url=request.path
+        )
+        if redirect_url:
+            return redirect(redirect_url)
 
         # Check that the course has an unexpired verified mode
         course_mode, expired_course_mode = self._get_verified_modes_for_course(course_key)
@@ -704,16 +720,13 @@ def submit_photos_for_verification(request):
     # then try to do that before creating the attempt.
     if request.POST.get('full_name'):
         try:
-            profile_api.update_profile(
-                username,
-                full_name=request.POST.get('full_name')
-            )
-        except profile_api.ProfileUserNotFound:
+            AccountView.update_account(request.user, username, {"name": request.POST.get('full_name')})
+        except AccountUserNotFound:
             return HttpResponseBadRequest(_("No profile found for user"))
-        except profile_api.ProfileInvalidField:
+        except AccountUpdateError:
             msg = _(
                 "Name must be at least {min_length} characters long."
-            ).format(min_length=profile_api.FULL_NAME_MIN_LENGTH)
+            ).format(min_length=NAME_MIN_LENGTH)
             return HttpResponseBadRequest(msg)
 
     # Create the attempt
@@ -730,20 +743,20 @@ def submit_photos_for_verification(request):
     attempt.mark_ready()
     attempt.submit()
 
-    profile_dict = profile_api.profile_info(username)
-    if profile_dict:
-        # Send a confirmation email to the user
-        context = {
-            'full_name': profile_dict.get('full_name'),
-            'platform_name': settings.PLATFORM_NAME
-        }
+    account_settings = AccountView.get_serialized_account(username)
 
-        subject = _("Verification photos received")
-        message = render_to_string('emails/photo_submission_confirmation.txt', context)
-        from_address = microsite.get_value('default_from_email', settings.DEFAULT_FROM_EMAIL)
-        to_address = profile_dict.get('email')
+    # Send a confirmation email to the user
+    context = {
+        'full_name': account_settings['name'],
+        'platform_name': settings.PLATFORM_NAME
+    }
 
-        send_mail(subject, message, from_address, [to_address], fail_silently=False)
+    subject = _("Verification photos received")
+    message = render_to_string('emails/photo_submission_confirmation.txt', context)
+    from_address = microsite.get_value('default_from_email', settings.DEFAULT_FROM_EMAIL)
+    to_address = account_settings['email']
+
+    send_mail(subject, message, from_address, [to_address], fail_silently=False)
 
     return HttpResponse(200)
 

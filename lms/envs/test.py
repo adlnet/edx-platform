@@ -263,7 +263,9 @@ FEATURES['ENABLE_OAUTH2_PROVIDER'] = True
 
 ########################### External REST APIs #################################
 FEATURES['ENABLE_MOBILE_REST_API'] = True
+FEATURES['ENABLE_MOBILE_SOCIAL_FACEBOOK_FEATURES'] = True
 FEATURES['ENABLE_VIDEO_ABSTRACTION_LAYER_API'] = True
+FEATURES['ENABLE_USER_REST_API'] = True
 
 ###################### Payment ##############################3
 # Enable fake payment processing page
@@ -377,7 +379,7 @@ FEATURES['CLASS_DASHBOARD'] = True
 #   Generated checkid_setup request to http://testserver/openid/provider/login/ with assocication {HMAC-SHA1}{51d49995}{s/kRmA==}
 
 import openid.oidutil
-openid.oidutil.log = lambda message, level = 0: None
+openid.oidutil.log = lambda message, level=0: None
 
 PLATFORM_NAME = "edX"
 SITE_NAME = "edx.org"
@@ -460,3 +462,7 @@ FEATURES['ENTRANCE_EXAMS'] = True
 FEATURES['ENABLE_COURSEWARE_SEARCH'] = True
 # Use MockSearchEngine as the search engine for test scenario
 SEARCH_ENGINE = "search.tests.mock_search_engine.MockSearchEngine"
+
+FACEBOOK_APP_SECRET = "Test"
+FACEBOOK_APP_ID = "Test"
+FACEBOOK_API_VERSION = "v2.2"

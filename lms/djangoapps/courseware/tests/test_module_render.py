@@ -16,6 +16,7 @@ from django.contrib.auth.models import AnonymousUser
 from mock import MagicMock, patch, Mock
 from opaque_keys.edx.keys import UsageKey, CourseKey
 from opaque_keys.edx.locations import SlashSeparatedCourseKey
+from courseware.module_render import hash_resource
 from xblock.field_data import FieldData
 from xblock.runtime import Runtime
 from xblock.fields import ScopeIds
@@ -41,7 +42,7 @@ from xmodule.modulestore import ModuleStoreEnum
 from xmodule.modulestore.django import modulestore
 from xmodule.modulestore.tests.django_utils import ModuleStoreTestCase
 from xmodule.modulestore.tests.factories import ItemFactory, CourseFactory, check_mongo_calls
-from xmodule.x_module import XModuleDescriptor, XModule, STUDENT_VIEW
+from xmodule.x_module import XModuleDescriptor, XModule, STUDENT_VIEW, CombinedSystem
 
 TEST_DATA_DIR = settings.COMMON_TEST_DATA_ROOT
 
@@ -246,6 +247,14 @@ class ModuleRenderTestCase(ModuleStoreTestCase, LoginEnrollmentTestCase):
         render.get_module_for_descriptor(self.mock_user, request, descriptor, field_data_cache, self.toy_course.id)
         render.get_module_for_descriptor(self.mock_user, request, descriptor, field_data_cache, self.toy_course.id)
 
+    def test_hash_resource(self):
+        """
+        Ensure that the resource hasher works and does not fail on unicode,
+        decoded or otherwise.
+        """
+        resources = ['ASCII text', u'❄ I am a special snowflake.', "❄ So am I, but I didn't tell you."]
+        self.assertEqual(hash_resource(resources), 'a76e27c8e80ca3efd7ce743093aa59e0')
+
 
 class TestHandleXBlockCallback(ModuleStoreTestCase, LoginEnrollmentTestCase):
     """
@@ -316,7 +325,7 @@ class TestHandleXBlockCallback(ModuleStoreTestCase, LoginEnrollmentTestCase):
             json.dumps({
                 'success': 'Submission aborted! Maximum %d files may be submitted at once' %
                            settings.MAX_FILEUPLOADS_PER_INPUT
-            })
+            }, indent=2)
         )
 
     def test_too_large_file(self):
@@ -336,7 +345,7 @@ class TestHandleXBlockCallback(ModuleStoreTestCase, LoginEnrollmentTestCase):
             json.dumps({
                 'success': 'Submission aborted! Your file "%s" is too large (max size: %d MB)' %
                            (inputfile.name, settings.STUDENT_FILEUPLOAD_MAX_SIZE / (1000 ** 2))
-            })
+            }, indent=2)
         )
 
     def test_xmodule_dispatch(self):
@@ -398,6 +407,29 @@ class TestHandleXBlockCallback(ModuleStoreTestCase, LoginEnrollmentTestCase):
                 'bad_handler',
                 'bad_dispatch',
             )
+
+    @patch.dict('django.conf.settings.FEATURES', {'ENABLE_XBLOCK_VIEW_ENDPOINT': True})
+    def test_xblock_view_handler(self):
+        args = [
+            'edX/toy/2012_Fall',
+            quote_slashes('i4x://edX/toy/videosequence/Toy_Videos'),
+            'student_view'
+        ]
+        xblock_view_url = reverse(
+            'xblock_view',
+            args=args
+        )
+
+        request = self.request_factory.get(xblock_view_url)
+        request.user = self.mock_user
+        response = render.xblock_view(request, *args)
+        self.assertEquals(200, response.status_code)
+
+        expected = ['csrf_token', 'html', 'resources']
+        content = json.loads(response.content)
+        for section in expected:
+            self.assertIn(section, content)
+        self.assertIn('<div class="xblock xblock-student_view xmodule_display', content['html'])
 
 
 @ddt.ddt
@@ -892,13 +924,16 @@ class TestAnonymousStudentId(ModuleStoreTestCase, LoginEnrollmentTestCase):
             _field_data=Mock(spec=FieldData),
             location=location,
             static_asset_path=None,
-            runtime=Mock(
+            _runtime=Mock(
                 spec=Runtime,
                 resources_fs=None,
-                mixologist=Mock(_mixins=())
+                mixologist=Mock(_mixins=(), name='mixologist'),
+                name='runtime',
             ),
             scope_ids=Mock(spec=ScopeIds),
+            name='descriptor'
         )
+        descriptor.runtime = CombinedSystem(descriptor._runtime, None)  # pylint: disable=protected-access
         # Use the xblock_class's bind_for_student method
         descriptor.bind_for_student = partial(xblock_class.bind_for_student, descriptor)
 
@@ -908,10 +943,10 @@ class TestAnonymousStudentId(ModuleStoreTestCase, LoginEnrollmentTestCase):
         return render.get_module_for_descriptor_internal(
             user=self.user,
             descriptor=descriptor,
-            field_data_cache=Mock(spec=FieldDataCache),
+            field_data_cache=Mock(spec=FieldDataCache, name='field_data_cache'),
             course_id=course_id,
-            track_function=Mock(),  # Track Function
-            xqueue_callback_url_prefix=Mock(),  # XQueue Callback Url Prefix
+            track_function=Mock(name='track_function'),  # Track Function
+            xqueue_callback_url_prefix=Mock(name='xqueue_callback_url_prefix'),  # XQueue Callback Url Prefix
             request_token='request_token',
         ).xmodule_runtime.anonymous_student_id
 

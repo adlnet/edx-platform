@@ -91,7 +91,7 @@ FEATURES = {
     'SUBDOMAIN_BRANDING': False,
 
     'FORCE_UNIVERSITY_DOMAIN': False,  # set this to the university domain to use, as an override to HTTP_HOST
-                                        # set to None to do no university selection
+                                       # set to None to do no university selection
 
     # for consistency in user-experience, keep the value of the following 3 settings
     # in sync with the corresponding ones in cms/envs/common.py
@@ -102,6 +102,13 @@ FEATURES = {
     # discussion home panel, which includes a subscription on/off setting for discussion digest emails.
     # this should remain off in production until digest notifications are online.
     'ENABLE_DISCUSSION_HOME_PANEL': False,
+
+    # Set this to True if you want the discussion digest emails enabled automatically for new users.
+    # This will be set on all new account registrations.
+    # It is not recommended to enable this feature if ENABLE_DISCUSSION_HOME_PANEL is not enabled, since
+    # subscribers who receive digests in that case will only be able to unsubscribe via links embedded
+    # in their emails, and they will have no way to resubscribe.
+    'ENABLE_DISCUSSION_EMAIL_DIGEST': False,
 
     'ENABLE_PSYCHOMETRICS': False,  # real-time psychometrics (eg item response theory analysis in instructor dashboard)
 
@@ -132,6 +139,13 @@ FEATURES = {
 
     # Toggles OAuth2 authentication provider
     'ENABLE_OAUTH2_PROVIDER': False,
+
+    # Allows to enable an API endpoint to serve XBlock view, used for example by external applications.
+    # See jquey-xblock: https://github.com/edx-solutions/jquery-xblock
+    'ENABLE_XBLOCK_VIEW_ENDPOINT': False,
+
+    # Allows to configure the LMS to provide CORS headers to serve requests from other domains
+    'ENABLE_CORS_HEADERS': False,
 
     # Can be turned off if course lists need to be hidden. Effects views and templates.
     'COURSES_ARE_BROWSABLE': True,
@@ -241,7 +255,12 @@ FEATURES = {
     # only edX superusers can perform the downloads)
     'ALLOW_COURSE_STAFF_GRADE_DOWNLOADS': False,
 
-    'ENABLED_PAYMENT_REPORTS': ["refund_report", "itemized_purchase_report", "university_revenue_share", "certificate_status"],
+    'ENABLED_PAYMENT_REPORTS': [
+        "refund_report",
+        "itemized_purchase_report",
+        "university_revenue_share",
+        "certificate_status"
+    ],
 
     # Turn off account locking if failed login attempts exceeds a limit
     'ENABLE_MAX_FAILED_LOGIN_ATTEMPTS': True,
@@ -249,15 +268,9 @@ FEATURES = {
     # Hide any Personally Identifiable Information from application logs
     'SQUELCH_PII_IN_LOGS': True,
 
-    # Toggles the embargo functionality, which enable embargoing for particular courses
+    # Toggles the embargo functionality, which blocks users from
+    # the site or courses based on their location.
     'EMBARGO': False,
-
-    # Toggles the embargo site functionality, which enable embargoing for the whole site
-    'SITE_EMBARGOED': False,
-
-    # Toggle whether to replace the current embargo implementation with
-    # the more flexible "country access" feature.
-    'ENABLE_COUNTRY_ACCESS': False,
 
     # Whether the Wiki subsystem should be accessible via the direct /wiki/ paths. Setting this to True means
     # that people can submit content and modify the Wiki in any arbitrary manner. We're leaving this as True in the
@@ -280,10 +293,6 @@ FEATURES = {
     # Turn on Advanced Security by default
     'ADVANCED_SECURITY': True,
 
-    # Show a "Download your certificate" on the Progress page if the lowest
-    # nonzero grade cutoff is met
-    'SHOW_PROGRESS_SUCCESS_BUTTON': False,
-
     # When a logged in user goes to the homepage ('/') should the user be
     # redirected to the dashboard - this is default Open edX behavior. Set to
     # False to not redirect the user
@@ -294,12 +303,13 @@ FEATURES = {
     # Set to True to change the course sorting behavior by their start dates, latest first.
     'ENABLE_COURSE_SORTING_BY_START_DATE': False,
 
+    # Flag to enable new user account APIs.
+    'ENABLE_USER_REST_API': False,
+
     # Expose Mobile REST API. Note that if you use this, you must also set
     # ENABLE_OAUTH2_PROVIDER to True
     'ENABLE_MOBILE_REST_API': False,
-
-    # Enable the new dashboard, account, and profile pages
-    'ENABLE_NEW_DASHBOARD': False,
+    'ENABLE_MOBILE_SOCIAL_FACEBOOK_FEATURES': False,
 
     # Enable the combined login/registration form
     'ENABLE_COMBINED_LOGIN_REGISTRATION': False,
@@ -335,6 +345,9 @@ FEATURES = {
 
     # Courseware search feature
     'ENABLE_COURSEWARE_SEARCH': False,
+
+    # log all information from cybersource callbacks
+    'LOG_POSTPAY_CALLBACKS': True,
 }
 
 # Ignore static asset files on import which match this pattern
@@ -838,7 +851,7 @@ LOCALE_PATHS = (REPO_ROOT + '/conf/locale',)  # edx-platform/conf/locale/
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
 # Guidelines for translators
-TRANSLATORS_GUIDE = 'https://github.com/edx/edx-platform/blob/master/docs/en_us/developers/source/i18n_translators_guide.rst'
+TRANSLATORS_GUIDE = 'http://edx.readthedocs.org/projects/edx-developer-guide/en/latest/internationalization/i18n_translators_guide.html'  # pylint: disable=line-too-long
 
 #################################### GITHUB #######################################
 # gitreload is used in LMS-workflow to pull content from github
@@ -1084,7 +1097,10 @@ rwd_header_footer_js = sorted(rooted_glob(PROJECT_ROOT / 'static', 'js/common_he
 staff_grading_js = sorted(rooted_glob(PROJECT_ROOT / 'static', 'coffee/src/staff_grading/**/*.js'))
 open_ended_js = sorted(rooted_glob(PROJECT_ROOT / 'static', 'coffee/src/open_ended/**/*.js'))
 notes_js = sorted(rooted_glob(PROJECT_ROOT / 'static', 'coffee/src/notes/**/*.js'))
-instructor_dash_js = sorted(rooted_glob(PROJECT_ROOT / 'static', 'coffee/src/instructor_dashboard/**/*.js'))
+instructor_dash_js = (
+    sorted(rooted_glob(PROJECT_ROOT / 'static', 'coffee/src/instructor_dashboard/**/*.js')) +
+    sorted(rooted_glob(PROJECT_ROOT / 'static', 'js/instructor_dashboard/**/*.js'))
+)
 
 # JavaScript used by the student account and profile pages
 # These are not courseware, so they do not need many of the courseware-specific
@@ -1129,6 +1145,7 @@ verify_student_js = [
     'js/src/string_utils.js',
     'js/verify_student/models/verification_model.js',
     'js/verify_student/views/error_view.js',
+    'js/verify_student/views/image_input_view.js',
     'js/verify_student/views/webcam_photo_view.js',
     'js/verify_student/views/step_view.js',
     'js/verify_student/views/intro_step_view.js',
@@ -1250,8 +1267,8 @@ PIPELINE_CSS = {
 }
 
 
-common_js = set(rooted_glob(COMMON_ROOT / 'static', 'coffee/src/**/*.js')) - set(courseware_js + discussion_js + staff_grading_js + open_ended_js + notes_js + instructor_dash_js)
-project_js = set(rooted_glob(PROJECT_ROOT / 'static', 'coffee/src/**/*.js')) - set(courseware_js + discussion_js + staff_grading_js + open_ended_js + notes_js + instructor_dash_js)
+common_js = set(rooted_glob(COMMON_ROOT / 'static', 'coffee/src/**/*.js')) - set(courseware_js + discussion_js + staff_grading_js + open_ended_js + notes_js + instructor_dash_js)    # pylint: disable=line-too-long
+project_js = set(rooted_glob(PROJECT_ROOT / 'static', 'coffee/src/**/*.js')) - set(courseware_js + discussion_js + staff_grading_js + open_ended_js + notes_js + instructor_dash_js)  # pylint: disable=line-too-long
 
 
 PIPELINE_JS = {
@@ -1620,6 +1637,9 @@ INSTALLED_APPS = (
     'survey',
 
     'lms.djangoapps.lms_xblock',
+
+    'openedx.core.djangoapps.content.course_structures',
+    'course_structure_api',
 )
 
 ######################### MARKETING SITE ###############################
@@ -1671,6 +1691,17 @@ if FEATURES.get('AUTH_USE_CAS'):
     INSTALLED_APPS += ('django_cas',)
     MIDDLEWARE_CLASSES += ('django_cas.middleware.CASMiddleware',)
 
+############# CORS headers for cross-domain requests #################
+
+if FEATURES.get('ENABLE_CORS_HEADERS'):
+    INSTALLED_APPS += ('corsheaders', 'cors_csrf')
+    MIDDLEWARE_CLASSES = (
+        'corsheaders.middleware.CorsMiddleware',
+        'cors_csrf.middleware.CorsCSRFMiddleware',
+    ) + MIDDLEWARE_CLASSES
+    CORS_ALLOW_CREDENTIALS = True
+    CORS_ORIGIN_WHITELIST = ()
+    CORS_ORIGIN_ALLOW_ALL = False
 
 ###################### Registration ##################################
 
@@ -1704,10 +1735,6 @@ GRADES_DOWNLOAD = {
     'ROOT_PATH': '/tmp/edx-s3/grades',
 }
 
-######################## PROGRESS SUCCESS BUTTON ##############################
-# The following fields are available in the URL: {course_id} {student_id}
-PROGRESS_SUCCESS_BUTTON_URL = 'http://<domain>/<path>/{course_id}'
-PROGRESS_SUCCESS_BUTTON_TEXT_OVERRIDE = None
 
 #### PASSWORD POLICY SETTINGS #####
 PASSWORD_MIN_LENGTH = 8
@@ -1931,6 +1958,7 @@ ALL_LANGUAGES = (
 ### Apps only installed in some instances
 OPTIONAL_APPS = (
     'mentoring',
+    'edx_sga',
 
     # edx-ora2
     'submissions',
@@ -2024,3 +2052,26 @@ PDF_RECEIPT_COBRAND_LOGO_HEIGHT_MM = 12
 SEARCH_ENGINE = None
 # Use the LMS specific result processor
 SEARCH_RESULT_PROCESSOR = "lms.lib.courseware_search.lms_result_processor.LmsSearchResultProcessor"
+
+# The configuration for learner profiles
+PROFILE_CONFIGURATION = {
+    # Default visibility level for accounts without a specified value
+    # The value is one of: 'all_users', 'private'
+    "default_visibility": "private",
+
+    # The list of all fields that can be shown on a learner's profile
+    "all_fields": [
+        'username',
+        'profile_image',
+        'country',
+        'time_zone',
+        'languages',
+        'bio',
+    ],
+
+    # The list of fields that are always public on a learner's profile
+    "public_fields": [
+        'username',
+        'profile_image',
+    ],
+}

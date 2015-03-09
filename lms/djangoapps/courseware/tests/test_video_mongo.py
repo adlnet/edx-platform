@@ -1,27 +1,16 @@
 # -*- coding: utf-8 -*-
 """Video xmodule tests in mongo."""
 import json
-import unittest
 from collections import OrderedDict
-from mock import patch, PropertyMock, MagicMock
+from mock import patch, MagicMock
 
 from django.conf import settings
 
-from xblock.fields import ScopeIds
-from xblock.field_data import DictFieldData
-
-from xmodule.video_module import create_youtube_string, VideoDescriptor
+from xmodule.video_module import create_youtube_string
 from xmodule.x_module import STUDENT_VIEW
-from xmodule.tests import get_test_descriptor_system
 from xmodule.tests.test_video import VideoDescriptorTestBase
 
-from edxval.api import (
-    ValVideoNotFoundError,
-    get_video_info,
-    create_profile,
-    create_video
-)
-import mock
+from edxval.api import create_profile, create_video
 
 from . import BaseTestXmodule
 from .test_video_xml import SOURCE_XML
@@ -40,6 +29,9 @@ class TestVideoYouTube(TestVideo):
             'ajax_url': self.item_descriptor.xmodule_runtime.ajax_url + '/save_user_state',
             'autoplay': settings.FEATURES.get('AUTOPLAY_VIDEOS', False),
             'branding_info': None,
+            'cdn_eval': False,
+            'cdn_eval_endpoint': getattr(settings, 'PERFORMANCE_GRAPHITE_URL', ''),
+            'cdn_exp_group': None,
             'data_dir': getattr(self, 'data_dir', None),
             'display_name': u'A Name',
             'end': 3610.0,
@@ -104,6 +96,9 @@ class TestVideoNonYouTube(TestVideo):
         expected_context = {
             'ajax_url': self.item_descriptor.xmodule_runtime.ajax_url + '/save_user_state',
             'branding_info': None,
+            'cdn_eval': False,
+            'cdn_eval_endpoint': getattr(settings, 'PERFORMANCE_GRAPHITE_URL', ''),
+            'cdn_exp_group': None,
             'data_dir': getattr(self, 'data_dir', None),
             'show_captions': 'true',
             'handout': None,
@@ -208,6 +203,9 @@ class TestGetHtmlMethod(BaseTestXmodule):
 
         expected_context = {
             'branding_info': None,
+            'cdn_eval': False,
+            'cdn_eval_endpoint': getattr(settings, 'PERFORMANCE_GRAPHITE_URL', ''),
+            'cdn_exp_group': None,
             'data_dir': getattr(self, 'data_dir', None),
             'show_captions': 'true',
             'handout': None,
@@ -325,6 +323,9 @@ class TestGetHtmlMethod(BaseTestXmodule):
 
         initial_context = {
             'branding_info': None,
+            'cdn_eval': False,
+            'cdn_eval_endpoint': getattr(settings, 'PERFORMANCE_GRAPHITE_URL', ''),
+            'cdn_exp_group': None,
             'data_dir': getattr(self, 'data_dir', None),
             'show_captions': 'true',
             'handout': None,
@@ -417,7 +418,7 @@ class TestGetHtmlMethod(BaseTestXmodule):
         # it'll just fall back to the values in the VideoDescriptor.
         self.assertIn("example_source.mp4", self.item_descriptor.render(STUDENT_VIEW).content)
 
-    @mock.patch('edxval.api.get_video_info')
+    @patch('edxval.api.get_video_info')
     def test_get_html_with_mocked_edx_video_id(self, mock_get_video_info):
         mock_get_video_info.return_value = {
             'url': '/edxval/video/example',
@@ -465,6 +466,9 @@ class TestGetHtmlMethod(BaseTestXmodule):
         # Video found for edx_video_id
         initial_context = {
             'branding_info': None,
+            'cdn_eval': False,
+            'cdn_eval_endpoint': getattr(settings, 'PERFORMANCE_GRAPHITE_URL', ''),
+            'cdn_exp_group': None,
             'data_dir': getattr(self, 'data_dir', None),
             'show_captions': 'true',
             'handout': None,
@@ -583,6 +587,9 @@ class TestGetHtmlMethod(BaseTestXmodule):
         # Video found for edx_video_id
         initial_context = {
             'branding_info': None,
+            'cdn_eval': False,
+            'cdn_eval_endpoint': getattr(settings, 'PERFORMANCE_GRAPHITE_URL', ''),
+            'cdn_exp_group': None,
             'data_dir': getattr(self, 'data_dir', None),
             'show_captions': 'true',
             'handout': None,
@@ -702,6 +709,9 @@ class TestGetHtmlMethod(BaseTestXmodule):
                 'logo_tag': 'Video hosted by XuetangX.com',
                 'url': 'http://www.xuetangx.com'
             },
+            'cdn_eval': False,
+            'cdn_eval_endpoint': getattr(settings, 'PERFORMANCE_GRAPHITE_URL', ''),
+            'cdn_exp_group': None,
             'data_dir': getattr(self, 'data_dir', None),
             'show_captions': 'true',
             'handout': None,
@@ -798,81 +808,22 @@ class TestVideoDescriptorInitialization(BaseTestXmodule):
         self.assertFalse(self.item_descriptor.source_visible)
 
     def test_download_video_is_explicitly_set(self):
-        with patch(
-            'xmodule.editing_module.TabsEditingDescriptor.editable_metadata_fields',
-            new_callable=PropertyMock,
-            return_value={
-                'download_video': {
-                    'default_value': False,
-                    'explicitly_set': True,
-                    'display_name': 'Video Download Allowed',
-                    'help': 'Show a link beneath the video to allow students to download the video.',
-                    'type': 'Boolean',
-                    'value': False,
-                    'field_name': 'download_video',
-                    'options': [
-                        {'display_name': "True", "value": True},
-                        {'display_name': "False", "value": False}
-                    ],
-                },
-                'html5_sources': {
-                    'default_value': [],
-                    'explicitly_set': False,
-                    'display_name': 'Video Sources',
-                    'help': 'A list of filenames to be used with HTML5 video.',
-                    'type': 'List',
-                    'value': [u'http://youtu.be/3_yD_cEKoCk.mp4'],
-                    'field_name': 'html5_sources',
-                    'options': [],
-                },
-                'source': {
-                    'default_value': '',
-                    'explicitly_set': False,
-                    'display_name': 'Download Video',
-                    'help': 'The external URL to download the video.',
-                    'type': 'Generic',
-                    'value': u'http://example.org/video.mp4',
-                    'field_name': 'source',
-                    'options': [],
-                },
-                'track': {
-                    'default_value': '',
-                    'explicitly_set': False,
-                    'display_name': 'Download Transcript',
-                    'help': 'The external URL to download the timed transcript track.',
-                    'type': 'Generic',
-                    'value': u'http://some_track.srt',
-                    'field_name': 'track',
-                    'options': [],
-                },
-                'download_track': {
-                    'default_value': False,
-                    'explicitly_set': False,
-                    'display_name': 'Transcript Download Allowed',
-                    'help': 'Show a link beneath the video to allow students to download the transcript. Note: You must add a link to the HTML5 Transcript field above.',
-                    'type': 'Generic',
-                    'value': False,
-                    'field_name': 'download_track',
-                    'options': [],
-                },
-                'transcripts': {},
-                'handout': {},
-            }
-        ):
-            metadata = {
-                'track': u'http://some_track.srt',
-                'source': 'http://example.org/video.mp4',
-                'html5_sources': ['http://youtu.be/3_yD_cEKoCk.mp4'],
-            }
+        metadata = {
+            'track': u'http://some_track.srt',
+            'source': 'http://example.org/video.mp4',
+            'html5_sources': ['http://youtu.be/3_yD_cEKoCk.mp4'],
+            'download_video': False,
+        }
 
-            self.initialize_module(metadata=metadata)
+        self.initialize_module(metadata=metadata)
 
-            fields = self.item_descriptor.editable_metadata_fields
-            self.assertIn('source', fields)
+        fields = self.item_descriptor.editable_metadata_fields
+        self.assertIn('source', fields)
+        self.assertIn('download_video', fields)
 
-            self.assertFalse(self.item_descriptor.download_video)
-            self.assertTrue(self.item_descriptor.source_visible)
-            self.assertTrue(self.item_descriptor.download_track)
+        self.assertFalse(self.item_descriptor.download_video)
+        self.assertTrue(self.item_descriptor.source_visible)
+        self.assertTrue(self.item_descriptor.download_track)
 
     def test_source_is_empty(self):
         metadata = {
