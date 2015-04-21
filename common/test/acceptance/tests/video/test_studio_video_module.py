@@ -83,7 +83,7 @@ class CMSVideoBaseTest(UniqueCourseTest):
         self.outline.visit()
 
         # Visit Unit page
-        self.unit_page = self.outline.section('Test Section').subsection('Test Subsection').toggle_expand().unit(
+        self.unit_page = self.outline.section('Test Section').subsection('Test Subsection').expand_subsection().unit(
             'Test Unit').go_to()
 
         self.video.wait_for_video_component_render()
@@ -320,5 +320,3 @@ class CMSVideoTest(CMSVideoBaseTest):
         self.save_unit_settings()
 
         self.video.click_player_button('play')
-
-        self.assertTrue(self.video.is_slider_range_visible)

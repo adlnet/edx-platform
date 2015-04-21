@@ -12,11 +12,13 @@ from xblock.runtime import Runtime as VanillaRuntime
 
 from xmodule.library_content_module import ANY_CAPA_TYPE_VALUE, LibraryContentDescriptor
 from xmodule.library_tools import LibraryToolsService
+from xmodule.modulestore import ModuleStoreEnum
 from xmodule.modulestore.tests.factories import LibraryFactory, CourseFactory
 from xmodule.modulestore.tests.utils import MixedSplitTestCase
 from xmodule.tests import get_test_system
 from xmodule.validation import StudioValidationMessage
 from xmodule.x_module import AUTHOR_VIEW
+from search.search_engine_base import SearchEngine
 
 dummy_render = lambda block, _: Fragment(block.data)  # pylint: disable=invalid-name
 
@@ -49,26 +51,33 @@ class LibraryContentTest(MixedSplitTestCase):
         """
         Bind a module (part of self.course) so we can access student-specific data.
         """
-        module_system = get_test_system(course_id=self.course.location.course_key)
+        module_system = get_test_system(course_id=module.location.course_key)
         module_system.descriptor_runtime = module.runtime._descriptor_system  # pylint: disable=protected-access
         module_system._services['library_tools'] = self.tools  # pylint: disable=protected-access
 
         def get_module(descriptor):
             """Mocks module_system get_module function"""
-            sub_module_system = get_test_system(course_id=self.course.location.course_key)
+            sub_module_system = get_test_system(course_id=module.location.course_key)
             sub_module_system.get_module = get_module
             sub_module_system.descriptor_runtime = descriptor._runtime  # pylint: disable=protected-access
-            descriptor.bind_for_student(sub_module_system, descriptor._field_data)  # pylint: disable=protected-access
+            descriptor.bind_for_student(sub_module_system, descriptor._field_data, self.user_id)  # pylint: disable=protected-access
             return descriptor
 
         module_system.get_module = get_module
         module.xmodule_runtime = module_system
 
 
-class TestLibraryContentModule(LibraryContentTest):
+class LibraryContentModuleTestMixin(object):
     """
     Basic unit tests for LibraryContentModule
     """
+    problem_types = [
+        ["multiplechoiceresponse"], ["optionresponse"], ["optionresponse", "coderesponse"],
+        ["coderesponse", "optionresponse"]
+    ]
+
+    problem_type_lookup = {}
+
     def _get_capa_problem_type_xml(self, *args):
         """ Helper function to create empty CAPA problem definition """
         problem = "<problem>"
@@ -83,12 +92,10 @@ class TestLibraryContentModule(LibraryContentTest):
 
         Creates four blocks total.
         """
-        problem_types = [
-            ["multiplechoiceresponse"], ["optionresponse"], ["optionresponse", "coderesponse"],
-            ["coderesponse", "optionresponse"]
-        ]
-        for problem_type in problem_types:
-            self.make_block("problem", self.library, data=self._get_capa_problem_type_xml(*problem_type))
+        self.problem_type_lookup = {}
+        for problem_type in self.problem_types:
+            block = self.make_block("problem", self.library, data=self._get_capa_problem_type_xml(*problem_type))
+            self.problem_type_lookup[block.location] = problem_type
 
     def test_lib_content_block(self):
         """
@@ -235,6 +242,42 @@ class TestLibraryContentModule(LibraryContentTest):
         self.assertNotIn(LibraryContentDescriptor.display_name, non_editable_metadata_fields)
 
 
+@patch('xmodule.library_tools.SearchEngine.get_search_engine', Mock(return_value=None))
+class TestLibraryContentModuleNoSearchIndex(LibraryContentModuleTestMixin, LibraryContentTest):
+    """
+    Tests for library container when no search index is available.
+    Tests fallback low-level CAPA problem introspection
+    """
+    pass
+
+
+search_index_mock = Mock(spec=SearchEngine)  # pylint: disable=invalid-name
+
+
+@patch('xmodule.library_tools.SearchEngine.get_search_engine', Mock(return_value=search_index_mock))
+class TestLibraryContentModuleWithSearchIndex(LibraryContentModuleTestMixin, LibraryContentTest):
+    """
+    Tests for library container with mocked search engine response.
+    """
+    def _get_search_response(self, field_dictionary=None):
+        """ Mocks search response as returned by search engine """
+        target_type = field_dictionary.get('problem_types')
+        matched_block_locations = [
+            key for key, problem_types in
+            self.problem_type_lookup.items() if target_type in problem_types
+        ]
+        return {
+            'results': [
+                {'data': {'id': str(location)}} for location in matched_block_locations
+            ]
+        }
+
+    def setUp(self):
+        """ Sets up search engine mock """
+        super(TestLibraryContentModuleWithSearchIndex, self).setUp()
+        search_index_mock.search = Mock(side_effect=self._get_search_response)
+
+
 @patch(
     'xmodule.modulestore.split_mongo.caching_descriptor_system.CachingDescriptorSystem.render', VanillaRuntime.render
 )
@@ -323,6 +366,17 @@ class TestLibraryContentAnalytics(LibraryContentTest):
         self.assertEqual(len(event_data["result"]), 2)
         self.assertEqual(event_data["previous_count"], 1)
         self.assertEqual(event_data["max_count"], 2)
+
+    def test_assigned_event_published(self):
+        """
+        Same as test_assigned_event but uses the published branch
+        """
+        self.store.publish(self.course.location, self.user_id)
+        with self.store.branch_setting(ModuleStoreEnum.Branch.published_only):
+            self.lc_block = self.store.get_item(self.lc_block.location)
+            self._bind_course_module(self.lc_block)
+            self.lc_block.xmodule_runtime.publish = self.publisher
+            self.test_assigned_event()
 
     def test_assigned_descendants(self):
         """

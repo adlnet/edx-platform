@@ -15,7 +15,6 @@ from django.test.utils import override_settings
 
 from bulk_email.models import Optout
 from courseware.tests.factories import StaffFactory, InstructorFactory
-from xmodule.modulestore.tests.django_utils import TEST_DATA_MOCK_MODULESTORE
 from instructor_task.subtasks import update_subtask_status
 from student.roles import CourseStaffRole
 from student.models import CourseEnrollment
@@ -84,12 +83,6 @@ class EmailSendFromDashboardTestCase(ModuleStoreTestCase):
             'course_id': self.course.id.to_deprecated_string(),
             'success': True,
         }
-
-    def tearDown(self):
-        """
-        Undo all patches.
-        """
-        patch.stopall()
 
 
 @patch.dict(settings.FEATURES, {'ENABLE_INSTRUCTOR_EMAIL': True, 'REQUIRE_COURSE_EMAIL_AUTH': False})
@@ -185,6 +178,13 @@ class TestEmailSendFromDashboardMockedHtmlToText(EmailSendFromDashboardTestCase)
             [e.to[0] for e in mail.outbox],
             [self.instructor.email] + [s.email for s in self.staff] + [s.email for s in self.students]
         )
+
+    @override_settings(BULK_EMAIL_JOB_SIZE_THRESHOLD=1)
+    def test_send_to_all_high_queue(self):
+        """
+        Test that email is still sent when the high priority queue is used
+        """
+        self.test_send_to_all()
 
     def test_no_duplicate_emails_staff_instructor(self):
         """

@@ -112,6 +112,16 @@ class DiscussionThreadPage(PageObject, DiscussionPageMixin):
         """Returns true if the response editor is present, false otherwise"""
         return self._is_element_visible(".response_{} .edit-post-body".format(response_id))
 
+    @wait_for_js
+    def is_discussion_body_visible(self):
+        return self._is_element_visible(".post-body")
+
+    def is_mathjax_preview_available(self):
+        return self.q(css=".MathJax_Preview").text[0] == ""
+
+    def is_mathjax_rendered(self):
+        return self._is_element_visible(".MathJax")
+
     def is_response_visible(self, comment_id):
         """Returns true if the response is viewable onscreen"""
         return self._is_element_visible(".response_{} .response-body".format(comment_id))
@@ -311,13 +321,15 @@ class DiscussionSortPreferencePage(CoursePage):
 
 
 class DiscussionTabSingleThreadPage(CoursePage):
-    def __init__(self, browser, course_id, thread_id):
+    def __init__(self, browser, course_id, discussion_id, thread_id):
         super(DiscussionTabSingleThreadPage, self).__init__(browser, course_id)
         self.thread_page = DiscussionThreadPage(
             browser,
             "body.discussion .discussion-article[data-id='{thread_id}']".format(thread_id=thread_id)
         )
-        self.url_path = "discussion/forum/dummy/threads/" + thread_id
+        self.url_path = "discussion/forum/{discussion_id}/threads/{thread_id}".format(
+            discussion_id=discussion_id, thread_id=thread_id
+        )
 
     def is_browser_on_page(self):
         return self.thread_page.is_browser_on_page()
@@ -432,9 +444,9 @@ class DiscussionUserProfilePage(CoursePage):
         return (
             self.q(css='section.discussion-user-threads[data-course-id="{}"]'.format(self.course_id)).present
             and
-            self.q(css='section.user-profile div.sidebar-username').present
+            self.q(css='section.user-profile a.leaner-profile-link').present
             and
-            self.q(css='section.user-profile div.sidebar-username').text[0] == self.username
+            self.q(css='section.user-profile a.leaner-profile-link').text[0] == self.username
         )
 
     @wait_for_js
@@ -513,6 +525,10 @@ class DiscussionUserProfilePage(CoursePage):
             self.is_window_on_top,
             "Window is on top"
         ).fulfill()
+
+    def click_on_sidebar_username(self):
+        self.wait_for_page()
+        self.q(css='.leaner-profile-link').first.click()
 
 
 class DiscussionTabHomePage(CoursePage, DiscussionPageMixin):

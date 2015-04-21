@@ -1,6 +1,7 @@
 import logging
 import datetime
 import decimal
+import dateutil
 import pytz
 from ipware.ip import get_ip
 from django.db.models import Q
@@ -12,6 +13,9 @@ from django.http import (
     HttpResponseBadRequest, HttpResponseForbidden, Http404
 )
 from django.utils.translation import ugettext as _
+from commerce.api import EcommerceAPI
+from commerce.exceptions import InvalidConfigurationError, ApiError
+from commerce.http import InternalRequestErrorResponse
 from course_modes.models import CourseMode
 from util.json_request import JsonResponse
 from django.views.decorators.http import require_POST, require_http_methods
@@ -691,6 +695,19 @@ def postpay_callback(request):
         # See if this payment occurred as part of the verification flow process
         # If so, send the user back into the flow so they have the option
         # to continue with verification.
+
+        # Only orders where order_items.count() == 1 might be attempting to upgrade
+        attempting_upgrade = request.session.get('attempting_upgrade', False)
+        if attempting_upgrade:
+            if result['order'].has_items(CertificateItem):
+                course_id = result['order'].orderitem_set.all().select_subclasses("certificateitem")[0].course_id
+                if course_id:
+                    course_enrollment = CourseEnrollment.get_enrollment(request.user, course_id)
+                    if course_enrollment:
+                        course_enrollment.emit_event(EVENT_NAME_USER_UPGRADED)
+
+            request.session['attempting_upgrade'] = False
+
         verify_flow_redirect = _get_verify_flow_redirect(result['order'])
         if verify_flow_redirect is not None:
             return verify_flow_redirect
@@ -698,6 +715,7 @@ def postpay_callback(request):
         # Otherwise, send the user to the receipt page
         return HttpResponseRedirect(reverse('shoppingcart.views.show_receipt', args=[result['order'].id]))
     else:
+        request.session['attempting_upgrade'] = False
         return render_to_response('shoppingcart/error.html', {'order': result['order'],
                                                               'error_html': result['error_html']})
 
@@ -806,18 +824,89 @@ def show_receipt(request, ordernum):
     Displays a receipt for a particular order.
     404 if order is not yet purchased or request.user != order.user
     """
+    is_json_request = 'application/json' in request.META.get('HTTP_ACCEPT', "")
     try:
         order = Order.objects.get(id=ordernum)
-    except Order.DoesNotExist:
-        raise Http404('Order not found!')
+    except (Order.DoesNotExist, ValueError):
+        if is_json_request:
+            return _get_external_order(request, ordernum)
+        else:
+            raise Http404('Order not found!')
 
     if order.user != request.user or order.status not in ['purchased', 'refunded']:
         raise Http404('Order not found!')
 
-    if 'application/json' in request.META.get('HTTP_ACCEPT', ""):
+    if is_json_request:
         return _show_receipt_json(order)
     else:
         return _show_receipt_html(request, order)
+
+
+def _get_external_order(request, order_number):
+    """Get the order context from the external E-Commerce Service.
+
+    Get information about an order. This function makes a request to the E-Commerce Service to see if there is
+    order information that can be used to render a receipt for the user.
+
+    Args:
+        request (Request): The request for the the receipt.
+        order_number (str) : The order number.
+
+    Returns:
+        dict: A serializable dictionary of the receipt page context based on an order returned from the E-Commerce
+            Service.
+
+    """
+    try:
+        api = EcommerceAPI()
+        order_number, order_status, order_data = api.get_order(request.user, order_number)
+        billing = order_data.get('billing_address', {})
+        country = billing.get('country', {})
+
+        # In order to get the date this order was paid, we need to check for payment sources, and associated
+        # transactions.
+        payment_dates = []
+        for source in order_data.get('sources', []):
+            for transaction in source.get('transactions', []):
+                payment_dates.append(dateutil.parser.parse(transaction['date_created']))
+        payment_date = sorted(payment_dates, reverse=True).pop()
+
+        order_info = {
+            'orderNum': order_number,
+            'currency': order_data['currency'],
+            'status': order_status,
+            'purchase_datetime': get_default_time_display(payment_date),
+            'total_cost': order_data['total_excl_tax'],
+            'billed_to': {
+                'first_name': billing.get('first_name', ''),
+                'last_name': billing.get('last_name', ''),
+                'street1': billing.get('line1', ''),
+                'street2': billing.get('line2', ''),
+                'city': billing.get('line4', ''),  # 'line4' is the City, from the E-Commerce Service
+                'state': billing.get('state', ''),
+                'postal_code': billing.get('postcode', ''),
+                'country': country.get('display_name', ''),
+            },
+            'items': [
+                {
+                    'quantity': item['quantity'],
+                    'unit_cost': item['unit_price_excl_tax'],
+                    'line_cost': item['line_price_excl_tax'],
+                    'line_desc': item['description']
+                }
+                for item in order_data['lines']
+            ]
+        }
+        return JsonResponse(order_info)
+    except InvalidConfigurationError:
+        msg = u"E-Commerce API not setup. Cannot request Order [{order_number}] for User [{user_id}] ".format(
+            user_id=request.user.id, order_number=order_number
+        )
+        log.debug(msg)
+        return JsonResponse(status=500, object={'error_message': msg})
+    except ApiError as err:
+        # The API will handle logging of the error.
+        return InternalRequestErrorResponse(err.message)
 
 
 def _show_receipt_json(order):
@@ -891,13 +980,6 @@ def _show_receipt_html(request, order):
     receipt_template = 'shoppingcart/receipt.html'
     __, instructions = order.generate_receipt_instructions()
     order_type = getattr(order, 'order_type')
-
-    # Only orders where order_items.count() == 1 might be attempting to upgrade
-    attempting_upgrade = request.session.get('attempting_upgrade', False)
-    if attempting_upgrade:
-        course_enrollment = CourseEnrollment.get_or_create_enrollment(request.user, order_items[0].course_id)
-        course_enrollment.emit_event(EVENT_NAME_USER_UPGRADED)
-        request.session['attempting_upgrade'] = False
 
     recipient_list = []
     total_registration_codes = None

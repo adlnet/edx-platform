@@ -6,7 +6,7 @@
 # Translators:
 # Abdallah Nassif <abdoosh00@gmail.com>, 2013
 # abdallah.nassif <abdallah_n@hotmail.com>, 2013
-# Abdallah Nassif <abdoosh00@gmail.com>, 2013-2014
+# Abdallah Nassif <abdoosh00@gmail.com>, 2013-2015
 # abdallah.nassif <abdallah_n@hotmail.com>, 2013
 # qrfahasan <ahasan@qrf.org>, 2014
 # Ahmad AbdArrahman <mygooglizer@gmail.com>, 2013-2014
@@ -58,7 +58,7 @@
 # Translators:
 # Abdallah Nassif <abdoosh00@gmail.com>, 2013
 # abdallah.nassif <abdallah_n@hotmail.com>, 2013
-# Abdallah Nassif <abdoosh00@gmail.com>, 2013-2014
+# Abdallah Nassif <abdoosh00@gmail.com>, 2013-2015
 # abdallah.nassif <abdallah_n@hotmail.com>, 2013
 # Ahmad AbdArrahman <mygooglizer@gmail.com>, 2013-2014
 # ayshibly <ayshibly@gmail.com>, 2014
@@ -96,6 +96,7 @@
 # may <may@qordoba.com>, 2014
 # Nabeel El-Dughailib <nabeel@qordoba.com>, 2014-2015
 # Najwan Al Rousan <najwanrousan@gmail.com>, 2013
+# omarithawi <oithawi@qrf.org>, 2015
 # Sarina Canelake <sarina@edx.org>, 2014
 # #-#-#-#-#  messages.po (edx-platform)  #-#-#-#-#
 # edX translation file
@@ -124,7 +125,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: edx-platform\n"
 "Report-Msgid-Bugs-To: openedx-translation@googlegroups.com\n"
-"POT-Creation-Date: 2015-03-02 19:02+0000\n"
+"POT-Creation-Date: 2015-04-06 12:41+0000\n"
 "PO-Revision-Date: 2015-02-05 11:21+0000\n"
 "Last-Translator: Nabeel El-Dughailib <nabeel@qordoba.com>\n"
 "Language-Team: Arabic (http://www.transifex.com/projects/p/edx-platform/language/ar/)\n"
@@ -185,23 +186,9 @@ msgid "Subsection"
 msgstr "القسم الفرعي"
 
 #: cms/djangoapps/contentstore/views/helpers.py
-#: lms/djangoapps/instructor/views/tools.py
+#: lms/djangoapps/instructor/views/tools.py lms/templates/seq_module.html
 msgid "Unit"
 msgstr "الوحدة"
-
-#. #-#-#-#-#  django-partial.po (edx-platform)  #-#-#-#-#
-#. Translators: This is the status for a video that the servers have
-#. successfully processed
-#: cms/djangoapps/contentstore/views/videos.py
-#: lms/djangoapps/instructor/views/instructor_task_helpers.py
-#: lms/templates/verify_student/midcourse_reverify_dash.html
-#, fuzzy
-msgid "Complete"
-msgstr ""
-"#-#-#-#-#  django-partial.po (edx-platform)  #-#-#-#-#\n"
-"اكتملت البيانات\n"
-"#-#-#-#-#  mako.po (edx-platform)  #-#-#-#-#\n"
-"تم استكمال العملية"
 
 #: cms/djangoapps/contentstore/views/videos.py
 #: lms/djangoapps/class_dashboard/dashboard_data.py
@@ -226,9 +213,70 @@ msgstr ""
 "#-#-#-#-#  mako.po (edx-platform)  #-#-#-#-#\n"
 "حالة"
 
+#: common/djangoapps/cors_csrf/models.py
+msgid ""
+"List of domains that are allowed to make cross-domain requests to this site."
+"  Please list each domain on its own line."
+msgstr ""
+
 #: common/djangoapps/course_modes/models.py
 msgid "Honor Code Certificate"
 msgstr "شهادة ميثاق الشرف الأكاديمي"
+
+#: common/djangoapps/course_modes/models.py
+msgid "Your verification is pending"
+msgstr ""
+
+#: common/djangoapps/course_modes/models.py
+msgid "Verified: Pending Verification"
+msgstr ""
+
+#: common/djangoapps/course_modes/models.py
+msgid "ID verification pending"
+msgstr ""
+
+#: common/djangoapps/course_modes/models.py
+msgid "You're enrolled as a verified student"
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/course_info.html
+msgid "Verified"
+msgstr "موثَّقة"
+
+#: lms/templates/dashboard/_dashboard_course_listing.html
+msgid "ID Verified Ribbon/Badge"
+msgstr "شارة الطالب الذي جرى التحقّق من هويّته"
+
+#: common/djangoapps/course_modes/models.py
+msgid "You're enrolled as an honor code student"
+msgstr ""
+
+#: common/djangoapps/course_modes/models.py
+#: openedx/core/djangoapps/user_api/views.py
+#: lms/templates/static_templates/honor.html
+#, fuzzy
+msgid "Honor Code"
+msgstr ""
+"#-#-#-#-#  django-partial.po (edx-platform)  #-#-#-#-#\n"
+"ميثاق الشرف \n"
+"#-#-#-#-#  mako.po (edx-platform)  #-#-#-#-#\n"
+"ميثاق الشرف"
+
+#: common/djangoapps/course_modes/models.py
+msgid "You're auditing this course"
+msgstr ""
+
+#: common/djangoapps/course_modes/models.py
+msgid "Auditing"
+msgstr ""
+
+#: common/djangoapps/course_modes/models.py
+msgid "You're enrolled as a professional education student"
+msgstr ""
+
+#: common/djangoapps/course_modes/models.py
+msgid "Professional Ed"
+msgstr ""
 
 #: common/djangoapps/course_modes/views.py
 msgid "Enrollment is closed"
@@ -425,8 +473,8 @@ msgid "Bachelor's degree"
 msgstr "درجة البكالوريوس"
 
 #: common/djangoapps/student/models.py
-msgid "Associate's degree"
-msgstr "درجة الزمالة"
+msgid "Associate degree"
+msgstr ""
 
 #: common/djangoapps/student/models.py
 msgid "Secondary/high school"
@@ -574,6 +622,8 @@ msgid ""
 "This account has not been activated. We have sent another activation "
 "message. Please check your email for the activation instructions."
 msgstr ""
+"لم يجرِ تفعيل هذا الحساب. وقد بعثنا رسالة تفعيل أخرى. يُرجى منك التحقق من "
+"بريدك الإكتروني للاطلاع على إرشادات التفعيل."
 
 #: common/djangoapps/student/views.py
 msgid "Please enter a username"
@@ -606,6 +656,18 @@ msgstr "يوجد مسبقًا حساب يحمل اسم المستخدم العل
 #: common/djangoapps/student/views.py
 msgid "An account with the Email '{email}' already exists."
 msgstr "يوجد مسبقًا حساب يحمل عنوان البريد الإلكتروني '{email}'."
+
+#: common/djangoapps/student/views.py
+msgid "An access_token is required when passing value ({}) for provider."
+msgstr ""
+
+#: common/djangoapps/student/views.py
+msgid "The provided access_token is already associated with another user."
+msgstr ""
+
+#: common/djangoapps/student/views.py
+msgid "The provided access_token is not valid."
+msgstr ""
 
 #: common/djangoapps/student/views.py
 msgid "Unknown error. Please e-mail us to let us know how it happened."
@@ -1079,8 +1141,8 @@ msgid "Maximum upload file size is {file_size} bytes."
 msgstr "يبلغ الحدّ الأقصى لحجم الملفّ المسموح بتحميله {file_size} بايت."
 
 #: common/djangoapps/util/milestones_helpers.py
-msgid "Course {} requires {}"
-msgstr "المساق {} يتطلّب {}"
+msgid "Course {course_id} requires {prerequisite_course_id}"
+msgstr ""
 
 #: common/djangoapps/util/milestones_helpers.py
 msgid "System defined milestone"
@@ -1554,6 +1616,10 @@ msgstr "الملاحظات التوضيحية"
 #: common/lib/xmodule/xmodule/html_module.py
 msgid "This name appears in the horizontal navigation at the top of the page."
 msgstr "يظهر هذا الإسم في شريط التصفّح الأفقي في أعلى الصفحة."
+
+#: common/lib/xmodule/xmodule/capa_base.py
+msgid "Blank Advanced Problem"
+msgstr ""
 
 #: common/lib/xmodule/xmodule/capa_base.py
 #: common/lib/xmodule/xmodule/combined_open_ended_module.py
@@ -2125,19 +2191,15 @@ msgstr "تواريخ حجب النقاشات"
 #: common/lib/xmodule/xmodule/course_module.py
 msgid ""
 "Enter pairs of dates between which students cannot post to discussion "
-"forums. Each pair should be formatted as [\"YYYY-MM-DD\", \"YYYY-MM-DD\"]. "
-"To specify times as well as dates, format each pair as [\"YYYY-MM-"
-"DDTHH:MM\", \"YYYY-MM-DDTHH:MM\"] (be sure to include the \"T\" between the "
-"date and time). An entry defining more than one blackout period might look "
-"like this: [[\"2014-09-15\", \"2014-09-21\"], [\"2014-10-01\", "
-"\"2014-10-08\"]]"
+"forums. Inside the provided brackets, enter an additional set of square "
+"brackets surrounding each pair of dates you add. Format each pair of dates "
+"as [\"YYYY-MM-DD\", \"YYYY-MM-DD\"]. To specify times as well as dates, "
+"format each pair as [\"YYYY-MM-DDTHH:MM\", \"YYYY-MM-DDTHH:MM\"]. Be sure to"
+" include the \"T\" between the date and time. For example, an entry defining"
+" two blackout periods looks like this, including the outer pair of square "
+"brackets: [[\"2015-09-15\", \"2015-09-21\"], [\"2015-10-01\", "
+"\"2015-10-08\"]] "
 msgstr ""
-"يُرجى إدخال أزواج التواريخ التي لا يمكن للطلّاب النشر بينها في منتديات "
-"النقاش. ويجب أن تكون صيغة كل تاريخين بهذا الشكل [\"YYYY-MM-DD\", \"YYYY-MM-"
-"DD\"]. أمّا لتحديد الأوقات إلى جانب التواريخ، يجب صياغة كل زوج بهذا الشكل: "
-"[\"YYYY-MM-DDTHH:MM\", \"YYYY-MM-DDTHH:MM\"] (تأكّد رجاءً من تضمين حرف ’T‘ "
-"بين التاريخ والوقت). وقد يظهر الإدخال الذي يحدّد أكثر من فترة حجب واحدة بهذا"
-" الشكل: [[\"2014-09-15\", \"2014-09-21\"], [\"2014-10-01\", \"2014-10-08\"]]"
 
 #: common/lib/xmodule/xmodule/course_module.py
 msgid "Discussion Topic Mapping"
@@ -2148,13 +2210,10 @@ msgid ""
 "Enter discussion categories in the following format: \"CategoryName\": "
 "{\"id\": \"i4x-InstitutionName-CourseNumber-course-CourseRun\"}. For "
 "example, one discussion category may be \"Lydian Mode\": {\"id\": \"i4x-"
-"UniversityX-MUS101-course-2014_T1\"}. The \"id\" value for each category "
-"must be unique."
+"UniversityX-MUS101-course-2015_T1\"}. The \"id\" value for each category "
+"must be unique. In \"id\" values, the only special characters that are "
+"supported are underscore, hyphen, and period."
 msgstr ""
-"يُرجى إدخال فئات النقاشات بالصيغة التالية: \"CategoryName\": {\"id\": \"i4x-"
-"InstitutionName-CourseNumber-course-CourseRun\"}. وقد تكون فئة إحدى النقاشات"
-" \"Lydian Mode\" مثلًا: {\"id\": \"i4x-UniversityX-MUS101-course-2014_T1\"}."
-" لذا يجب أن يكون الرقم التعريفي لكل مناقشة فريدًا من نوعه. "
 
 #: common/lib/xmodule/xmodule/course_module.py
 msgid "Discussion Sorting Alphabetical"
@@ -2224,6 +2283,16 @@ msgid ""
 msgstr ""
 "يُرجى إدخال الرقم التعريفي الفريد من نوعه لملفّات الفيديو الخاصة بمساقك "
 "والتي زوّدتك بها edX. "
+
+#: common/lib/xmodule/xmodule/course_module.py
+msgid ""
+"Enter the URL for the official course Facebook group. If you provide a URL, "
+"the mobile app includes a button that students can tap to access the group."
+msgstr ""
+
+#: common/lib/xmodule/xmodule/course_module.py
+msgid "Facebook URL"
+msgstr ""
 
 #: common/lib/xmodule/xmodule/course_module.py
 msgid "Course Not Graded"
@@ -2663,6 +2732,20 @@ msgstr ""
 msgid "Certificate Name (Long)"
 msgstr "اسم الشهادة (طويل)"
 
+#. Translators: This field is the container for course-specific certifcate
+#. configuration values
+#: common/lib/xmodule/xmodule/course_module.py
+msgid "Certificate Web/HTML View Overrides"
+msgstr ""
+
+#. Translators: These overrides allow for an alternative configuration of the
+#. certificate web view
+#: common/lib/xmodule/xmodule/course_module.py
+msgid ""
+"Enter course-specific overrides for the Web/HTML template parameters here "
+"(JSON format)"
+msgstr ""
+
 #: common/lib/xmodule/xmodule/course_module.py
 msgid "CSS Class for Course Reruns"
 msgstr "صف CSS لعمليات إعادة طرح المساق"
@@ -3021,19 +3104,17 @@ msgstr "لم يُعثر على عنوان البريد الإلكتروني."
 msgid "Any Type"
 msgstr "أي نوع"
 
-#: common/lib/xmodule/xmodule/library_content_module.py
-msgid "\"{value}\" is not a valid library ID."
-msgstr "لا تشكِّل القيمة \"{value}\" رقم مكتبة صالحًا. "
+#: cms/templates/widgets/header.html
+msgid "Library"
+msgstr "مكتبة"
 
 #: common/lib/xmodule/xmodule/library_content_module.py
-#: cms/templates/index.html
-msgid "Libraries"
-msgstr "المكتبات"
+msgid "Select the library from which you want to draw content."
+msgstr ""
 
 #: common/lib/xmodule/xmodule/library_content_module.py
-msgid ""
-"Enter a library ID for each library from which you want to draw content."
-msgstr "يُرجى إدخال رقم مكتبة لكل مكتبة تودّ استخراج محتوىً منها. "
+msgid "Library Version"
+msgstr ""
 
 #: common/lib/xmodule/xmodule/library_content_module.py
 msgid "Mode"
@@ -3103,6 +3184,8 @@ msgid ""
 "This course does not support content libraries. Contact your system "
 "administrator for more information."
 msgstr ""
+"لا يحتوي هذا المساق على مكتبات محتوى. يُرجى الاتّصال بمسؤول النظام للحصول "
+"على مزيد من المعلومات."
 
 #: common/lib/xmodule/xmodule/library_content_module.py
 msgid "A library has not yet been selected."
@@ -3121,9 +3204,8 @@ msgid "Select another problem type."
 msgstr "يُرجى اختيار نوع آخر من المسائل."
 
 #: common/lib/xmodule/xmodule/library_content_module.py
-msgid "The specified libraries are configured to fetch {count} problem, "
-msgid_plural ""
-"The specified libraries are configured to fetch {count} problems, "
+msgid "The specified library is configured to fetch {count} problem, "
+msgid_plural "The specified library is configured to fetch {count} problems, "
 msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
@@ -3134,16 +3216,24 @@ msgstr[5] ""
 #: common/lib/xmodule/xmodule/library_content_module.py
 msgid "but there is only {actual} matching problem."
 msgid_plural "but there are only {actual} matching problems."
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
-msgstr[4] ""
-msgstr[5] ""
+msgstr[0] "لا يوجد أي {actual} مسألة مطابقة."
+msgstr[1] "لكنه يوجدفقط {actual} مسألة واحدة مطابقة."
+msgstr[2] "لكنه يوجد فقط {actual} مسألتان متطابقتان."
+msgstr[3] "لكنه يوجد القليل من {actual} المسائل مطابقة."
+msgstr[4] "لكنه يوجد العديد من {actual} المسائل المطابقة"
+msgstr[5] "لكنّه لا يوجد سوى {actual} مسائل مطابِقة."
 
 #: common/lib/xmodule/xmodule/library_content_module.py
 msgid "Edit the library configuration."
 msgstr "تعديل إعدادات المساق"
+
+#: common/lib/xmodule/xmodule/library_content_module.py
+msgid "Invalid Library"
+msgstr ""
+
+#: common/lib/xmodule/xmodule/library_content_module.py
+msgid "No Library Selected"
+msgstr ""
 
 #: common/lib/xmodule/xmodule/library_root_xblock.py
 msgid "Enter the name of the library as it should appear in Studio."
@@ -3519,13 +3609,8 @@ msgstr "معلومات المساق "
 #. Translators: "Progress" is the name of the student's course progress page
 #: common/lib/xmodule/xmodule/tabs.py
 #: lms/templates/peer_grading/peer_grading.html
-#, fuzzy
 msgid "Progress"
-msgstr ""
-"#-#-#-#-#  django-partial.po (edx-platform)  #-#-#-#-#\n"
-"التقدّم  \n"
-"#-#-#-#-#  mako.po (edx-platform)  #-#-#-#-#\n"
-"التطور "
+msgstr "التقدّم"
 
 #. Translators: "Wiki" is the name of the course's wiki page
 #: common/lib/xmodule/xmodule/tabs.py lms/djangoapps/course_wiki/views.py
@@ -3543,13 +3628,8 @@ msgstr "الكتب"
 #. staff to view open-ended problems that require staff grading
 #: common/lib/xmodule/xmodule/tabs.py
 #: lms/templates/instructor/staff_grading.html
-#, fuzzy
 msgid "Staff grading"
-msgstr ""
-"#-#-#-#-#  django-partial.po (edx-platform)  #-#-#-#-#\n"
-"التقييم من قبل طاقم المساق\n"
-"#-#-#-#-#  mako.po (edx-platform)  #-#-#-#-#\n"
-"تقييم طاقم المساق "
+msgstr "التقييم من قبل طاقم المساق"
 
 #. Translators: "Peer grading" appears on a tab that allows
 #. students to view open-ended problems that require grading
@@ -4384,6 +4464,12 @@ msgstr "تحميل النشرة "
 
 #: common/lib/xmodule/xmodule/video_module/video_xfields.py
 msgid ""
+"Specify whether access to this video is limited to browsers only, or if it "
+"can be accessed from other applications including mobile apps."
+msgstr ""
+
+#: common/lib/xmodule/xmodule/video_module/video_xfields.py
+msgid ""
 "If you were assigned a Video ID by edX for the video to play in this "
 "component, enter the ID here. In this case, do not enter values in the "
 "Default Video URL, the Video File URLs, and the YouTube ID fields. If you "
@@ -4424,10 +4510,236 @@ msgstr "بحث"
 msgid "Copyright"
 msgstr "حقوق الطبع والنشر "
 
+#: lms/djangoapps/certificates/models.py
+msgid ""
+"A human-readable description of the example certificate.  For example, "
+"'verified' or 'honor' to differentiate between two types of certificates."
+msgstr ""
+
+#: lms/djangoapps/certificates/models.py
+msgid ""
+"A unique identifier for the example certificate.  This is used when we "
+"receive a response from the queue to determine which example certificate was"
+" processed."
+msgstr ""
+
+#: lms/djangoapps/certificates/models.py
+msgid ""
+"An access key for the example certificate.  This is used when we receive a "
+"response from the queue to validate that the sender is the same entity we "
+"asked to generate the certificate."
+msgstr ""
+
+#: lms/djangoapps/certificates/models.py
+msgid "The full name that will appear on the certificate."
+msgstr ""
+
+#: lms/djangoapps/certificates/models.py
+msgid "The template file to use when generating the certificate."
+msgstr ""
+
+#: lms/djangoapps/certificates/models.py
+msgid "The status of the example certificate."
+msgstr ""
+
+#: lms/djangoapps/certificates/models.py
+msgid "The reason an error occurred during certificate generation."
+msgstr ""
+
+#: lms/djangoapps/certificates/models.py
+msgid "The download URL for the generated certificate."
+msgstr ""
+
+#. Translators:  This text is bound to the HTML 'title' element of the page
+#. and appears
+#. in the browser title bar when a requested certificate is not found or
+#. recognized
+#: lms/djangoapps/certificates/views.py
+msgid "Invalid Certificate"
+msgstr ""
+
+#. Translators: This line appears on the certificate after the name of a
+#. course, and provides more
+#. information about the organizations providing the course material to
+#. platform users
+#: lms/djangoapps/certificates/views.py
+msgid "a course of study offered by {partner_name}, through {platform_name}."
+msgstr ""
+
+#: lms/djangoapps/certificates/views.py
+msgid "More Information About {user_name}'s Certificate:"
+msgstr ""
+
+#. Translators:  This line appears on the page just before the generation date
+#. for the certificate
+#: lms/djangoapps/certificates/views.py
+msgid "Issued On:"
+msgstr ""
+
+#. Translators:  The format of the date includes the full name of the month
+#: lms/djangoapps/certificates/views.py
+msgid "{month} {day}, {year}"
+msgstr ""
+
+#. Translators:  The Certificate ID Number is an alphanumeric value unique to
+#. each individual certificate
+#: lms/djangoapps/certificates/views.py
+msgid "Certificate ID Number"
+msgstr ""
+
+#: lms/djangoapps/certificates/views.py
+msgid "About {platform_name} Certificates"
+msgstr ""
+
+#. Translators: This text describes the purpose (and therefore, value) of a
+#. course certificate
+#. 'verifying your identity' refers to the process for establishing the
+#. authenticity of the student
+#: lms/djangoapps/certificates/views.py
+msgid ""
+"{platform_name} acknowledges achievements through certificates, which are "
+"awarded for various activities {platform_name} students complete under the "
+"<a href='{tos_url}'>{platform_name} Honor Code</a>.  Some certificates "
+"require completing additional steps, such as <a href='{verified_cert_url}'> "
+"verifying your identity</a>."
+msgstr ""
+
+#. Translators:  Certificate Types correspond to the different enrollment
+#. options available for a given course
+#: lms/djangoapps/certificates/views.py
+msgid "{certificate_type} Certfificate"
+msgstr ""
+
+#: lms/djangoapps/certificates/views.py
+msgid "How {platform_name} Validates Student Certificates"
+msgstr ""
+
+#. Translators:  This text describes the validation mechanism for a
+#. certificate file (known as GPG security)
+#: lms/djangoapps/certificates/views.py
+msgid ""
+"Certificates issued by {platform_name} are signed by a gpg key so that they "
+"can be validated independently by anyone with the {platform_name} public "
+"key. For independent verification, {platform_name} uses what is called a "
+"\"detached signature\"&quot;\"."
+msgstr ""
+
+#: lms/djangoapps/certificates/views.py
+msgid "Validate this certificate for yourself"
+msgstr ""
+
+#. Translators:  This text describes (at a high level) the mission and charter
+#. the edX platform and organization
+#: lms/djangoapps/certificates/views.py
+msgid ""
+"{platform_name} offers interactive online classes and MOOCs from the world's"
+" best universities, including MIT, Harvard, Berkeley, University of Texas, "
+"and many others.  {platform_name} is a non-profit online initiative created "
+"by founding partners Harvard and MIT."
+msgstr ""
+
+#: lms/djangoapps/certificates/views.py
+msgid "About {platform_name}"
+msgstr ""
+
+#: lms/djangoapps/certificates/views.py
+msgid "Learn more about {platform_name}"
+msgstr ""
+
+#: lms/djangoapps/certificates/views.py
+msgid "Learn with {platform_name}"
+msgstr ""
+
+#: lms/djangoapps/certificates/views.py
+msgid "Work at {platform_name}"
+msgstr ""
+
+#: lms/djangoapps/certificates/views.py
+msgid "Contact {platform_name}"
+msgstr ""
+
+#: cms/templates/widgets/footer.html lms/templates/footer-edx-new.html
+#: lms/templates/footer.html lms/templates/static_templates/privacy.html
+msgid "Privacy Policy"
+msgstr "سياسة الخصوصية"
+
+#: lms/djangoapps/certificates/views.py
+msgid "Terms of Service &amp; Honor Code"
+msgstr ""
+
+#. Translators:  This text appears near the top of the certficate and
+#. describes the guarantee provided by edX
+#: lms/djangoapps/certificates/views.py
+msgid "{platform_name} acknowledges the following student accomplishment"
+msgstr ""
+
+#: lms/djangoapps/certificates/views.py
+msgid "Certificate Validation"
+msgstr ""
+
+#. Translators:  This text describes the 'Honor' course certificate type.
+#: lms/djangoapps/certificates/views.py
+msgid ""
+"An {cert_type} Certificate signifies that an {platform_name} learner has "
+"agreed to abide by {platform_name}'s honor code and completed all of the "
+"required tasks for this course under its guidelines."
+msgstr ""
+
+#. Translators:  This text describes the 'ID Verified' course certificate
+#. type, which is a higher level of
+#. verification offered by edX.  This type of verification is useful for
+#. professional education/certifications
+#: lms/djangoapps/certificates/views.py
+msgid ""
+"An {cert_type} Certificate signifies that an {platform_name} learner has "
+"agreed to abide by {platform_name}'s honor code and completed all of the "
+"required tasks for this course under its guidelines, as well as having their"
+" photo ID checked to verify their identity."
+msgstr ""
+
+#. Translators:  This text describes the 'XSeries' course certificate type.
+#. An XSeries is a collection of
+#. courses related to each other in a meaningful way, such as a specific topic
+#. or theme, or even an organization
+#: lms/djangoapps/certificates/views.py
+msgid ""
+"An {cert_type} Certificate demonstrates a high level of achievement in a "
+"program of study, and includes verification of the student's identity."
+msgstr ""
+
+#. Translators:  This is the copyright line which appears at the bottom of the
+#. certificate page/screen
+#: lms/djangoapps/certificates/views.py
+msgid "&copy; {year} {platform_name}. All rights reserved."
+msgstr ""
+
+#. Translators:  This text represents the verification of the certificate
+#: lms/djangoapps/certificates/views.py
+msgid ""
+"This is a valid {platform_name} certificate for {user_name}, who "
+"participated in {partner_name} {course_number}"
+msgstr ""
+
+#. Translators:  This text is bound to the HTML 'title' element of the page
+#. and appears in the browser title bar
+#: lms/djangoapps/certificates/views.py
+msgid "Valid {partner_name} {course_number} Certificate | {platform_name}"
+msgstr ""
+
+#. Translators:  This text fragment appears after the student's name
+#. (displayed in a large font) on the certificate
+#. screen.  The text describes the accomplishment represented by the
+#. certificate information displayed to the user
+#: lms/djangoapps/certificates/views.py
+msgid ""
+"successfully completed, received a passing grade, and was awarded a "
+"{platform_name} {certificate_type} Certificate of Completion in "
+msgstr ""
+
 #: lms/djangoapps/class_dashboard/dashboard_data.py
 #: lms/djangoapps/instructor/views/api.py
 #: lms/djangoapps/instructor/views/legacy.py
-#: lms/djangoapps/instructor/views/tools.py
+#: lms/djangoapps/instructor/views/tools.py lms/templates/dashboard.html
 #: lms/templates/staff_problem_info.html
 #: lms/templates/instructor/instructor_dashboard_2/metrics.html
 msgid "Username"
@@ -4435,13 +4747,8 @@ msgstr "اسم المستخدم"
 
 #: lms/djangoapps/class_dashboard/dashboard_data.py
 #: lms/templates/instructor/instructor_dashboard_2/metrics.html
-#, fuzzy
 msgid "Grade"
-msgstr ""
-"#-#-#-#-#  django-partial.po (edx-platform)  #-#-#-#-#\n"
-"الدرجة \n"
-"#-#-#-#-#  mako.po (edx-platform)  #-#-#-#-#\n"
-"الدرجة"
+msgstr "الدرجة"
 
 #: lms/djangoapps/class_dashboard/dashboard_data.py
 #: lms/templates/instructor/instructor_dashboard_2/metrics.html
@@ -4485,8 +4792,8 @@ msgid "Course page automatically created."
 msgstr "جرى إنشاء صفحة المساق تلقائيًّا."
 
 #: lms/djangoapps/course_wiki/views.py
-msgid "Welcome to the edX Wiki"
-msgstr "أهلًا بك في صفحة الويكي الخاصة بـ edX "
+msgid "Welcome to the {platform_name} Wiki"
+msgstr ""
 
 #: lms/djangoapps/course_wiki/views.py
 msgid "Visit a course wiki to add an article."
@@ -4567,12 +4874,16 @@ msgstr ""
 msgid "Course is not valid"
 msgstr ""
 
-#: lms/djangoapps/courseware/views.py lms/templates/courseware/progress.html
+#: lms/djangoapps/courseware/views.py
 msgid "Your certificate will be available when you pass the course."
 msgstr ""
 
-#: lms/djangoapps/courseware/views.py lms/templates/courseware/progress.html
-msgid "Creating certificate"
+#: lms/djangoapps/courseware/views.py
+msgid "Certificate has already been created."
+msgstr ""
+
+#: lms/djangoapps/courseware/views.py
+msgid "Certificate is already being created."
 msgstr ""
 
 #: lms/djangoapps/courseware/features/video.py
@@ -4634,13 +4945,8 @@ msgstr "عنوان البريد الإلكتروني"
 #: lms/templates/sysadmin_dashboard_gitlogs.html
 #: lms/templates/instructor/instructor_dashboard_2/add_coupon_modal.html
 #: lms/templates/instructor/instructor_dashboard_2/edit_coupon_modal.html
-#, fuzzy
 msgid "Course ID"
-msgstr ""
-"#-#-#-#-#  django-partial.po (edx-platform)  #-#-#-#-#\n"
-"الرمز التعريفي للمساق \n"
-"#-#-#-#-#  mako.po (edx-platform)  #-#-#-#-#\n"
-"رقم المساق "
+msgstr "رقم تعريف المساق "
 
 #: lms/djangoapps/dashboard/support.py
 msgid "User not found"
@@ -4952,6 +5258,27 @@ msgstr "نأسف لحدوث خطأ في الخادم. يُرجى إعادة ال
 msgid "No endpoint was provided for EdxNotes."
 msgstr "لم تُحدَّد نقطة نهاية لخدمة EdxNotes."
 
+#: lms/djangoapps/instructor/tests/test_api.py
+#: lms/djangoapps/instructor/views/instructor_task_helpers.py
+#: lms/templates/verify_student/midcourse_reverify_dash.html
+#, fuzzy
+msgid "Complete"
+msgstr ""
+"#-#-#-#-#  django-partial.po (edx-platform)  #-#-#-#-#\n"
+"اكتملت البيانات\n"
+"#-#-#-#-#  mako.po (edx-platform)  #-#-#-#-#\n"
+"تم استكمال العملية"
+
+#: lms/djangoapps/instructor/tests/test_api.py
+#: lms/djangoapps/instructor/views/api.py
+msgid "This student (%s) will skip the entrance exam."
+msgstr ""
+
+#: lms/djangoapps/instructor/tests/test_api.py
+#: lms/djangoapps/instructor/views/api.py
+msgid "This student (%s) is already allowed to skip the entrance exam."
+msgstr ""
+
 #: lms/djangoapps/instructor/views/api.py
 msgid "User does not exist."
 msgstr "المستخدم غير موجود."
@@ -5000,8 +5327,8 @@ msgid "File is not attached."
 msgstr "الملف غير مُرفَق. "
 
 #: lms/djangoapps/instructor/views/api.py
-msgid "Invoice number '{0}' does not exist."
-msgstr " الفاتورة رقم '{0}' غير موجودة."
+msgid "Invoice number '{num}' does not exist."
+msgstr ""
 
 #: lms/djangoapps/instructor/views/api.py
 msgid "The sale associated with this invoice has already been invalidated."
@@ -5253,6 +5580,10 @@ msgstr ""
 msgid "E-Commerce"
 msgstr "التجارة الإلكترونية"
 
+#: cms/templates/export.html
+msgid "Certificates"
+msgstr "الشهادات"
+
 #: lms/djangoapps/instructor/views/instructor_dashboard.py
 msgid "Please Enter the numeric value for the course price"
 msgstr "يُرجى إدخال القيمة الرقمية لسعر المساق"
@@ -5272,6 +5603,10 @@ msgstr "تتوافر بيانات التسجيل الآن على {dashboard_link
 #: lms/djangoapps/instructor/views/instructor_dashboard.py
 msgid "Membership"
 msgstr "العضوية"
+
+#: lms/djangoapps/instructor/views/instructor_dashboard.py
+msgid "Cohorts"
+msgstr ""
 
 #: lms/djangoapps/instructor/views/instructor_dashboard.py
 msgid "Student Admin"
@@ -5623,6 +5958,20 @@ msgid "Problem successfully {action} for student '{student}'"
 msgstr "نجحت مهمّة {action} للمسألة الخاصة بالطالب ’{student}‘ "
 
 #. Translators: {action} is a past-tense verb that is localized separately.
+#. {student} is a student identifier.
+#: lms/djangoapps/instructor_task/views.py
+msgid ""
+"Unable to find entrance exam submission to be {action} for student "
+"'{student}'"
+msgstr ""
+
+#. Translators: {action} is a past-tense verb that is localized separately.
+#. {student} is a student identifier.
+#: lms/djangoapps/instructor_task/views.py
+msgid "Entrance exam successfully {action} for student '{student}'"
+msgstr ""
+
+#. Translators: {action} is a past-tense verb that is localized separately.
 #: lms/djangoapps/instructor_task/views.py
 msgid "Unable to find any students with submissions to be {action}"
 msgstr "تعذّر إيجاد أي طلّاب لديهم تقديمات تستوجب {action}"
@@ -5688,6 +6037,17 @@ msgstr "(تخطّي {skipped})"
 #: lms/djangoapps/instructor_task/views.py
 msgid " (out of {total})"
 msgstr "(من أصل {total})"
+
+#: lms/djangoapps/lms_xblock/mixin.py
+msgid "Whether to display this module in the table of contents"
+msgstr ""
+
+#. Translators: "TOC" stands for "Table of Contents"
+#: lms/djangoapps/lms_xblock/mixin.py
+msgid ""
+"What format this module is in (used for deciding which grader to apply, and "
+"what to show in the TOC)"
+msgstr ""
 
 #: lms/djangoapps/lms_xblock/mixin.py
 msgid "Courseware Chrome"
@@ -5938,7 +6298,7 @@ msgstr "[Refund] استرداد المال بطلب من المستخدم "
 
 #: lms/djangoapps/shoppingcart/models.py
 msgid "Mode {mode} does not exist for {course_id}"
-msgstr ""
+msgstr "الوضعية {mode} غير موجودة بالنسبة للمساق {course_id}"
 
 #. Translators: In this particular case, mode_name refers to a
 #. particular mode (i.e. Honor Code Certificate, Verified Certificate, etc)
@@ -5949,23 +6309,19 @@ msgstr "{mode_name} للمساق {course}"
 
 #: lms/djangoapps/shoppingcart/models.py
 msgid ""
-"You have up to two weeks into the course to unenroll from the Verified "
-"Certificate option and receive a full refund. To receive your refund, "
-"contact {billing_email}. Please include your order number in your email. "
-"Please do NOT include your credit card information."
-msgstr ""
-"يُرجى ملاحظة أنّ لديك مهلة لا تزيد عن أسبوعين منذ بدء المساق للتراجع عن "
-"اختيار \"الشهادة الموثّقة\" واسترداد المبلغ بالكامل. ولاسترداد مالك، يُرجى "
-"المراسلة على عنوان البريد الإلكتروني {billing_email}، بحيث يجب أن تحدّد في "
-"الرسالة رقم طلبك. ولكن لا تذكر فيها رجاءً معلومات بطاقتك الائتمانية.  "
-
-#: lms/djangoapps/shoppingcart/models.py
-msgid ""
 "If you haven't verified your identity yet, please start the verification "
 "process ({verification_url})."
 msgstr ""
 "إذا لم تؤكّد هويّتك بعد، يُرجى منك البدء بعملية التحقّق "
 "({verification_url}). "
+
+#: lms/djangoapps/shoppingcart/models.py
+msgid ""
+"You have up to two weeks into the course to unenroll and receive a full "
+"refund.To receive your refund, contact {billing_email}. Please include your "
+"order number in your email. Please do NOT include your credit card "
+"information."
+msgstr ""
 
 #: lms/djangoapps/shoppingcart/models.py
 msgid ""
@@ -5980,7 +6336,7 @@ msgstr ""
 
 #: lms/djangoapps/shoppingcart/models.py
 msgid "Could not find a course with the ID '{course_id}'"
-msgstr ""
+msgstr "نأسف لتعذّر إيجاد مساق يحمل الرقم التعريفي '{course_id}'"
 
 #: lms/djangoapps/shoppingcart/models.py
 msgid "Donation for {course}"
@@ -5994,7 +6350,7 @@ msgstr "تبرّع لمنصّة {platform_name}"
 msgid "Page {page_number} of {page_count}"
 msgstr "الصفحة {page_number} من أصل {page_count}"
 
-#: lms/djangoapps/shoppingcart/pdf.py
+#: lms/djangoapps/shoppingcart/pdf.py lms/templates/shoppingcart/receipt.html
 msgid "Invoice"
 msgstr "الفاتورة"
 
@@ -6127,7 +6483,7 @@ msgstr "التعليقات"
 msgid "University"
 msgstr "الجامعة"
 
-#: lms/djangoapps/shoppingcart/reports.py
+#: lms/djangoapps/shoppingcart/reports.py cms/templates/widgets/header.html
 msgid "Course"
 msgstr "المساق "
 
@@ -6901,8 +7257,8 @@ msgid "Selected price is not valid number."
 msgstr "رقم السعر الذي جرى اختياره غير صالح. "
 
 #: lms/djangoapps/verify_student/views.py
-msgid "This course doesn't support verified certificates"
-msgstr "لا يدعم هذا المساق الشهادات الموثَّقة"
+msgid "This course doesn't support paid certificates"
+msgstr ""
 
 #: lms/djangoapps/verify_student/views.py
 msgid "No selected price or selected price is below minimum."
@@ -6933,14 +7289,80 @@ msgstr "بيانات الصورة غير صالحة."
 msgid "Verification photos received"
 msgstr "جرى تلقّي الصور التي تساعد في عملية التحقّق  "
 
+#: lms/djangoapps/verify_student/views.py
+msgid "No checkpoint found"
+msgstr ""
+
+#: lms/djangoapps/verify_student/views.py
+msgid "Invalid image data during photo verification."
+msgstr ""
+
+#: lms/djangoapps/verify_student/views.py
+msgid "Could not submit photos"
+msgstr ""
+
+#. #-#-#-#-#  django-partial.po (edx-platform)  #-#-#-#-#
+#. Translators: This is the website name of www.facebook.com.  Please
+#. translate this the way that Facebook advertises in your language.
+#: lms/envs/common.py lms/templates/dashboard/_dashboard_course_listing.html
+msgid "Facebook"
+msgstr ""
+
+#. #-#-#-#-#  django-partial.po (edx-platform)  #-#-#-#-#
+#. Translators: This is the website name of www.twitter.com.  Please
+#. translate this the way that Twitter advertises in your language.
+#: lms/envs/common.py lms/templates/dashboard/_dashboard_course_listing.html
+msgid "Twitter"
+msgstr ""
+
+#. Translators: This is the website name of www.linkedin.com.  Please
+#. translate this the way that LinkedIn advertises in your language.
+#: lms/envs/common.py
+msgid "LinkedIn"
+msgstr ""
+
+#. Translators: This is the website name of plus.google.com.  Please
+#. translate this the way that Google+ advertises in your language.
+#: lms/envs/common.py
+msgid "Google+"
+msgstr ""
+
+#. Translators: This is the website name of www.tumblr.com.  Please
+#. translate this the way that Tumblr advertises in your language.
+#: lms/envs/common.py
+msgid "Tumblr"
+msgstr ""
+
+#. Translators: This is the website name of www.meetup.com.  Please
+#. translate this the way that MeetUp advertises in your language.
+#: lms/envs/common.py
+msgid "Meetup"
+msgstr ""
+
+#. Translators: This is the website name of www.reddit.com.  Please
+#. translate this the way that Reddit advertises in your language.
+#: lms/envs/common.py
+msgid "Reddit"
+msgstr ""
+
+#. Translators: This is the website name of www.youtube.com.  Please
+#. translate this the way that YouTube advertises in your language.
+#: lms/envs/common.py
+msgid "Youtube"
+msgstr ""
+
 #: lms/envs/common.py
 msgid "Taiwan"
 msgstr "تايوان"
 
+#: lms/lib/courseware_search/lms_result_processor.py
+msgid "(Unnamed)"
+msgstr ""
+
 #: lms/templates/main_django.html cms/templates/base.html
 #: lms/templates/main.html
 msgid "Skip to main content"
-msgstr ""
+msgstr "الانتقال إلى المحتوى الرئيسي"
 
 #: lms/templates/dashboard/_dashboard_refund.html
 #: lms/templates/dashboard/support.html
@@ -7588,6 +8010,15 @@ msgstr "لا توجد مرفقات لهذا المقال."
 msgid "You cannot create two cohorts with the same name"
 msgstr "لا يمكنك إنشاء مجموعتين يحملان الاسم نفسه "
 
+#: openedx/core/djangoapps/course_groups/cohorts.py
+msgid ""
+"There must be one cohort to which students can automatically be assigned."
+msgstr ""
+
+#: openedx/core/djangoapps/course_groups/views.py
+msgid "A cohort with the same name already exists."
+msgstr ""
+
 #. Translators: This example email address is used as a placeholder in
 #. a field on the login form meant to hold the user's email address.
 #. Translators: This example email address is used as a placeholder in
@@ -7630,12 +8061,15 @@ msgstr ""
 "يبدو أنّ اسم المستخدم {username} يخصّ حسابًا قائمًا. يُرجى إعادة المحاولة "
 "باسم مستخدم مختلف."
 
-#. Translators: These instructions appear on the registration form,
-#. immediately
-#. below a field meant to hold the user's full name.
+#. Translators: This example name is used as a placeholder in
+#. a field on the registration form meant to hold the user's name.
 #: openedx/core/djangoapps/user_api/views.py
-msgid "The name that will appear on your certificates"
-msgstr "الاسم كما سيظهر على شهاداتك"
+msgid "Jane Doe"
+msgstr ""
+
+#: lms/templates/register.html
+msgid "Needed for any certificates you may earn"
+msgstr "مطلوب لأي شهادة قد تنالها "
 
 #. Translators: This label appears above a field on the registration form
 #. meant to hold the user's public username.
@@ -7644,8 +8078,16 @@ msgid "Public username"
 msgstr "اسم مستخدم ظاهر لعامّة الناس"
 
 #: openedx/core/djangoapps/user_api/views.py
-msgid "The name that will identify you in your courses"
-msgstr "الاسم الذي سيعرّف عنك في مساقاتك"
+msgid ""
+"The name that will identify you in your courses - {bold_start}(cannot be "
+"changed later){bold_end}"
+msgstr ""
+
+#. Translators: This example username is used as a placeholder in
+#. a field on the registration form meant to hold the user's username.
+#: openedx/core/djangoapps/user_api/views.py
+msgid "JaneDoe"
+msgstr ""
 
 #. Translators: This label appears above a dropdown menu on the registration
 #. form used to select the user's highest completed level of education.
@@ -7693,17 +8135,6 @@ msgstr "البلد"
 msgid "Please select your Country."
 msgstr "يُرجى تحديد بلدك."
 
-#: openedx/core/djangoapps/user_api/views.py
-#: lms/templates/dashboard/_dashboard_course_listing.html
-#: lms/templates/static_templates/honor.html
-#, fuzzy
-msgid "Honor Code"
-msgstr ""
-"#-#-#-#-#  django-partial.po (edx-platform)  #-#-#-#-#\n"
-"ميثاق الشرف \n"
-"#-#-#-#-#  mako.po (edx-platform)  #-#-#-#-#\n"
-"ميثاق الشرف"
-
 #. #-#-#-#-#  django-partial.po (edx-platform)  #-#-#-#-#
 #. Translators: This is a legal document users must agree to
 #. in order to register a new account.
@@ -7735,12 +8166,38 @@ msgstr ""
 msgid "Terms of Service"
 msgstr "شروط الخدمة"
 
-#: openedx/core/djangoapps/user_api/accounts/views.py
+#: openedx/core/djangoapps/user_api/accounts/api.py
 msgid "Field '{field_name}' cannot be edited."
 msgstr ""
 
-#: openedx/core/djangoapps/user_api/accounts/views.py
+#: openedx/core/djangoapps/user_api/accounts/api.py
 msgid "Value '{field_value}' is not valid for field '{field_name}'."
+msgstr ""
+
+#: openedx/core/djangoapps/user_api/preferences/api.py
+msgid "Delete failed for user preference '{preference_key}'."
+msgstr ""
+
+#: openedx/core/djangoapps/user_api/preferences/api.py
+msgid "Preference '{preference_key}' cannot be set to an empty value."
+msgstr ""
+
+#: openedx/core/djangoapps/user_api/preferences/api.py
+msgid "Invalid user preference key '{preference_key}'."
+msgstr ""
+
+#: openedx/core/djangoapps/user_api/preferences/api.py
+msgid ""
+"Value '{preference_value}' is not valid for user preference "
+"'{preference_key}'."
+msgstr ""
+
+#: openedx/core/djangoapps/user_api/preferences/api.py
+msgid "Save failed for user preference '{key}' with value '{value}'."
+msgstr ""
+
+#: openedx/core/djangoapps/user_api/preferences/views.py
+msgid "No data provided for user preference update"
 msgstr ""
 
 #: cms/djangoapps/contentstore/course_info_model.py
@@ -7855,7 +8312,7 @@ msgstr "صفحة فارغة"
 #: cms/djangoapps/contentstore/views/course.py
 #: cms/djangoapps/contentstore/views/tests/test_course_index.py
 msgid "Course has been successfully reindexed."
-msgstr ""
+msgstr "جرى إعادة فهرسة المساق بنجاح."
 
 #: cms/djangoapps/contentstore/views/course.py
 msgid "Unscheduled"
@@ -7909,10 +8366,14 @@ msgstr "يجب أن تتوفّر مجموعة واحدة على الأقل."
 
 #: cms/djangoapps/contentstore/views/course.py
 msgid "This group configuration is in use and cannot be deleted."
-msgstr ""
+msgstr "إنّ إعدادات هذه المجموعة قيد الاستخدام ولا يمكن حذفها."
 
 #: cms/djangoapps/contentstore/views/course.py
 msgid "This content group is in use and cannot be deleted."
+msgstr "إنّ مجموعة المحتوى هذه قيد الاستخدام ولا يمكن حذفها."
+
+#: cms/djangoapps/contentstore/views/entrance_exam.py
+msgid "Entrance Exam - Subsection"
 msgstr ""
 
 #: cms/djangoapps/contentstore/views/export_git.py
@@ -7936,8 +8397,8 @@ msgid "File upload corrupted. Please try again"
 msgstr "نأسف لحدوث خطأ في تحميل الملف. يُرجى إعادة المحاولة."
 
 #: cms/djangoapps/contentstore/views/import_export.py
-msgid "Could not find the course.xml file in the package."
-msgstr "لم نتمكن من إيجاد الملف course.xml في الحزمة."
+msgid "Could not find the {0} file in the package."
+msgstr ""
 
 #: cms/djangoapps/contentstore/views/item.py
 msgid "Invalid data"
@@ -7954,6 +8415,10 @@ msgstr "نسخة مطابقة لـ {0}"
 #: cms/djangoapps/contentstore/views/item.py
 msgid "Duplicate of '{0}'"
 msgstr "نسخة مطابقة لـ ’{0}‘"
+
+#: cms/djangoapps/contentstore/views/item.py
+msgid "Students must score {score}% or higher to access course materials."
+msgstr ""
 
 #: cms/djangoapps/contentstore/views/item.py
 msgid "{section_or_subsection} \"{display_name}\""
@@ -8030,6 +8495,12 @@ msgstr "جاري التحميل"
 msgid "In Progress"
 msgstr "قيد المعالجة"
 
+#. Translators: This is the status for a video that the servers have
+#. successfully processed
+#: cms/djangoapps/contentstore/views/videos.py
+msgid "Ready"
+msgstr ""
+
 #. #-#-#-#-#  django-studio.po (edx-platform)  #-#-#-#-#
 #. Translators: This is the status for a video that the servers have failed to
 #. process
@@ -8048,6 +8519,12 @@ msgstr ""
 #: cms/djangoapps/contentstore/views/videos.py
 msgid "Invalid Token"
 msgstr "إشارة غير صالحة"
+
+#. Translators: This is the status for a video that was included in a course
+#. import
+#: cms/djangoapps/contentstore/views/videos.py
+msgid "Imported"
+msgstr ""
 
 #. Translators: This is the status for a video that is in an unknown state
 #: cms/djangoapps/contentstore/views/videos.py
@@ -8224,21 +8701,6 @@ msgstr "مثال:  username@domain.com "
 msgid "Forgot password?"
 msgstr "هل نسيت كلمة السر؟"
 
-#: cms/templates/manage_users.html cms/templates/manage_users_lib.html
-#: lms/templates/courseware/legacy_instructor_dashboard.html
-msgid "Admin"
-msgstr "مشرف"
-
-#: cms/templates/manage_users.html cms/templates/manage_users_lib.html
-#: lms/templates/courseware/course_navigation.html
-#: lms/templates/discussion/_underscore_templates.html
-msgid "Staff"
-msgstr "طاقم المساق"
-
-#: cms/templates/manage_users_lib.html lms/templates/folditchallenge.html
-msgid "User"
-msgstr "المستخدم"
-
 #. Translators: This is the placeholder text for a field that requests the
 #. user's full name.
 #: cms/templates/register.html lms/templates/register.html
@@ -8295,10 +8757,16 @@ msgstr ""
 "تفضّل بزيارة {link_start}لوحة المعلومات{link_end} الخاصة بحسابك لرؤية "
 "مساقاتك."
 
+#. Translators: 'Open edX' is a brand, please keep this untranslated. See
+#. http://openedx.org for more information.
 #: cms/templates/widgets/footer.html lms/templates/footer-edx-new.html
-#: lms/templates/footer.html lms/templates/static_templates/privacy.html
-msgid "Privacy Policy"
-msgstr "سياسة الخصوصية"
+#: lms/templates/footer.html
+msgid "Powered by Open edX"
+msgstr "تُديره Open edX"
+
+#: cms/templates/widgets/header.html lms/templates/courseware/courseware.html
+msgid "Course Navigation"
+msgstr "تصفّح المساق"
 
 #: cms/templates/widgets/header.html lms/templates/help_modal.html
 #: lms/templates/navigation-edx.html lms/templates/navigation.html
@@ -8414,6 +8882,22 @@ msgid "Dashboard"
 msgstr "لوحة المعلومات"
 
 #: lms/templates/dashboard.html
+msgid "Current Courses"
+msgstr "المساقات الحالية"
+
+#: lms/templates/dashboard.html
+msgid "Looks like you haven't enrolled in any courses yet."
+msgstr "يبدو أنّك لم تسجِّل في أي مساق حتى الآن."
+
+#: lms/templates/dashboard.html
+msgid "Find courses now!"
+msgstr "استكشف المساقات الآن!"
+
+#: lms/templates/dashboard.html
+msgid "Course-loading errors"
+msgstr "الأخطاء الخاصة بتحميل المساقات "
+
+#: lms/templates/dashboard.html
 #: lms/templates/dashboard/_dashboard_info_language.html
 msgid "edit"
 msgstr "تعديل"
@@ -8430,12 +8914,12 @@ msgstr "الحسابات المترابطة"
 #: lms/templates/dashboard.html
 #: lms/templates/student_profile/third_party_auth.html
 msgid "Linked"
-msgstr "مرتبط بمواقع أخرى"
+msgstr "مربوط"
 
 #: lms/templates/dashboard.html
 #: lms/templates/student_profile/third_party_auth.html
 msgid "Not Linked"
-msgstr "غير مرتبط بمواقع أخرى"
+msgstr "غير مربوط"
 
 #. Translators: clicking on this removes the link between a user's edX account
 #. and their account with an external authentication provider (like Google or
@@ -8443,7 +8927,7 @@ msgstr "غير مرتبط بمواقع أخرى"
 #: lms/templates/dashboard.html
 #: lms/templates/student_profile/third_party_auth.html
 msgid "Unlink"
-msgstr "فكّ الارتباط بمواقع أخرى"
+msgstr "افصل"
 
 #. Translators: clicking on this creates a link between a user's edX account
 #. and their account with an external authentication provider (like Google or
@@ -8451,7 +8935,7 @@ msgstr "فكّ الارتباط بمواقع أخرى"
 #: lms/templates/dashboard.html
 #: lms/templates/student_profile/third_party_auth.html
 msgid "Link"
-msgstr "الارتباط بمواقع أخرى"
+msgstr "اربط"
 
 #: lms/templates/dashboard.html
 msgid "Order History"
@@ -8460,22 +8944,6 @@ msgstr "تاريخ الطلب"
 #: lms/templates/dashboard.html
 msgid "Reset Password"
 msgstr "إعادة ضبط كلمة السر"
-
-#: lms/templates/dashboard.html
-msgid "Current Courses"
-msgstr "المساقات الحالية"
-
-#: lms/templates/dashboard.html
-msgid "Looks like you haven't enrolled in any courses yet."
-msgstr "يبدو أنّك لم تسجِّل في أي مساق حتى الآن."
-
-#: lms/templates/dashboard.html
-msgid "Find courses now!"
-msgstr "استكشف المساقات الآن!"
-
-#: lms/templates/dashboard.html
-msgid "Course-loading errors"
-msgstr "الأخطاء الخاصة بتحميل المساقات "
 
 #: lms/templates/dashboard.html
 msgid "Email Settings for {course_number}"
@@ -8632,6 +9100,7 @@ msgid "Due:"
 msgstr "تاريخ الاستحقاق:"
 
 #: lms/templates/folditbasic.html
+#: lms/templates/instructor/instructor_dashboard_2/certificates.html
 msgid "Status:"
 msgstr "الحالة:"
 
@@ -8659,6 +9128,10 @@ msgstr "مقدَّم "
 #: lms/templates/folditchallenge.html
 msgid "Puzzle Leaderboard"
 msgstr "قائمة المتصدِّرين في حلّ اللغز "
+
+#: lms/templates/folditchallenge.html
+msgid "User"
+msgstr "المستخدم"
 
 #: lms/templates/footer-edx-new.html
 msgid "About edX"
@@ -8735,36 +9208,6 @@ msgstr "وظائف شاغرة في edX"
 msgid "Follow Us"
 msgstr "تابعونا على:"
 
-#. Translators: This is the website name of www.twitter.com. Please
-#. translate this the way that Twitter advertises in your language.
-#: lms/templates/footer-edx-new.html
-msgid "Twitter"
-msgstr "تويتر"
-
-#. Translators: This is the website name of www.facebook.com. Please
-#. translate this the way that Facebook advertises in your language.
-#: lms/templates/footer-edx-new.html
-msgid "Facebook"
-msgstr "فيسبوك"
-
-#. Translators: This is the website name of www.meetup.com. Please
-#. translate this the way that Meetup advertises in your language.
-#: lms/templates/footer-edx-new.html
-msgid "Meetup"
-msgstr "ميت آب"
-
-#. Translators: This is the website name of www.linked.com. Please
-#. translate this the way that LinkedIn advertises in your language.
-#: lms/templates/footer-edx-new.html
-msgid "LinkedIn"
-msgstr "لينكد إن"
-
-#. Translators: This is the website name of plus.google.com. Please
-#. translate this the way that Google+ advertises in your language.
-#: lms/templates/footer-edx-new.html
-msgid "Google+"
-msgstr "جوجل+"
-
 #: lms/templates/footer-edx-new.html
 msgid "Mobile Apps"
 msgstr "تطبيقات الهاتف المحمول"
@@ -8792,12 +9235,6 @@ msgid ""
 msgstr ""
 "{tos_link_start}شروط الخدمة{tos_link_end} و{honor_link_start}ميثاق "
 "الشرف{honor_link_end}"
-
-#. Translators: 'Open edX' is a brand, please keep this untranslated. See
-#. http://openedx.org for more information.
-#: lms/templates/footer.html
-msgid "Powered by Open edX"
-msgstr "تُديره Open edX"
 
 #: lms/templates/forgot_password_modal.html
 msgid "Password Reset"
@@ -9244,6 +9681,10 @@ msgstr ""
 msgid "Raw data:"
 msgstr "البيانات الأوّلية:"
 
+#: lms/templates/navigation-edx.html
+msgid "Home Page"
+msgstr ""
+
 #: lms/templates/navigation-edx.html lms/templates/navigation.html
 msgid "How it Works"
 msgstr "كيفية العمل"
@@ -9306,6 +9747,10 @@ msgid "You do not have any notes."
 msgstr "ليس لديك أي ملاحظات."
 
 #: lms/templates/problem.html
+msgid "your answer"
+msgstr ""
+
+#: lms/templates/problem.html
 msgid "Reset"
 msgstr "إعادة الضبط"
 
@@ -9315,10 +9760,6 @@ msgstr "إعادة الضبط"
 #: lms/templates/verify_student/face_upload.html
 msgid "Save"
 msgstr "حفظ"
-
-#: lms/templates/problem.html
-msgid "Reveal Answer"
-msgstr "الكشف عن الإجابة:"
 
 #: lms/templates/problem.html
 msgid "You have used {num_used} of {num_total} submissions"
@@ -9515,10 +9956,6 @@ msgstr ""
 #: lms/templates/register.html
 msgid "Please complete the following fields to register for an account. "
 msgstr "يُرجى إكمال الحقول التالية للتسجيل وإنشاء حساب."
-
-#: lms/templates/register.html
-msgid "Needed for any certificates you may earn"
-msgstr "مطلوب لأي شهادة قد تنالها "
 
 #: lms/templates/register.html
 msgid "cannot be changed later"
@@ -9727,6 +10164,10 @@ msgstr "كتاب المساق {course_number} "
 #: lms/templates/staticbook.html
 msgid "Textbook Navigation"
 msgstr "تصفّح الكتاب"
+
+#: lms/templates/staticbook.html
+msgid "Page"
+msgstr ""
 
 #: lms/templates/staticbook.html
 msgid "Previous page"
@@ -10202,6 +10643,39 @@ msgstr "احسب"
 msgid "Calculator Output Field"
 msgstr "حقل مخرجات الآلة الحاسبة"
 
+#: lms/templates/certificates/invalid.html
+msgid "This is an invalid certificate number"
+msgstr ""
+
+#: lms/templates/certificates/invalid.html
+msgid "This Certificate Does Not Exist"
+msgstr ""
+
+#: lms/templates/certificates/invalid.html
+msgid ""
+"We cannot find a certificate on file that matches this URL or ID number."
+msgstr ""
+
+#: lms/templates/certificates/invalid.html
+msgid "Looking for a Particular Certificate?"
+msgstr ""
+
+#: lms/templates/certificates/invalid.html
+msgid ""
+"Ensure that the ID number is an exact match of the ID number on the PDF or "
+"print certificate you are referencing."
+msgstr ""
+
+#: lms/templates/certificates/invalid.html
+msgid ""
+"If you are trying to validate a certificate with this ID number, it may be a"
+" forgery."
+msgstr ""
+
+#: lms/templates/certificates/valid.html
+msgid "Certificate Type"
+msgstr ""
+
 #: lms/templates/chat/toggle_chat.html
 msgid "Open Chat"
 msgstr "فتح الشات"
@@ -10451,6 +10925,10 @@ msgid "View About Page in studio"
 msgstr "استعراض صفحة اللمحة في استوديو"
 
 #: lms/templates/courseware/course_about.html
+msgid "Course About"
+msgstr ""
+
+#: lms/templates/courseware/course_about.html
 msgid "Overview"
 msgstr "لمحة عامة"
 
@@ -10526,7 +11004,7 @@ msgstr "تسجيل"
 #: lms/templates/courseware/course_about.html
 #: lms/templates/courseware/mktg_course_about.html
 msgid "enroll"
-msgstr ""
+msgstr "تسجيل"
 
 #: lms/templates/courseware/course_navigation.html
 msgid "Course View"
@@ -10535,6 +11013,11 @@ msgstr ""
 #: lms/templates/courseware/course_navigation.html
 msgid "View this course as:"
 msgstr "مشاهدة هذا المساق كـ:"
+
+#: lms/templates/courseware/course_navigation.html
+#: lms/templates/discussion/_underscore_templates.html
+msgid "Staff"
+msgstr "طاقم المساق"
 
 #: lms/templates/courseware/course_navigation.html
 msgid "Student in {content_group}"
@@ -10593,28 +11076,30 @@ msgid "{course_number} Courseware"
 msgstr "محتويات المساق {course_number}"
 
 #: lms/templates/courseware/courseware.html
-msgid "Return to Exam"
-msgstr "العودة إلى الامتحان "
-
-#: lms/templates/courseware/courseware.html
 msgid "Course Search"
 msgstr ""
 
 #: lms/templates/courseware/courseware.html
 msgid "search"
-msgstr ""
+msgstr "بحث"
 
 #: lms/templates/courseware/courseware.html
 msgid "Clear search"
 msgstr ""
 
 #: lms/templates/courseware/courseware.html
-msgid "Course Navigation"
-msgstr "تصفّح المساق"
-
-#: lms/templates/courseware/courseware.html
 msgid "No content has been added to this course"
 msgstr "لم يُضاف أي محتوى إلى هذا المساق بعد"
+
+#: lms/templates/courseware/courseware.html
+msgid ""
+"To access course materials, you must score {required_score}% or higher on "
+"this                 exam. Your current score is {current_score}%."
+msgstr ""
+
+#: lms/templates/courseware/courseware.html
+msgid "Your score is {current_score}%. You have passed the entrance exam."
+msgstr ""
 
 #: lms/templates/courseware/courseware.html
 msgid "Course Utilities"
@@ -10705,6 +11190,10 @@ msgstr ""
 #: lms/templates/courseware/legacy_instructor_dashboard.html
 msgid "Psychometrics"
 msgstr "المقاييس النفسية "
+
+#: lms/templates/courseware/legacy_instructor_dashboard.html
+msgid "Admin"
+msgstr "مشرف"
 
 #: lms/templates/courseware/legacy_instructor_dashboard.html
 msgid "Forum Admin"
@@ -10983,6 +11472,7 @@ msgid "About {course_id}"
 msgstr "لمحة عن {course_id} "
 
 #: lms/templates/courseware/mktg_coming_soon.html
+#: lms/templates/dashboard/_dashboard_course_listing.html
 msgid "Coming Soon"
 msgstr "قريبًا"
 
@@ -11050,9 +11540,17 @@ msgid "Course Progress for Student '{username}' ({email})"
 msgstr "تقدّم عمل الطالب '{username}' ({email}) على المساق"
 
 #: lms/templates/courseware/progress.html
+msgid "Your certificate is available"
+msgstr ""
+
+#: lms/templates/courseware/progress.html
 msgid ""
-"You can download your certificate as a PDF. You can then print your "
-"certificate or share it with others."
+"You can now download your certificate as a PDF. If you keep working and "
+"receive a higher grade, you can request an updated certificate."
+msgstr ""
+
+#: lms/templates/courseware/progress.html
+msgid "PDF will open in a new browser window or tab."
 msgstr ""
 
 #: lms/templates/courseware/progress.html
@@ -11060,7 +11558,26 @@ msgid "Download Your Certificate"
 msgstr ""
 
 #: lms/templates/courseware/progress.html
-msgid "Create Your Certificate"
+msgid "We're working on it..."
+msgstr ""
+
+#: lms/templates/courseware/progress.html
+msgid ""
+"We're creating your certificate. You can keep working in your courses and a "
+"link to it will appear here and on your Dashboard when it is ready."
+msgstr ""
+
+#: lms/templates/courseware/progress.html
+msgid "Congratulations, you qualified for a certificate!"
+msgstr ""
+
+#: lms/templates/courseware/progress.html
+msgid ""
+"You can keep working for a higher grade, or request your certificate now."
+msgstr ""
+
+#: lms/templates/courseware/progress.html
+msgid "Request Certificate"
 msgstr ""
 
 #: lms/templates/courseware/progress.html
@@ -11196,73 +11713,73 @@ msgid "{course_number} {course_name} Cover Image"
 msgstr "صورة الغلاف {course_number} {course_name} "
 
 #: lms/templates/dashboard/_dashboard_course_listing.html
-msgid "Your verification is pending"
-msgstr "عملية التحقّق من هويّتك معلَّقة "
-
-#: lms/templates/dashboard/_dashboard_course_listing.html
 msgid "Enrolled as: "
 msgstr "مسجَّل كـ: "
 
-#. Translators: This text describes that the student has enrolled for a
-#. Verified Certificate, but verification of identity is pending.
 #: lms/templates/dashboard/_dashboard_course_listing.html
-msgid "ID verification pending"
-msgstr "عملية التحقّق من هويّة الطالب معلَّقة "
-
-#. Translators: The student is enrolled for a Verified Certificate, but
-#. verification of identity is pending.
-#: lms/templates/dashboard/_dashboard_course_listing.html
-msgid "Verified: Pending Verification"
-msgstr "شهادة موثَّقة: عملية التحقّق من هويّة الطالب معلَّقة "
+msgid "Ended - {end_date}"
+msgstr ""
 
 #: lms/templates/dashboard/_dashboard_course_listing.html
-msgid "You're enrolled as a verified student"
-msgstr "أنت مسجَّل كطالب لشهادة موثَّقة"
+msgid "Started - {start_date}"
+msgstr ""
 
 #: lms/templates/dashboard/_dashboard_course_listing.html
-msgid "ID Verified Ribbon/Badge"
-msgstr "شارة الطالب الذي جرى التحقّق من هويّته"
+msgid "Starts - {start_date}"
+msgstr ""
 
 #: lms/templates/dashboard/_dashboard_course_listing.html
-#: lms/templates/instructor/instructor_dashboard_2/course_info.html
-msgid "Verified"
-msgstr "موثَّقة"
+msgid "View Archived Course"
+msgstr "استعراض المساق المحفوظ في الأرشيف"
 
 #: lms/templates/dashboard/_dashboard_course_listing.html
-msgid "You're enrolled as an honor code student"
-msgstr "أنت مسجَّل كطالب لشهادة ميثاق الشرف"
+#: lms/templates/shoppingcart/registration_code_receipt.html
+msgid "View Course"
+msgstr "استعراض المساق "
 
 #: lms/templates/dashboard/_dashboard_course_listing.html
-msgid "You're auditing this course"
-msgstr "أنت مسجَّل في هذا المساق كمستمع."
+msgid "Share on Facebook"
+msgstr ""
 
 #: lms/templates/dashboard/_dashboard_course_listing.html
-msgid "Auditing"
-msgstr "الحضور بصفة مستمع"
+msgid "I'm learning on {platform_name}:"
+msgstr ""
 
 #: lms/templates/dashboard/_dashboard_course_listing.html
-msgid "You're enrolled as a professional education student"
-msgstr "أنت مسجَّل كطالب تعليم مهني."
+msgid "Share on Twitter"
+msgstr ""
 
 #: lms/templates/dashboard/_dashboard_course_listing.html
-msgid "Professional Ed"
-msgstr "التعليم المهني"
+msgid "Course options dropdown"
+msgstr ""
 
 #: lms/templates/dashboard/_dashboard_course_listing.html
-msgid "Course Completed - {end_date}"
-msgstr "تاريخ استكمال المساق - {end_date} "
+msgid "Additional Actions Menu"
+msgstr ""
 
 #: lms/templates/dashboard/_dashboard_course_listing.html
-msgid "Course Started - {start_date}"
-msgstr "تاريخ بدء المساق - {start_date} "
+msgid "Available Actions"
+msgstr ""
 
 #: lms/templates/dashboard/_dashboard_course_listing.html
-msgid "Course has not yet started"
-msgstr "لم يبدأ المساق بعد"
+msgid "Are you sure you want to unenroll from the purchased course"
+msgstr "هل أنت متأكّد من رغبتك في إلغاء التسجيل في المساق الذي اشتريته"
 
 #: lms/templates/dashboard/_dashboard_course_listing.html
-msgid "Course Starts - {start_date}"
-msgstr "يبدأ المساق - {start_date} "
+msgid "Are you sure you want to unenroll from"
+msgstr "هل أنت متأكّد من رغبتك في إلغاء التسجيل في "
+
+#: lms/templates/dashboard/_dashboard_course_listing.html
+msgid ""
+"Are you sure you want to unenroll from the verified {cert_name_long} track "
+"of"
+msgstr ""
+"هل أنت متأكّد من رغبتك في إلغاء التسجيل في مسار الشهادة الموثَّقة "
+"{cert_name_long} لـ"
+
+#: lms/templates/dashboard/_dashboard_course_listing.html
+msgid "Email Settings"
+msgstr "إعدادات عنوان البريد الإلكتروني "
 
 #: lms/templates/dashboard/_dashboard_course_listing.html
 msgid "Verification not yet complete."
@@ -11271,12 +11788,12 @@ msgstr "لم يكتمل التحقّق بعد."
 #: lms/templates/dashboard/_dashboard_course_listing.html
 msgid "You only have {days} day left to verify for this course."
 msgid_plural "You only have {days} days left to verify for this course."
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
-msgstr[4] ""
-msgstr[5] ""
+msgstr[0] "لم يتبقى لديك أي {days} يوم لتثبيت هذا المساق."
+msgstr[1] "تبقى لديك يوم واحد {days} فقط لتثبيت هذا المساق."
+msgstr[2] "تبقى لديك يومان {days} فقط لتثبيت هذا المساق."
+msgstr[3] "تبقى لديك {days} أيام فقط لتثبيت هذا المساق."
+msgstr[4] "تبقى لديك {days} أيام فقط لتثبيت هذا المساق."
+msgstr[5] "تبقّى لديك {days} أيام فقط لتجري عملية التحقق لهذا المساق."
 
 #: lms/templates/dashboard/_dashboard_course_listing.html
 msgid "Almost there!"
@@ -11350,35 +11867,6 @@ msgstr ""
 "يمكنك {contact_link_start}الاتصال بصاحب الحساب{contact_link_end} لطلب "
 "الدفعة، أو يمكنك {unenroll_link_start}إلغاء التسجيل{unenroll_link_end} في "
 "هذا المساق."
-
-#: lms/templates/dashboard/_dashboard_course_listing.html
-msgid "View Archived Course"
-msgstr "استعراض المساق المحفوظ في الأرشيف"
-
-#: lms/templates/dashboard/_dashboard_course_listing.html
-#: lms/templates/shoppingcart/registration_code_receipt.html
-msgid "View Course"
-msgstr "استعراض المساق "
-
-#: lms/templates/dashboard/_dashboard_course_listing.html
-msgid "Are you sure you want to unenroll from the purchased course"
-msgstr "هل أنت متأكّد من رغبتك في إلغاء التسجيل في المساق الذي اشتريته"
-
-#: lms/templates/dashboard/_dashboard_course_listing.html
-msgid "Are you sure you want to unenroll from"
-msgstr "هل أنت متأكّد من رغبتك في إلغاء التسجيل في "
-
-#: lms/templates/dashboard/_dashboard_course_listing.html
-msgid ""
-"Are you sure you want to unenroll from the verified {cert_name_long} track "
-"of"
-msgstr ""
-"هل أنت متأكّد من رغبتك في إلغاء التسجيل في مسار الشهادة الموثَّقة "
-"{cert_name_long} لـ"
-
-#: lms/templates/dashboard/_dashboard_course_listing.html
-msgid "Email Settings"
-msgstr "إعدادات عنوان البريد الإلكتروني "
 
 #: lms/templates/dashboard/_dashboard_prompt_midcourse_reverify.html
 #: lms/templates/verify_student/prompt_midcourse_reverify.html
@@ -12094,21 +12582,22 @@ msgstr "شكرًا على تسجيلك في {platform_name}."
 
 #: lms/templates/emails/activation_email.txt
 msgid ""
-"To get started, please activate your account by clicking on the link below "
-"(you may also copy and paste the link into your browser's address bar)."
+"Change your life and start learning today by activating your {platform_name}"
+" account. Click on the link below or copy and paste it into your browser's "
+"address bar."
 msgstr ""
-"للبدء، يُرجى منك تفعيل حسابك عبر النقر على الرابط أدناه (يمكنك أيضًا أن تنسخ"
-" الرابط وتلصقه على شريط عنوان متصفّحك)."
 
 #: lms/templates/emails/activation_email.txt
 msgid ""
-"Activation ensures that you can register for {platform_name} courses and "
-"access the courseware. If you require assistance, please use our web form at"
-" {contact_us} or email {info_address}."
+"After you activate your account, you can sign up for and take any of the "
+"hundreds of courses {platform_name} offers."
 msgstr ""
-"يضمن لك تفعيل حسابك إمكانية التسجيل في مساقات {platform_name} واستخدام "
-"محتوياتها. وإذا احتجتَ إلى أي مساعدة، يُرجى مراسلتنا عبر ملء الاستمارة "
-"الإلكترونية في {contact_us} أو على عنوان البريد الإلكتروني {info_address}."
+
+#: lms/templates/emails/activation_email.txt
+msgid ""
+"If you need help, please use our web form at {contact_us_url} or email "
+"{info_email_address}."
+msgstr ""
 
 #: lms/templates/emails/activation_email.txt
 msgid "We hope you enjoy learning with {platform_name}!"
@@ -12122,14 +12611,8 @@ msgstr "فريق {platform_name}"
 #: lms/templates/emails/activation_email.txt
 msgid ""
 "This email was automatically sent by {site_name} because someone attempted "
-"to create an {platform_name} account using this email address. If you did "
-"not attempt to create this account and do not activate the account, you will"
-" no longer receive emails from {platform_name}."
+"to create an {platform_name} account using this email address."
 msgstr ""
-"أُرسلت هذه الرسالة الإلكترونية تلقائيًا من موقع {site_name} بسبب محاولة "
-"أحدهم أن ينشئ حسابًا على {platform_name} باستخدام عنوان البريد الإلكتروني "
-"هذا. فإذا لم تكن أنت من قام بهذه المحاولة ولم تفعّل الحساب، لن تتلقّى أي "
-"رسائل أخرى من {platform_name}."
 
 #: lms/templates/emails/activation_email.txt
 #: lms/templates/emails/email_change.txt
@@ -12319,40 +12802,48 @@ msgid ""
 "To enroll in ${course_names} we have provided a registration URL for you.  "
 "Please follow the instructions below to claim your access."
 msgstr ""
+"للتسجيل في المساقات ${course_names}، أعددنا لك رابط تسجيل، ويُرجى منك اتباع "
+"التعليمات التالية لتتمكّن من الدخول."
 
 #: lms/templates/emails/business_order_confirmation_email.txt
 msgid "Your redeem url is: [[Enter Redeem URL here from the attached CSV]]"
 msgstr ""
+"رابط الاسترداد الخاص بمساقك هو: [[أدخل رابط الاسترداد هنا من ملف CSV "
+"المرفَق]]"
 
 #: lms/templates/emails/business_order_confirmation_email.txt
 msgid "(1) Register for an account at {site_name}"
-msgstr ""
+msgstr "(1) أنشئ حسابًا على موقع {site_name}"
 
 #: lms/templates/emails/business_order_confirmation_email.txt
 msgid ""
 "(2) Once registered, copy the redeem URL and paste it in your web browser."
-msgstr ""
+msgstr "(2) بعد التسجيل، يُرجى نسخ رابط الاسترداد ولصقه على متصفّحك."
 
 #: lms/templates/emails/business_order_confirmation_email.txt
 msgid ""
 "(3) On the enrollment confirmation page, Click the 'Activate Enrollment "
 "Code' button. This will show the enrollment confirmation."
 msgstr ""
+"(3) انقر زر ’تفعيل رمز التسجيل‘ في صفحة تأكيد التسجيل، ليظهر التأكيد على "
+"تسجيلك."
 
 #: lms/templates/emails/business_order_confirmation_email.txt
 msgid ""
 "(4) You should be able to click on 'view course' button or see your course "
 "on your student dashboard at {url}"
 msgstr ""
+"(4) يجب أن تتمكّن من النقر على زر \"عرض المساق\" أو أن ترى مساقك على لوحة "
+"معلومات طالبك عبر الرابط {url}"
 
 #: lms/templates/emails/business_order_confirmation_email.txt
 msgid ""
 "(5) Course materials will not be available until the course start date."
-msgstr ""
+msgstr "(5) لن تُتاح محتويات المساق قبل أن يحين تاريخ بدء المساق."
 
 #: lms/templates/emails/business_order_confirmation_email.txt
 msgid "<p>Sincerely,</p><p>[[Your Signature]]</p>"
-msgstr ""
+msgstr "<p>المخلص،</p><p>[[توقيعك]]</p>"
 
 #: lms/templates/emails/confirm_email_change.txt
 msgid ""
@@ -12488,11 +12979,13 @@ msgid ""
 "Your payment was successful. You will see the charge below on your next "
 "credit or debit card statement under the company name {merchant_name}."
 msgstr ""
+"جرت عملية الدفع بنجاح. سترى قيمة السداد أدناه على كشف الحساب الخاص ببطاقتك "
+"الإئتمانية أو بطاقة الخصومات تحت اسم الشركة {merchant_name}."
 
 #: lms/templates/emails/order_confirmation_email.txt
 #: lms/templates/emails/photo_submission_confirmation.txt
 msgid "Thank you,"
-msgstr ""
+msgstr "شكرًا لك،"
 
 #: lms/templates/emails/order_confirmation_email.txt
 msgid "Your order number is: {order_number}"
@@ -12500,11 +12993,11 @@ msgstr "رقم طلبك هو : {order_number}"
 
 #: lms/templates/emails/photo_submission_confirmation.txt
 msgid "Hi {full_name},"
-msgstr ""
+msgstr "مرحبًا {full_name}،"
 
 #: lms/templates/emails/photo_submission_confirmation.txt
 msgid "Thanks for submitting your photos!"
-msgstr ""
+msgstr "شكرًا لك على تقديم صورك!"
 
 #: lms/templates/emails/photo_submission_confirmation.txt
 msgid ""
@@ -12514,7 +13007,7 @@ msgstr ""
 
 #: lms/templates/emails/photo_submission_confirmation.txt
 msgid "The {platform_name} team"
-msgstr ""
+msgstr "فريق المساق {platform_name}"
 
 #: lms/templates/emails/registration_codes_sale_email.txt
 msgid "Thank you for your purchase of {course_name}!"
@@ -12525,6 +13018,8 @@ msgid ""
 "An invoice for {currency_symbol}{total_price} is attached. Payment is due "
 "immediately.  Information on payment methods can be found on the invoice."
 msgstr ""
+"يُرجى رؤية الفاتورة المرفقة وقيمتها {currency_symbol} {total_price}. الدفع "
+"واجب فورًا. وتوجد على الفاتورة معلومات طرق الدفع."
 
 #: lms/templates/emails/registration_codes_sale_email.txt
 msgid ""
@@ -12543,6 +13038,8 @@ msgid ""
 "Thanks,\n"
 "The {platform_name} Team"
 msgstr ""
+"شكرًا،\n"
+"فريق المساق {platform_name}"
 
 #. Translators: please translate the text inside [[ ]]. This is meant as a
 #. template for course teams to use.
@@ -12577,6 +13074,8 @@ msgid ""
 "Sincerely,\n"
 "[[Your Signature]]"
 msgstr ""
+"المخلص،\n"
+"[[توقيعك]]"
 
 #: lms/templates/emails/registration_codes_sale_invoice_attachment.txt
 msgid "INVOICE"
@@ -12604,7 +13103,7 @@ msgstr "الرقم المرجعي للعميل: {reference_number}$"
 
 #: lms/templates/emails/registration_codes_sale_invoice_attachment.txt
 msgid "Balance Due: {currency_symbol}{sale_price}"
-msgstr ""
+msgstr "المبلغ المستحق: {currency_symbol}{sale_price}"
 
 #: lms/templates/emails/registration_codes_sale_invoice_attachment.txt
 msgid "Course: {course_name}"
@@ -12616,10 +13115,12 @@ msgid ""
 "Sub-Total:    {currency_symbol}{sub_total}  Discount:  "
 "{currency_symbol}{discount}"
 msgstr ""
+"السعر: {currency_symbol}{course_price} الكمية: {quantity} المجموع الجزئي: "
+"{currency_symbol}{sub_total} الخصم: {currency_symbol}{discount}"
 
 #: lms/templates/emails/registration_codes_sale_invoice_attachment.txt
 msgid "Total:      {currency_symbol}{sale_price}"
-msgstr ""
+msgstr "المجموع: {currency_symbol}{sale_price}"
 
 #: lms/templates/emails/registration_codes_sale_invoice_attachment.txt
 msgid "Payment instructions"
@@ -12831,6 +13332,52 @@ msgstr "نسبة الخصم"
 
 #: lms/templates/instructor/instructor_dashboard_2/add_coupon_modal.html
 msgid "Add expiration date"
+msgstr "إضافة تاريخ انتهاء الاستحقاق"
+
+#: lms/templates/instructor/instructor_dashboard_2/certificates.html
+msgid "Example Certificates"
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/certificates.html
+msgid "Generate example certificates for the course."
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/certificates.html
+msgid "Generate Example Certificates"
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/certificates.html
+msgid "Generating example {name} certificate"
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/certificates.html
+msgid "Error generating example {name} certificate: {error}"
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/certificates.html
+msgid "View {name} certificate"
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/certificates.html
+msgid "Refresh Status"
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/certificates.html
+msgid "Student-Generated Certificates"
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/certificates.html
+msgid "Disable Student-Generated Certificates"
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/certificates.html
+msgid "Enable Student-Generated Certificates"
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/certificates.html
+msgid ""
+"You must successfully generate example certificates before you enable "
+"student-generated certificates."
 msgstr ""
 
 #: lms/templates/instructor/instructor_dashboard_2/course_info.html
@@ -13037,31 +13584,31 @@ msgstr ""
 #: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
 #: lms/templates/instructor/instructor_dashboard_2/generate_registarion_codes_modal.html
 msgid "Create Enrollment Codes"
-msgstr ""
+msgstr "إنشاء رموز التسجيل"
 
 #: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
 msgid "Download a .csv file of all enrollment codes for this course"
-msgstr ""
+msgstr "تنزيل ملف .csv بجميع رموز التسجيل الخاصة بهذا المساق "
 
 #: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
 msgid "Download All Enrollment Codes"
-msgstr ""
+msgstr "تنزيل جميع رموز التسجيل"
 
 #: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
 msgid "Download a .csv file of all unused enrollment codes for this course"
-msgstr ""
+msgstr "تنزيل ملف csv. بجميع رموز التسجيل غير المستخدمة الخاصة بهذا المساق"
 
 #: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
 msgid "Download Unused Enrollment Codes"
-msgstr ""
+msgstr "تنزيل رموز التسجيل غير المستخدمة"
 
 #: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
 msgid "Download a .csv file of all used enrollment codes for this course"
-msgstr ""
+msgstr "تنزيل ملف csv. بجميع رموز التسجيل المستخدمة الخاصة بهذا المساق"
 
 #: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
 msgid "Download Used Enrollment Codes"
-msgstr ""
+msgstr "تنزيل رموز التسجيل المستخدمة"
 
 #: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
 #: lms/templates/instructor/instructor_dashboard_2/set_course_mode_price_modal.html
@@ -13083,7 +13630,7 @@ msgstr "المبيعات"
 
 #: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
 msgid "Total Credit Card Purchases: "
-msgstr ""
+msgstr "مجموع مشتريات بطاقة الإئتمان:"
 
 #: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
 msgid ""
@@ -13093,7 +13640,7 @@ msgstr ""
 
 #: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
 msgid "Download All Invoices"
-msgstr ""
+msgstr "تنزيل جميع الفواتير"
 
 #: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
 msgid "Download All Credit Card Purchases"
@@ -13105,15 +13652,15 @@ msgstr ""
 
 #: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
 msgid "Invoice Number"
-msgstr ""
+msgstr "رقم الفاتورة"
 
 #: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
 msgid "Cancel Invoice"
-msgstr ""
+msgstr "إلغاء الفاتورة"
 
 #: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
 msgid "Resubmit Invoice"
-msgstr ""
+msgstr "إعادة تقديم الفاتورة"
 
 #: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
 msgid "Coupons List"
@@ -13133,7 +13680,7 @@ msgstr "معلومات القسائم"
 
 #: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
 msgid "Expiry Date"
-msgstr ""
+msgstr "تاريخ انتهاء الاستحقاق"
 
 #: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
 msgid "Discount (%)"
@@ -13145,15 +13692,15 @@ msgstr ""
 
 #: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
 msgid "{code}"
-msgstr ""
+msgstr "{code}"
 
 #: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
 msgid "{description}"
-msgstr ""
+msgstr "{description}"
 
 #: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
 msgid "{discount}"
-msgstr ""
+msgstr "{discount}"
 
 #: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
 msgid "Invoice number should not be empty."
@@ -13161,7 +13708,7 @@ msgstr "لا يمكن أن يُترَك رقم الفاتورة فارغًا."
 
 #: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
 msgid "Never Expires"
-msgstr ""
+msgstr "لا يستحقّ أبدًا"
 
 #: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
 msgid "Please enter the company name"
@@ -13261,7 +13808,7 @@ msgstr "مثال: A123DS"
 
 #: lms/templates/instructor/instructor_dashboard_2/edit_coupon_modal.html
 msgid "Expiration Date"
-msgstr ""
+msgstr "تاريخ انتهاء الاستحقاق"
 
 #: lms/templates/instructor/instructor_dashboard_2/extensions.html
 msgid "Individual due date extensions"
@@ -13365,7 +13912,7 @@ msgstr "إنشاء نموذج رموز التسجيل"
 
 #: lms/templates/instructor/instructor_dashboard_2/generate_registarion_codes_modal.html
 msgid "* Required Information"
-msgstr ""
+msgstr "* معلومات مطلوبة"
 
 #: lms/templates/instructor/instructor_dashboard_2/generate_registarion_codes_modal.html
 msgid "Organization Name"
@@ -13382,11 +13929,11 @@ msgstr "موظف الاتصال في المنظمة"
 
 #: lms/templates/instructor/instructor_dashboard_2/generate_registarion_codes_modal.html
 msgid "Organization Contact Name"
-msgstr ""
+msgstr "اسم متلقّي الاتصال في المؤسسة"
 
 #: lms/templates/instructor/instructor_dashboard_2/generate_registarion_codes_modal.html
 msgid "The primary contact at the organization"
-msgstr ""
+msgstr "متلقّي الاتصالات الرئيسي في المؤسسة"
 
 #: lms/templates/instructor/instructor_dashboard_2/generate_registarion_codes_modal.html
 msgid "Invoice Recipient"
@@ -13422,7 +13969,7 @@ msgstr "الرمز البريدي"
 
 #: lms/templates/instructor/instructor_dashboard_2/generate_registarion_codes_modal.html
 msgid "Unit Price"
-msgstr ""
+msgstr "سعر الوحدة "
 
 #: lms/templates/instructor/instructor_dashboard_2/generate_registarion_codes_modal.html
 msgid "The price per enrollment purchased"
@@ -13430,7 +13977,7 @@ msgstr ""
 
 #: lms/templates/instructor/instructor_dashboard_2/generate_registarion_codes_modal.html
 msgid "Number of Enrollment Codes"
-msgstr ""
+msgstr "عدد رموز التسجيل"
 
 #: lms/templates/instructor/instructor_dashboard_2/generate_registarion_codes_modal.html
 msgid "The total number of enrollment codes to create"
@@ -13556,7 +14103,7 @@ msgstr ""
 
 #: lms/templates/instructor/instructor_dashboard_2/membership.html
 msgid "Register/Enroll Students"
-msgstr ""
+msgstr "تسجيل الطلاب"
 
 #: lms/templates/instructor/instructor_dashboard_2/membership.html
 msgid ""
@@ -13565,10 +14112,14 @@ msgid ""
 "name, and country. Please include one student per row and do not include any"
 " headers, footers, or blank lines."
 msgstr ""
+"لتسجيل وإلحاق مجموعة مستخدمين في هذا المساق، يُرجى اختيار ملف CSV الذي يحتوي"
+" على الأعمدة التالية بهذا الترتيب بالضبط: عنوان البريد الإلكتروني، واسم "
+"المستخدم، والاسم، والبلد. ويُرجى ذِكر طالب واحد في كل سطر وعدم تضمين أي "
+"ترويسات أو حواشي أو أسطر فارغة."
 
 #: lms/templates/instructor/instructor_dashboard_2/membership.html
 msgid "Upload CSV"
-msgstr ""
+msgstr "تحميل ملف CSV"
 
 #: lms/templates/instructor/instructor_dashboard_2/membership.html
 msgid "Batch Beta Tester Addition"
@@ -14022,6 +14573,10 @@ msgid "Rescore All Problems"
 msgstr ""
 
 #: lms/templates/instructor/instructor_dashboard_2/student_admin.html
+msgid "Let Student Skip Entrance Exam"
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/student_admin.html
 msgid ""
 "You can also delete all of the student's answers and scores for the entire "
 "entrance exam."
@@ -14096,11 +14651,11 @@ msgstr "مفتوح بشكل مشروط"
 
 #: lms/templates/modal/accessible_confirm.html
 msgid "OK"
-msgstr ""
+msgstr "موافق"
 
 #: lms/templates/modal/accessible_confirm.html
 msgid "open"
-msgstr ""
+msgstr "افتح"
 
 #: lms/templates/open_ended_problems/combined_notifications.html
 msgid "{course_number} Combined Notifications"
@@ -14386,25 +14941,27 @@ msgstr ""
 #: lms/templates/shoppingcart/receipt.html
 #: lms/templates/shoppingcart/shopping_cart.html
 msgid "Billing Details"
-msgstr ""
+msgstr "تفاصيل الفوترة"
 
 #: lms/templates/shoppingcart/billing_details.html
 msgid ""
 "You can proceed to payment at any point in time. Any additional information "
 "you provide will be included in your receipt."
 msgstr ""
+"يمكنك متابعة تسديد الدفعة في أي وقت. ومن شأن أي معلومات إضافية تقدّمها أن "
+"تُدرَج في إيصالك."
 
 #: lms/templates/shoppingcart/billing_details.html
 msgid "Purchasing Organizational Details"
-msgstr ""
+msgstr "تفاصيل المؤسسة المشترِية "
 
 #: lms/templates/shoppingcart/billing_details.html
 msgid "Purchasing organization"
-msgstr ""
+msgstr "المؤسسة المشترِية"
 
 #: lms/templates/shoppingcart/billing_details.html
 msgid "Purchase order number (if any)"
-msgstr ""
+msgstr "رقم طلب الشراء (إن وُجد)"
 
 #: lms/templates/shoppingcart/billing_details.html
 msgid "email@example.com"
@@ -14412,27 +14969,29 @@ msgstr "email@example.com"
 
 #: lms/templates/shoppingcart/billing_details.html
 msgid "Additional Receipt Recipient"
-msgstr ""
+msgstr "مستلم الإيصال الإضافي"
 
 #: lms/templates/shoppingcart/billing_details.html
 msgid ""
 "If no additional billing details are populated the payment confirmation will"
 " be sent to the user making the purchase."
 msgstr ""
+"في حال عدم توفير تفاصيل إضافية حول الفوتَرة، سيُرسَل التأكيد على الدفعة إلى "
+"المستخدم الذي يقوم بعملية الشراء."
 
 #: lms/templates/shoppingcart/billing_details.html
 msgid "Payment processing occurs on a separate secure site."
-msgstr ""
+msgstr "تجري معالجة الدفع عبر موقع آمن منفصل."
 
 #: lms/templates/shoppingcart/billing_details.html
 #: lms/templates/shoppingcart/shopping_cart.html
 msgid "Your Shopping cart is currently empty."
-msgstr ""
+msgstr "إنّ عربة تسوّقك فارغة حاليًا."
 
 #: lms/templates/shoppingcart/billing_details.html
 #: lms/templates/shoppingcart/shopping_cart.html
 msgid "View Courses"
-msgstr ""
+msgstr "عرض المساقات"
 
 #: lms/templates/shoppingcart/download_report.html
 msgid "Download CSV Data"
@@ -14478,12 +15037,12 @@ msgstr "لقد حدث خطأ لدى إجراء العملية الخاصة طل�
 
 #: lms/templates/shoppingcart/receipt.html
 msgid "Thank you for your purchase!"
-msgstr ""
+msgstr "شكرًا لك على شرائك!"
 
 #: lms/templates/shoppingcart/receipt.html
 #: lms/templates/shoppingcart/registration_code_redemption.html
 msgid "View Dashboard"
-msgstr ""
+msgstr "عرض لوحة المعلومات"
 
 #: lms/templates/shoppingcart/receipt.html
 msgid ""
@@ -14507,7 +15066,7 @@ msgstr[5] ""
 
 #: lms/templates/shoppingcart/receipt.html
 msgid "The following receipt has been emailed to {receipient_emails}"
-msgstr ""
+msgstr "أُرسِل الإيصال التالي بالبريد الإكتروني إلى {receipient_emails}"
 
 #: lms/templates/shoppingcart/receipt.html
 msgid ""
@@ -14515,62 +15074,65 @@ msgid ""
 "enroll into the course. The confirmation/receipt email you will receive has "
 "an example email template with directions for the individuals enrolling."
 msgstr ""
+"يُرجى إرسال أحد رموز التسجيل الخاصة هذه إلى كل متخصّص ليتمكّن من التسجيل في "
+"المساق، ويوجد في رسالة التأكيد/الإيصال التي ستتلقّاها عبر البريد الإلكتروني "
+"نموذج رسالة إلكترونية وفيه توجيهات حول عملية تسجيل الأفراد."
 
 #: lms/templates/shoppingcart/receipt.html
 msgid "Enrollment Code"
-msgstr ""
+msgstr "رمز التسجيل"
 
 #: lms/templates/shoppingcart/receipt.html
 msgid "Enrollment Link"
-msgstr ""
+msgstr "رابط التسجيل"
 
 #: lms/templates/shoppingcart/receipt.html
 msgid "Used"
-msgstr ""
+msgstr "مستخدَم"
 
 #: lms/templates/shoppingcart/receipt.html
 msgid "Date of purchase"
-msgstr ""
+msgstr "تاريخ الشراء"
 
 #: lms/templates/shoppingcart/receipt.html
 msgid "Print Receipt"
-msgstr ""
+msgstr "طباعة الإيصال"
 
 #: lms/templates/shoppingcart/receipt.html
 msgid "Billed To Details"
-msgstr ""
+msgstr "تفاصيل متلقّي الفاتورة"
 
 #: lms/templates/shoppingcart/receipt.html
 msgid "Company Name"
-msgstr ""
+msgstr "اسم الشركة"
 
 #: lms/templates/shoppingcart/receipt.html
 msgid "Purchase Order Number"
-msgstr ""
+msgstr "رقم طلب الشراء"
 
 #: lms/templates/shoppingcart/receipt.html
 msgid "Company Contact Name"
-msgstr ""
+msgstr "اسم متلقّي الاتصال في الشركة"
 
 #: lms/templates/shoppingcart/receipt.html
 msgid "Company Contact Email"
-msgstr ""
+msgstr "عنوان البريد الإلكتروني لمتلقّي الاتصال في الشركة"
 
 #: lms/templates/shoppingcart/receipt.html
 msgid "Recipient Name"
-msgstr ""
+msgstr "اسم المرسَل له"
 
 #: lms/templates/shoppingcart/receipt.html
 msgid "Recipient Email"
-msgstr ""
+msgstr "عنوان البريد الإلكتروني للمرسَل له"
 
 #: lms/templates/shoppingcart/receipt.html
 msgid "Card Type"
-msgstr ""
+msgstr "نوع البطاقة"
 
 #: lms/templates/shoppingcart/receipt.html
 msgid "Credit Card Number"
-msgstr ""
+msgstr "رقم بطاقة الائتمان"
 
 #: lms/templates/shoppingcart/receipt.html
 msgid "Address 1"
@@ -14590,7 +15152,7 @@ msgstr "التسجيل لـ"
 
 #: lms/templates/shoppingcart/receipt.html
 msgid "Course Dates"
-msgstr ""
+msgstr "تواريخ المساق"
 
 #: lms/templates/shoppingcart/receipt.html
 msgid " {course_name} "
@@ -14599,12 +15161,12 @@ msgstr " {course_name} "
 #: lms/templates/shoppingcart/receipt.html
 #: lms/templates/shoppingcart/shopping_cart.html
 msgid "Price per student:"
-msgstr ""
+msgstr "السعر لكل طالب:"
 
 #: lms/templates/shoppingcart/receipt.html
 #: lms/templates/shoppingcart/shopping_cart.html
 msgid "Discount Applied:"
-msgstr ""
+msgstr "الخصم المطبَّق:"
 
 #. Translators: Please keep the "<del>" and "</del>" tags around your
 #. translation of the word "this" in your translation.
@@ -14634,15 +15196,15 @@ msgstr "تواريخ المساق"
 
 #: lms/templates/shoppingcart/registration_code_receipt.html
 msgid "{course_name}"
-msgstr ""
+msgstr "{course_name}"
 
 #: lms/templates/shoppingcart/registration_code_receipt.html
 msgid "{start_date}"
-msgstr ""
+msgstr "{start_date}"
 
 #: lms/templates/shoppingcart/registration_code_receipt.html
 msgid "{end_date}"
-msgstr ""
+msgstr "{end_date}"
 
 #: lms/templates/shoppingcart/registration_code_receipt.html
 msgid ""
@@ -14650,6 +15212,9 @@ msgid ""
 "Check your <a href={dashboard_url}>course dashboard</a> to see if you're "
 "enrolled in the course, or contact your company's administrator."
 msgstr ""
+"لقد نقرتَ رابطًا للحصول على رمز التسجيل الذي سبق أن استُخدِم. يُرجى مراجعة "
+"<a href={dashboard_url}>لوحة المعلومات</a> الخاصة بمساقك لترى ما إذا كنتَ "
+"مسجّلًا في المساق، أو اتّصل بالإداري المسؤول في شركتك."
 
 #: lms/templates/shoppingcart/registration_code_receipt.html
 #: lms/templates/shoppingcart/registration_code_redemption.html
@@ -14693,11 +15258,11 @@ msgstr ""
 #: lms/templates/shoppingcart/registration_code_receipt.html
 #: lms/templates/shoppingcart/registration_code_redemption.html
 msgid "Activate Course Enrollment"
-msgstr ""
+msgstr "تفعيل عملية التسجيل في المساق"
 
 #: lms/templates/shoppingcart/registration_code_redemption.html
 msgid "{course_number} {course_title} Cover Image"
-msgstr ""
+msgstr "صورة غلاف {course_number} {course_title}"
 
 #: lms/templates/shoppingcart/registration_code_redemption.html
 msgid ""
@@ -14715,49 +15280,51 @@ msgstr ""
 #: lms/templates/shoppingcart/shopping_cart.html
 msgid ""
 "{course_names} has been removed because the enrollment period has closed."
-msgstr ""
+msgstr "أُزيلَت المساقات {course_names} لأنّ فترة التسجيل فيها قد انتهت."
 
 #: lms/templates/shoppingcart/shopping_cart.html
 msgid "Registration for:"
-msgstr ""
+msgstr "التسجيل في:"
 
 #: lms/templates/shoppingcart/shopping_cart.html
 msgid "Course Dates:"
-msgstr ""
+msgstr "تواريخ المساق:"
 
 #: lms/templates/shoppingcart/shopping_cart.html
 msgid "Students:"
-msgstr ""
+msgstr "الطلّاب:"
 
 #: lms/templates/shoppingcart/shopping_cart.html
 msgid "code has been applied"
-msgstr ""
+msgstr "جرى تطبيق الرمز"
 
 #: lms/templates/shoppingcart/shopping_cart.html
 msgid "TOTAL:"
-msgstr ""
+msgstr "المجموع:"
 
 #: lms/templates/shoppingcart/shopping_cart.html
 msgid ""
 "After this purchase is complete, a receipt is generated with relative "
 "billing details and registration codes for students."
 msgstr ""
+"بعد اكتمال عملية الشراء، يُعدّ إيصال بتفاصيل الفوترة ذات الصلة وبرموز تسجيل "
+"الطلّاب."
 
 #: lms/templates/shoppingcart/shopping_cart.html
 msgid "After this purchase is complete,"
-msgstr ""
+msgstr "بعد اكتمال عملية الشراء،"
 
 #: lms/templates/shoppingcart/shopping_cart.html
 msgid "will be enrolled in this course."
-msgstr ""
+msgstr "ستصبح مسجّلًا في هذا المساق."
 
 #: lms/templates/shoppingcart/shopping_cart_flow.html
 msgid "Shopping cart"
-msgstr ""
+msgstr "عربة التسوق"
 
 #: lms/templates/shoppingcart/shopping_cart_flow.html
 msgid "{platform_name} -  Shopping Cart"
-msgstr ""
+msgstr "{platform_name} - عربة التسوق"
 
 #: lms/templates/shoppingcart/shopping_cart_flow.html
 #: lms/templates/verify_student/photo_reverification.html
@@ -14767,7 +15334,7 @@ msgstr "مراجعة "
 
 #: lms/templates/shoppingcart/shopping_cart_flow.html
 msgid "Payment"
-msgstr ""
+msgstr "الدفعة"
 
 #: lms/templates/shoppingcart/shopping_cart_flow.html
 #: lms/templates/verify_student/photo_reverification.html
@@ -14871,29 +15438,31 @@ msgstr "صفحة الطالب"
 
 #: lms/templates/survey/survey.html
 msgid "User Survey"
-msgstr ""
+msgstr "استبيان المستخدم"
 
 #: lms/templates/survey/survey.html
 msgid "Pre-Course Survey"
-msgstr ""
+msgstr "استبيان ما قبل المساق"
 
 #: lms/templates/survey/survey.html
 msgid ""
 "You can begin your course as soon as you complete the following form. "
 "Required fields are marked with an asterisk (*)."
 msgstr ""
+"يمكنك أن تبدأ بمساقك ما إن تملأ الاستمارة التالية. يُرجى الانتباه إلى أنّ "
+"الحقول الضرورية محدّدة بعلامة النجمة (*)."
 
 #: lms/templates/survey/survey.html
 msgid "You are missing the following required fields:"
-msgstr ""
+msgstr "لقد تركت الحقول الضرورية التالية فارغة:"
 
 #: lms/templates/survey/survey.html
 msgid "Cancel and Return to Dashboard"
-msgstr ""
+msgstr "إلغاء والعودة إلى لوحة المعلومات"
 
 #: lms/templates/survey/survey.html
 msgid "Why do I need to complete this information?"
-msgstr ""
+msgstr "لماذا عليّ توفير هذه المعلومات؟"
 
 #: lms/templates/survey/survey.html
 msgid ""
@@ -14901,16 +15470,21 @@ msgid ""
 "and future students. The more we know about your specific needs, the better "
 "we can make your course experience."
 msgstr ""
+"نستخدم المعلومات التي تزوّدنا بها لنحسّن مساقنا للطلّاب الحاليين "
+"والمستقبليين. فكلّما عرفنا أكثر عن احتياجاتك، تمكّنّا من زيادة تحسين تجربتك "
+"مع المساق."
 
 #: lms/templates/survey/survey.html
 msgid "Who can I contact if I have questions?"
-msgstr ""
+msgstr "من أستطيع الاتصال به إذا كان لدي أسئلة؟"
 
 #: lms/templates/survey/survey.html
 msgid ""
 "If you have any questions about this course or this form, you can contact <a"
 " href=\"{mail_to_link}\"\">{mail_to_link}</a>."
 msgstr ""
+"إذا كان لديك أي أسئلة حول المساق أو هذه الاستمارة، يُرجى الاتصال بـ <a "
+"href=\"{mail_to_link}\"\">{mail_to_link}</a>."
 
 #: lms/templates/verify_student/_modal_editname.html
 msgid "Edit Your Name"
@@ -14980,18 +15554,22 @@ msgstr ""
 #: lms/templates/verify_student/_verification_header.html
 msgid "You are upgrading your enrollment for {organization}'s {course_name}"
 msgstr ""
+"جاري تحديث تسجيلك في المساق {course_name} التابع للمؤسسة {organization}"
 
 #: lms/templates/verify_student/_verification_header.html
 msgid "You are re-verifying for {organization}'s {course_name}"
 msgstr ""
+"إنّك تعيد عملية التحقق الخاصة بالمساق {course_name} التابع لمؤسسة "
+"{organization}"
 
 #: lms/templates/verify_student/_verification_header.html
 msgid "You are enrolling in {organization}'s {course_name}"
-msgstr ""
+msgstr "جاري تسجيلك في المساق {course_name} التابع للمؤسسة {organization}"
 
 #: lms/templates/verify_student/_verification_header.html
 msgid "Congrats! You are now enrolled in {organization}'s {course_name}"
 msgstr ""
+"تهانينا! أنت الآن مسجّل في مساق {course_name} التابع للمؤسسة {organization}"
 
 #: lms/templates/verify_student/_verification_header.html
 msgid "Professional Education"
@@ -14999,15 +15577,15 @@ msgstr "التعليم المهني"
 
 #: lms/templates/verify_student/_verification_header.html
 msgid "{span_start}Upgrading to:{span_end} Verified"
-msgstr ""
+msgstr "جرى التحقّق من {span_start}جاري التحديث إلى:{span_end}"
 
 #: lms/templates/verify_student/_verification_header.html
 msgid "{span_start}Re-verifying for:{span_end} Verified"
-msgstr ""
+msgstr "جرى التحقّق من {span_start}جاري إعادة عملية التحقق لـ:{span_end} "
 
 #: lms/templates/verify_student/_verification_header.html
 msgid "{span_start}Enrolling as:{span_end} Verified"
-msgstr ""
+msgstr "جرى التحقّق من {span_start}جاري التسجيل بصفة:{span_end}"
 
 #: lms/templates/verify_student/_verification_support.html
 #: lms/templates/verify_student/pay_and_verify.html
@@ -15030,6 +15608,10 @@ msgstr ""
 #: lms/templates/verify_student/face_upload.html
 msgid "Edit Your Full Name"
 msgstr "قم بتعديل اسمك الكامل  "
+
+#: lms/templates/verify_student/incourse_reverify.html
+msgid "Verifying for \"{checkpoint_name}\" in course \"{course_name}\""
+msgstr ""
 
 #: lms/templates/verify_student/midcourse_photo_reverification.html
 msgid "Re-Verify"
@@ -15190,6 +15772,11 @@ msgstr ""
 #: lms/templates/verify_student/photo_reverification.html
 msgid "Edit your name"
 msgstr "تعديل إسمك "
+
+#: lms/templates/verify_student/midcourse_photo_reverification.html
+#: lms/templates/verify_student/photo_reverification.html
+msgid "Verification"
+msgstr ""
 
 #: lms/templates/verify_student/midcourse_photo_reverification.html
 msgid ""
@@ -15358,15 +15945,15 @@ msgstr ""
 
 #: lms/templates/verify_student/pay_and_verify.html
 msgid "Receipt For {course_name}"
-msgstr ""
+msgstr "الإيصال الخاص بالمساق {course_name}"
 
 #: lms/templates/verify_student/pay_and_verify.html
 msgid "Verify For {course_name}"
-msgstr ""
+msgstr "إجراء عملية التحقّق الخاصة بالمساق {course_name}"
 
 #: lms/templates/verify_student/pay_and_verify.html
 msgid "Enroll In {course_name}"
-msgstr ""
+msgstr "التسجيل في {course_name}"
 
 #: lms/templates/verify_student/photo_reverification.html
 msgid "Re-Verification"
@@ -15729,11 +16316,14 @@ msgid "Content"
 msgstr "المحتوى"
 
 #: cms/templates/asset_index.html cms/templates/container.html
-#: cms/templates/course_info.html cms/templates/course_outline.html
-#: cms/templates/edit-tabs.html cms/templates/index.html
-#: cms/templates/library.html cms/templates/manage_users.html
-#: cms/templates/manage_users_lib.html cms/templates/textbooks.html
-#: cms/templates/videos_index.html
+#: cms/templates/course-create-rerun.html cms/templates/course_info.html
+#: cms/templates/course_outline.html cms/templates/edit-tabs.html
+#: cms/templates/index.html cms/templates/library.html
+#: cms/templates/manage_users.html cms/templates/manage_users_lib.html
+#: cms/templates/textbooks.html cms/templates/videos_index.html
+#: cms/templates/ux/reference/container.html
+#: cms/templates/ux/reference/course-create-rerun.html
+#: cms/templates/ux/reference/outline.html
 msgid "Page Actions"
 msgstr "عمليات الصفحة"
 
@@ -15879,7 +16469,7 @@ msgstr "السحب لإعادة الترتيب"
 
 #: cms/templates/container.html
 msgid "View Live Version"
-msgstr "مشاهدة نسخة البث المباشر"
+msgstr "مشاهدة النسخة الحالية"
 
 #: cms/templates/container.html
 msgid "Preview Changes"
@@ -16163,11 +16753,11 @@ msgstr "قسم جديد"
 
 #: cms/templates/course_outline.html
 msgid "Reindex current course"
-msgstr ""
+msgstr "إعادة فهرسة المساق الحالي"
 
 #: cms/templates/course_outline.html
 msgid "Reindex"
-msgstr ""
+msgstr "إعادة الفهرسة"
 
 #: cms/templates/course_outline.html
 msgid "Collapse All Sections"
@@ -16411,8 +17001,25 @@ msgid "Back to dashboard"
 msgstr "العودة إلى لوحة المعلومات"
 
 #: cms/templates/export.html
+msgid "Library Export"
+msgstr ""
+
+#: cms/templates/export.html
 msgid "Course Export"
 msgstr "تصدير المساق"
+
+#: cms/templates/export.html
+msgid "About Exporting Libraries"
+msgstr ""
+
+#. Translators: ".tar.gz" is a file extension, and should not be translated
+#: cms/templates/export.html
+msgid ""
+"You can export libraries and edit them outside of {studio_name}. The "
+"exported file is a .tar.gz file (that is, a .tar file compressed with GNU "
+"Zip) that contains the library structure and content. You can also re-import"
+" libraries that you've exported."
+msgstr ""
 
 #: cms/templates/export.html
 msgid "About Exporting Courses"
@@ -16445,8 +17052,16 @@ msgstr ""
 "ضمنها بعض المعلومات الحسّاسة أو الخاصة بالترخيص."
 
 #: cms/templates/export.html
+msgid "Export My Library Content"
+msgstr ""
+
+#: cms/templates/export.html
 msgid "Export My Course Content"
 msgstr "تصدير محتوى مساقي"
+
+#: cms/templates/export.html
+msgid "Export Library Content"
+msgstr ""
 
 #: cms/templates/export.html
 msgid "Export Course Content"
@@ -16500,8 +17115,32 @@ msgid "Forum/discussion Data"
 msgstr "بيانات المنتدى/النقاشات"
 
 #: cms/templates/export.html
-msgid "Certificates"
-msgstr "الشهادات"
+msgid "Why export a library?"
+msgstr ""
+
+#: cms/templates/export.html
+msgid ""
+"You may want to edit the XML in your library directly, outside of "
+"{studio_name}. You may want to create a backup copy of your library. Or, you"
+" may want to create a copy of your library that you can later import into "
+"another library instance and customize."
+msgstr ""
+
+#: cms/templates/export.html
+msgid "Opening the downloaded file"
+msgstr "جاري فتح الملف المنزَّل "
+
+#. Translators: ".tar.gz" is a file extension, and should not be translated
+#: cms/templates/export.html
+msgid ""
+"Use an archive program to extract the data from the .tar.gz file. Extracted "
+"data includes the library.xml file, as well as subfolders that contain "
+"library content."
+msgstr ""
+
+#: cms/templates/export.html
+msgid "Learn more about exporting a library"
+msgstr ""
 
 #: cms/templates/export.html
 msgid "Why export a course?"
@@ -16535,10 +17174,6 @@ msgstr ""
 "MATLAB API وتصاريح توافقية أدوات التعلّم. ولكن لم يجرِ تصدير البيانات "
 "الأخرى، ومنها بيانات الطلّاب، ومعلومات التقييم، وبيانات منتديات النقاش، "
 "وإعدادات المساق، ومعلومات فريق المساق. "
-
-#: cms/templates/export.html
-msgid "Opening the downloaded file"
-msgstr "جاري فتح الملف المنزَّل "
 
 #. Translators: ".tar.gz" is a file extension, and should not be translated
 #: cms/templates/export.html
@@ -16623,31 +17258,27 @@ msgstr "هذه الوحدة موقَفة في الوقت الحالي."
 
 #: cms/templates/group_configurations.html
 msgid ""
-"Use content groups to give groups of students access to a specific set of "
-"course content. In addition to course content that is intended for all "
-"students, each content group sees content that you specifically designate as"
-" visible to it. By associating a content group with one or more cohorts, you"
-" can customize the content that a particular cohort or cohorts sees in your "
-"course."
+"If you have cohorts enabled in your course, you can use content groups to "
+"create cohort-specific courseware. In other words, you can customize the "
+"content that particular cohorts see in your course."
 msgstr ""
-"يُرجى استخدام مجموعات المحتوى لمنح مجموعات الطلّاب إمكانية الدخول إلى "
-"محتويات محدّدة في المساق، حيث بالإضافة إلى محتوى المساق الموجَّه للطلّاب "
-"جميعهم، فإنّ كل مجموعة محتوى تكشف عن المحتوى الذي تحدّده بعينه على أنّه مرئي"
-" في هذه المجموعة. ومن خلال ربط مجموعة محتوى بمجموعة طلّاب واحدة أو أكثر، "
-"يمكنك اختيار المحتوى الذي يمكن لمجموعة أو مجموعات معيّنة من الطلّاب أن تراه "
-"في مساقك."
+
+#: cms/templates/group_configurations.html
+msgid ""
+"Each content group that you create can be associated with one or more "
+"cohorts. In addition to course content that is intended for all students, "
+"you can designate some content as visible only to specified content groups. "
+"Only learners in the cohorts that are associated with the specified content "
+"groups see the additional content."
+msgstr ""
 
 #: cms/templates/group_configurations.html
 msgid ""
 "Click {em_start}New content group{em_end} to add a new content group. To "
 "edit the name of a content group, hover over its box and click "
-"{em_start}Edit{em_end}."
-msgstr ""
-
-#: cms/templates/group_configurations.html
-msgid ""
-"You can delete a content group only if it is not in use by a unit. To delete"
-" a content group, hover over its box and click the delete icon."
+"{em_start}Edit{em_end}. You can delete a content group only if it is not in "
+"use by a unit. To delete a content group, hover over its box and click the "
+"delete icon."
 msgstr ""
 
 #: cms/templates/group_configurations.html
@@ -16656,31 +17287,21 @@ msgstr "تعلّم المزيد"
 
 #: cms/templates/group_configurations.html
 msgid ""
-"Use experiment group configurations to define how many groups of students "
-"are in a content experiment. When you create a content experiment for a "
-"course, you select the group configuration to use."
+"Use experiment group configurations if you are conducting content "
+"experiments, also known as A/B testing, in your course. Experiment group "
+"configurations define how many groups of students are in a content "
+"experiment. When you create a content experiment for a course, you select "
+"the group configuration to use."
 msgstr ""
-"يُرجى استخدام إعدادات مجموعة التجربة لتحديد عدد مجموعات الطلّاب الموجودة في "
-"إحدى تجارب المساق. وعندما تنشئ تجربة محتوى معيّنة لمساق ما، يُرجى اختيار "
-"إعداد المجموعة الذي يجب استخدامه. "
 
 #: cms/templates/group_configurations.html
 msgid ""
 "Click {em_start}New Group Configuration{em_end} to add a new configuration. "
 "To edit a configuration, hover over its box and click "
-"{em_start}Edit{em_end}."
+"{em_start}Edit{em_end}. You can delete a group configuration only if it is "
+"not in use in an experiment. To delete a configuration, hover over its box "
+"and click the delete icon."
 msgstr ""
-"انقر {em_start}إعدادات مجموعة جديدة{em_end} لإضافة إعدادات جديدة. ولتعديل "
-"الإعدادات، ضع مؤشر فأرة الحاسوب فوق خانتها وانقر {em_start}تعديل{em_end}."
-
-#: cms/templates/group_configurations.html
-msgid ""
-"You can delete a group configuration only if it is not in use in an "
-"experiment. To delete a configuration, hover over its box and click the "
-"delete icon."
-msgstr ""
-"لا يمكنك حذف إعدادات المجموعة إلّا إذا لم تكن مستخدمة في تجربة. ولحذف "
-"الإعدادات، حرّك مؤشر الفأرة فوق خانتها وانقر أيقونة الحذف."
 
 #: cms/templates/group_configurations.html cms/templates/settings.html
 #: cms/templates/settings_advanced.html cms/templates/settings_graders.html
@@ -16829,11 +17450,9 @@ msgstr "مكتبة كبيرة تضمّ مختلف أنواع المسائل"
 
 #: cms/templates/howitworks.html
 msgid ""
-"It's more than just multiple choice. Studio supports more than a dozen types"
-" of problems to challenge your learners."
+"It's more than just multiple choice. {studio_name} supports more than a "
+"dozen types of problems to challenge your learners."
 msgstr ""
-"برنامج استوديو هو أكثر من مجرّد أسئلة متعدّدة الأجوبة، إذ يقدّم أكثر من عشرة"
-" أنواع من المسائل لتحدّي قدرات طلّابك. "
 
 #: cms/templates/howitworks.html
 msgid ""
@@ -16957,23 +17576,46 @@ msgstr ""
 "لتصحيح الخطأ."
 
 #: cms/templates/import.html
+msgid "Library Import"
+msgstr ""
+
+#: cms/templates/import.html
 msgid "Course Import"
 msgstr "استيراد المساق"
 
 #: cms/templates/import.html
 msgid ""
-"Be sure you want to import a course before continuing. Content of the "
-"imported course replaces all the content of this course. {em_start}You "
-"cannot undo a course import{em_end}. We recommend that you first export the "
-"current course, so you have a backup copy of it."
+"Be sure you want to import a library before continuing. The contents of the "
+"imported library will replace the contents of the existing library. "
+"{em_start}You cannot undo a library import{em_end}. Before you proceed, we "
+"recommend that you export the current library, so that you have a backup "
+"copy of it."
 msgstr ""
-"يُرجى التأكّد من رغبتك في استيراد المساق قبل المتابعة. فإنّ محتوى المساق "
-"المستورد يحلّ محلّ كافة محتوى هذا المساق. {em_start}وانتبه إلى أنّه لا يمكنك"
-" التراجع عن عملية استيراد المساق{em_end}. لذا نوصيك بتصدير المساق الحالي "
-"أوّلًا ليكون لديك نسخة احتياطية منه. "
 
-#. Translators: ".tar.gz" is a file extension, and files with that extension
-#. are called "gzipped tar files": these terms should not be translated
+#: cms/templates/import.html
+msgid ""
+"The library that you import must be in a .tar.gz file (that is, a .tar file "
+"compressed with GNU Zip). This .tar.gz file must contain a library.xml file."
+" It may also contain other files."
+msgstr ""
+
+#: cms/templates/import.html
+msgid ""
+"The import process has five stages. During the first two stages, you must "
+"stay on this page. You can leave this page after the Unpacking stage has "
+"completed. We recommend, however, that you don't make important changes to "
+"your library until the import operation has completed."
+msgstr ""
+
+#: cms/templates/import.html
+msgid ""
+"Be sure you want to import a course before continuing. The contents of the "
+"imported course will replace the contents of the existing course. "
+"{em_start}You cannot undo a course import{em_end}. Before you proceed, we "
+"recommend that you export the current course, so that you have a backup copy"
+" of it."
+msgstr ""
+
 #: cms/templates/import.html
 msgid ""
 "The course that you import must be in a .tar.gz file (that is, a .tar file "
@@ -16995,8 +17637,10 @@ msgstr ""
 "مرحلتين. ثمّ يمكنك مغادرة هذه الصفحة بعد أن تُستكمل مرحلة التفريغ. ولكنّنا "
 "نوصيك بعدم إجراء تغييرات أساسية في مساقك قبل أن تُستكمل عملية الاستيراد."
 
-#. Translators: ".tar.gz" is a file extension, and files with that extension
-#. are called "gzipped tar files": these terms should not be translated
+#: cms/templates/import.html
+msgid "Select a .tar.gz File to Replace Your Library Content"
+msgstr ""
+
 #: cms/templates/import.html
 msgid "Select a .tar.gz File to Replace Your Course Content"
 msgstr "اختر ملفّ .tar.gz لاستبدال محتوى مساقك"
@@ -17010,8 +17654,16 @@ msgid "File Chosen:"
 msgstr "الملف المختار: "
 
 #: cms/templates/import.html
-msgid "Replace my course with the one above"
-msgstr "استبدل مساقي بالمساق أعلاه"
+msgid "Replace my library with the selected file"
+msgstr ""
+
+#: cms/templates/import.html
+msgid "Replace my course with the selected file"
+msgstr ""
+
+#: cms/templates/import.html
+msgid "Library Import Status"
+msgstr ""
 
 #: cms/templates/import.html
 msgid "Course Import Status"
@@ -17043,28 +17695,71 @@ msgid "Reviewing semantics, syntax, and required data"
 msgstr "استعراض الدلالات، والقواعد اللغوية، والبيانات المطلوبة"
 
 #: cms/templates/import.html
+msgid "Updating Library"
+msgstr ""
+
+#: cms/templates/import.html
 msgid "Updating Course"
 msgstr "جاري تحديث المساق"
 
 #: cms/templates/import.html
 msgid ""
-"Integrating your imported content into this course. This may take a while "
-"with larger courses."
+"Integrating your imported content into this library. This process might take"
+" longer with larger libraries."
 msgstr ""
-"جاري دمج محتواك المستورد في هذا المساق. وقد تستغرق هذه العملية وقتًا أطول في"
-" حالة المساقات الكبيرة. "
+
+#: cms/templates/import.html
+msgid ""
+"Integrating your imported content into this course. This process might take "
+"longer with larger courses."
+msgstr ""
 
 #: cms/templates/import.html
 msgid "Success"
 msgstr "تمّت العملية بنجاح "
 
 #: cms/templates/import.html
+msgid "Your imported content has now been integrated into this library"
+msgstr ""
+
+#: cms/templates/import.html
 msgid "Your imported content has now been integrated into this course"
 msgstr "جرى الآن دمج محتواك المستورد في هذا المساق."
 
 #: cms/templates/import.html
+msgid "View Updated Library"
+msgstr ""
+
+#: cms/templates/import.html
 msgid "View Updated Outline"
 msgstr "مشاهدة المخطّط الكلّي المحدَّث "
+
+#: cms/templates/import.html
+msgid "Why import a library?"
+msgstr ""
+
+#: cms/templates/import.html
+msgid ""
+"You might want to update an existing library to a new version, or replace an"
+" existing library entirely. You might also have developed a library outside "
+"of {studio_name}."
+msgstr ""
+
+#: cms/templates/import.html
+msgid "Note: Library content is not automatically updated in courses"
+msgstr ""
+
+#: cms/templates/import.html
+msgid ""
+"If you change and import a library that is referenced by randomized content "
+"blocks in one or more courses, those courses do not automatically use the "
+"updated content. You must manually refresh the randomized content blocks to "
+"bring them up to date with the latest library content."
+msgstr ""
+
+#: cms/templates/import.html
+msgid "Learn more about importing a library"
+msgstr ""
 
 #: cms/templates/import.html
 msgid "Why import a course?"
@@ -17109,6 +17804,10 @@ msgstr ""
 "في حال كنت تجري عملية استيراد أثناء تشغيل مساقك وأقدمت على تغيير أسماء "
 "الرابط (أو العقد url_name) لأي مكوِّنات خاصة بالمسائل، فإنّ بيانات الطالب "
 "المرتبطة بهذه المكوِّنات قد يجري فقدانها، ومن بينها درجات مسائل الطلّاب. "
+
+#: cms/templates/import.html
+msgid "Learn more about importing a course"
+msgstr ""
 
 #: cms/templates/index.html cms/templates/widgets/header.html
 msgid "{studio_name} Home"
@@ -17278,6 +17977,10 @@ msgid ""
 msgstr ""
 "نأسف لحدوث خطأ في النظام أثناء معالجة مساقك. يُرجى الذهاب إلى المساق الأساسي"
 " لإعادة تجريب التشغيل الثاني، أو الاتصال بمدير مشروعك للحصول على المساعدة."
+
+#: cms/templates/index.html
+msgid "Libraries"
+msgstr "المكتبات"
 
 #: cms/templates/index.html
 msgid "Re-run Course"
@@ -17498,24 +18201,6 @@ msgid "Add Component"
 msgstr "إضافة مكوِّن "
 
 #: cms/templates/library.html
-msgid "Library ID"
-msgstr "رقم المكتبة"
-
-#: cms/templates/library.html
-msgid "Tip:"
-msgstr "نصيحة:"
-
-#: cms/templates/library.html
-msgid ""
-"To add content from this library to a course that uses a Randomized Content "
-"Block, copy this ID and enter it in the Libraries field in the Randomized "
-"Content Block settings."
-msgstr ""
-"لإضافة المحتوى من هذه المكتبة إلى مساق يَستخدم خاصّية \"كتلة محتوى "
-"عشوائية\"، يُرجى نسخ هذا الرقم التعريفي وإدخاله في حقل المكتبات في الإعدادات"
-" الخاصة بـ \"كتلة محتوى عشوائية\".  "
-
-#: cms/templates/library.html
 msgid "Adding content to your library"
 msgstr "جاري إضافة المحتوى إلى مكتبتك"
 
@@ -17544,17 +18229,12 @@ msgstr "استخدام محتوى المكتبة في المساقات"
 #: cms/templates/library.html
 msgid ""
 "Use library content in courses by adding the "
-"{em_start}library_content{em_end} policy key to Advanced Settings, then "
-"adding a Randomized Content Block to your courseware. In the settings for "
-"each Randomized Content Block, enter the Library ID for each library from "
-"which you want to draw content, and specify the number of problems to be "
-"randomly selected and displayed to each student."
+"{em_start}library_content{em_end} policy key to the Advanced Module List in "
+"the course's Advanced Settings, then adding a Randomized Content Block to "
+"your courseware. In the settings for each Randomized Content Block, select "
+"this library as the source library, and specify the number of problems to be"
+" randomly selected and displayed to each student."
 msgstr ""
-"يُرجى استخدام محتوى المكتبات في المساقات عبر إضافة مفتاح سياسة محتوى المكتبة"
-" {em_start}library_content{em_end} إلى الإعدادات المتقدّمة، ثمّ إضافة خاصّية"
-" \"كتلة محتوى عشوائية\" إلى محتوى مساقك. وفي الإعدادات الخاصة بكل كتلة محتوى"
-" عشوائية، يُرجى إدخال رقم المكتبة التي تريد استخلاص المحتوى منها، ثمّ تحديد "
-"عدد المسائل التي سيجري انتقائها عشوائيًّا وعرضها على الطالب.  "
 
 #: cms/templates/library.html
 msgid "Learn more about content libraries"
@@ -17622,34 +18302,6 @@ msgstr ""
 msgid "Add User"
 msgstr "إضافة مستخدم"
 
-#: cms/templates/manage_users.html cms/templates/manage_users_lib.html
-msgid "Current Role:"
-msgstr "الدور الحالي:"
-
-#: cms/templates/manage_users.html cms/templates/manage_users_lib.html
-msgid "You!"
-msgstr "أنت!"
-
-#: cms/templates/manage_users.html cms/templates/manage_users_lib.html
-msgid "send an email message to {email}"
-msgstr "أرسل رسالة عبر البريد الإلكتروني إلى {email} "
-
-#: cms/templates/manage_users.html cms/templates/manage_users_lib.html
-msgid "Promote another member to Admin to remove your admin rights"
-msgstr "يجب أن ترقّي عضوًا آخر إلى درجة مُشرِف لتتمكّن من إلغاء حقوقك كمشرف"
-
-#: cms/templates/manage_users.html cms/templates/manage_users_lib.html
-msgid "Remove Admin Access"
-msgstr "إلغاء صلاحية الوصول الخاصة بالمشرف"
-
-#: cms/templates/manage_users.html cms/templates/manage_users_lib.html
-msgid "Add Admin Access"
-msgstr "إضافة صلاحية الوصول الخاصة بالمشرف"
-
-#: cms/templates/manage_users.html cms/templates/manage_users_lib.html
-msgid "Delete the user, {username}"
-msgstr "حذف المستخدم،  {username} "
-
 #: cms/templates/manage_users.html
 msgid "Add Team Members to This Course"
 msgstr "إضافة أعضاء إلى فريق هذا المساق"
@@ -17715,26 +18367,6 @@ msgstr "منح إمكانية الدخول إلى هذه المكتبة"
 #: cms/templates/manage_users_lib.html
 msgid "Provide the email address of the user you want to add"
 msgstr "إدخال عنوان البريد الإلكتروني للمستخدم الذي تريد أن تضيفه"
-
-#: cms/templates/manage_users_lib.html
-msgid "Remove Staff Access"
-msgstr "إلغاء إمكانية الدخول إلى طاقم المساق"
-
-#: cms/templates/manage_users_lib.html
-msgid "Add Staff Access"
-msgstr "إضافة إمكانية الدخول إلى طاقم المساق"
-
-#: cms/templates/manage_users_lib.html
-msgid "Remove this user"
-msgstr "حذف هذا المستخدم"
-
-#: cms/templates/manage_users_lib.html
-msgid "Remove me"
-msgstr "حذفي"
-
-#: cms/templates/manage_users_lib.html
-msgid "Remove me from this library"
-msgstr "حذفي من هذه المكتبة"
 
 #: cms/templates/manage_users_lib.html
 msgid "Add More Users to This Library"
@@ -18402,18 +19034,17 @@ msgstr "إدارة الملفّات التي جرى تحميلها"
 msgid ""
 "After a file uploads successfully, automated processing begins. After "
 "automated processing begins for a file it is listed under Previous Uploads "
-"as {em_start}In Progress{em_end}. When the status is "
-"{em_start}Complete{em_end}, edX assigns a unique video ID to the video file "
-"and you can add it to your course. If something goes wrong, the "
-"{em_start}Failed{em_end} status message appears. Check for problems in the "
-"file and upload a replacement."
+"as {em_start}In Progress{em_end}. You can add the video to your course as "
+"soon as it has a unique video ID and the status is {em_start}Ready{em_end}. "
+"Allow 24 hours for file processing at the external video hosting sites to "
+"complete."
 msgstr ""
-"بعد نجاح تحميل الملف، تبدأ عملية معالجة أوتوماتيكية لهذا الفيديو. وعند بدء "
-"هذه العملية، يجري إدراج الملفّ ضمن \"التحميلات السابقة\" بحالة {em_start}قيد"
-" المعالجة{em_end}. وعندما تصبح حالته {em_start}اكتمل التحميل{em_end}، تُخصّص"
-" edX رقمَ فيديو فريدًا للملف، ويمكنك إضافته إلى مساقك. وفي حال حصلت مشكلة "
-"أثناء التحميل، تظهر رسالة الحالة {em_start}فشل التحميل{em_end}، وينبغي "
-"بعدئذٍ التحقّق من المشكلة في الملف وتحميل فيديو بديل.    "
+
+#: cms/templates/videos_index.html
+msgid ""
+"If something goes wrong, the {em_start}Failed{em_end} status message "
+"appears. Check for problems in your original file and upload a replacement."
+msgstr ""
 
 #: cms/templates/videos_index.html
 msgid "How do I get the videos into my course?"
@@ -18421,15 +19052,15 @@ msgstr "كيف أجلب الفيديوهات إلى مساقي؟"
 
 #: cms/templates/videos_index.html
 msgid ""
-"After processing is complete for the video file, you copy its unique video "
-"ID. On the Course Outline page, you create or locate a video component to "
-"play this video. Edit the video component to paste the ID into the Advanced "
-"{em_start}EdX Video ID{em_end} field."
+"As soon as the status for a file is {em_start}Ready{em_end}, you can add "
+"that video to a component in your course. Copy the unique video ID. In "
+"another browser window, on the Course Outline page, create or locate a video"
+" component to play this video. Edit the video component to paste the ID into"
+" the Advanced {em_start}EdX Video ID{em_end} field. The video can play in "
+"the LMS as soon as its status is {em_start}Ready{em_end}, although "
+"processing may not be complete for all encodings and all video hosting "
+"sites."
 msgstr ""
-"بعدما تكتمل معالجة ملف الفيديو، يُرجى نسخ رقمه التعريفي. ثمّ على صفحة مخطّط "
-"المساق، أَنشئ مكوّن فيديو أو حدّد مكانه لتشغيل هذا الفيديو. وبعدئذٍ عدّل "
-"مكوّن الفيديو لتلصق الرقم التعريفي في الحقل المتقدّم {em_start}رقم فيديو "
-"edX{em_end}.   "
 
 #: cms/templates/visibility_editor.html
 msgid "No content groups exist"
@@ -18568,6 +19199,10 @@ msgstr ""
 "أُرسِل رابط تفعيل على عنوان البريد الإلكتروني {email}، مع تعليمات حول تفعيل "
 "حسابك."
 
+#: cms/templates/widgets/footer.html cms/templates/widgets/sock.html
+msgid "Contact Us"
+msgstr "للاتصال بنا"
+
 #. Translators: 'EdX', 'edX', 'Studio', and 'Open edX' are trademarks of 'edX
 #. Inc.'. Please do not translate any of these trademarks and company names.
 #: cms/templates/widgets/footer.html
@@ -18576,17 +19211,9 @@ msgid ""
 "trademarks or trademarks of {link_start}edX Inc.{link_end}"
 msgstr ""
 
-#: cms/templates/widgets/footer.html cms/templates/widgets/sock.html
-msgid "Contact Us"
-msgstr "للاتصال بنا"
-
 #: cms/templates/widgets/header.html
 msgid "Current Course:"
 msgstr "المساق الحالي:"
-
-#: cms/templates/widgets/header.html
-msgid "Navigation for {course_name}"
-msgstr "التصفّح لـ {course_name}"
 
 #: cms/templates/widgets/header.html
 msgid "Outline"
@@ -18617,12 +19244,12 @@ msgid "Current Library:"
 msgstr "المكتبة الحالية:"
 
 #: cms/templates/widgets/header.html
-msgid "Library"
-msgstr "مكتبة"
+msgid "Account"
+msgstr ""
 
 #: cms/templates/widgets/header.html
-msgid "Help &amp; Account Navigation"
-msgstr "المساعدة وتصفّح الحساب "
+msgid "Account Navigation"
+msgstr ""
 
 #: cms/templates/widgets/header.html
 msgid "Contextual Online Help"
@@ -18635,10 +19262,6 @@ msgstr "دخولك مسجَّل حاليًّا كـ:"
 #: cms/templates/widgets/header.html
 msgid "Sign Out"
 msgstr "تسجيل الخروج"
-
-#: cms/templates/widgets/header.html
-msgid "You're not currently signed in"
-msgstr "دخولك ليس مسجّلاً حاليًّا "
 
 #: cms/templates/widgets/metadata-edit.html
 msgid "Launch Latex Source Compiler"

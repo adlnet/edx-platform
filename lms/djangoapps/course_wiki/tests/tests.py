@@ -1,5 +1,4 @@
 from django.core.urlresolvers import reverse
-from django.test.utils import override_settings
 
 from courseware.tests.tests import LoginEnrollmentTestCase
 from xmodule.modulestore.tests.django_utils import ModuleStoreTestCase
@@ -92,7 +91,6 @@ class WikiRedirectTestCase(LoginEnrollmentTestCase, ModuleStoreTestCase):
         course_wiki_page = referer.replace('progress', 'wiki/' + self.toy.wiki_slug + "/")
 
         ending_location = resp.redirect_chain[-1][0]
-        ending_status = resp.redirect_chain[-1][1]
 
         self.assertEquals(ending_location, 'http://testserver' + course_wiki_page)
         self.assertEquals(resp.status_code, 200)

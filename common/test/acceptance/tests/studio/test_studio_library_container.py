@@ -7,7 +7,7 @@ import textwrap
 
 from .base_studio_test import StudioLibraryTest
 from ...fixtures.course import CourseFixture
-from ..helpers import UniqueCourseTest
+from ..helpers import UniqueCourseTest, TestWithSearchIndexMixin
 from ...pages.studio.library import StudioLibraryContentEditor, StudioLibraryContainerXBlockWrapper
 from ...pages.studio.overview import CourseOutlinePage
 from ...fixtures.course import XBlockFixtureDesc
@@ -18,7 +18,7 @@ UNIT_NAME = 'Test Unit'
 
 
 @ddt.ddt
-class StudioLibraryContainerTest(StudioLibraryTest, UniqueCourseTest):
+class StudioLibraryContainerTest(StudioLibraryTest, UniqueCourseTest, TestWithSearchIndexMixin):
     """
     Test Library Content block in LMS
     """
@@ -26,6 +26,7 @@ class StudioLibraryContainerTest(StudioLibraryTest, UniqueCourseTest):
         """
         Install library with some content and a course using fixtures
         """
+        self._create_search_index()
         super(StudioLibraryContainerTest, self).setUp()
         # Also create a course:
         self.course_fixture = CourseFixture(
@@ -40,7 +41,12 @@ class StudioLibraryContainerTest(StudioLibraryTest, UniqueCourseTest):
 
         self.outline.visit()
         subsection = self.outline.section(SECTION_NAME).subsection(SUBSECTION_NAME)
-        self.unit_page = subsection.toggle_expand().unit(UNIT_NAME).go_to()
+        self.unit_page = subsection.expand_subsection().unit(UNIT_NAME).go_to()
+
+    def tearDown(self):
+        """ Tear down method: remove search index backing file """
+        self._cleanup_index_file()
+        super(StudioLibraryContainerTest, self).tearDown()
 
     def populate_library_fixture(self, library_fixture):
         """
@@ -290,3 +296,21 @@ class StudioLibraryContainerTest(StudioLibraryTest, UniqueCourseTest):
         block.reset_field_val("Display Name")
         block.save_settings()
         self.assertEqual(block.name, name_default)
+
+    def test_cannot_manage(self):
+        """
+        Scenario: Given I have a library, a course and library content xblock in a course
+        When I go to studio unit page for library content block
+        And when I click the "View" link
+        Then I can see a preview of the blocks drawn from the library.
+
+        And I do not see a duplicate button
+        And I do not see a delete button
+        """
+        block_wrapper_unit_page = self._get_library_xblock_wrapper(self.unit_page.xblocks[0].children[0])
+        container_page = block_wrapper_unit_page.go_to_container()
+
+        for block in container_page.xblocks:
+            self.assertFalse(block.has_duplicate_button)
+            self.assertFalse(block.has_delete_button)
+            self.assertFalse(block.has_edit_visibility_button)

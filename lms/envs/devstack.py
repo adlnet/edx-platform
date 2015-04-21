@@ -45,11 +45,9 @@ ANALYTICS_DASHBOARD_URL = None
 ################################ DEBUG TOOLBAR ################################
 
 INSTALLED_APPS += ('debug_toolbar', 'debug_toolbar_mongo')
-MIDDLEWARE_CLASSES = (
-    (
-        'django_comment_client.utils.QueryCountDebugMiddleware',
-        'debug_toolbar.middleware.DebugToolbarMiddleware',
-    ) + MIDDLEWARE_CLASSES
+MIDDLEWARE_CLASSES += (
+    'django_comment_client.utils.QueryCountDebugMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 INTERNAL_IPS = ('127.0.0.1',)
 
@@ -121,6 +119,10 @@ FEATURES['ENTRANCE_EXAMS'] = True
 ########################## Courseware Search #######################
 FEATURES['ENABLE_COURSEWARE_SEARCH'] = True
 SEARCH_ENGINE = "search.elastic.ElasticSearchEngine"
+
+
+########################## Certificates Web/HTML View #######################
+FEATURES['CERTIFICATES_HTML_VIEW'] = True
 
 
 #####################################################################

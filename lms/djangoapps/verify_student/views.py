@@ -7,11 +7,9 @@ import logging
 import decimal
 import datetime
 from collections import namedtuple
+
 from pytz import UTC
 from ipware.ip import get_ip
-
-from edxmako.shortcuts import render_to_response, render_to_string
-
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.http import (
@@ -26,11 +24,17 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
+from opaque_keys.edx.keys import CourseKey, UsageKey
+from opaque_keys import InvalidKeyError
+from xmodule.modulestore.django import modulestore
+from xmodule.modulestore.exceptions import ItemNotFoundError, NoPathToItem
 
-from openedx.core.djangoapps.user_api.accounts.views import AccountView
+from edxmako.shortcuts import render_to_response, render_to_string
+from openedx.core.djangoapps.user_api.accounts.api import get_account_settings, update_account_settings
 from openedx.core.djangoapps.user_api.accounts import NAME_MIN_LENGTH
-from openedx.core.djangoapps.user_api.api.account import AccountUserNotFound, AccountUpdateError
-
+from openedx.core.djangoapps.user_api.errors import UserNotFound, AccountValidationError
+from commerce.api import EcommerceAPI
+from commerce.exceptions import ApiError
 from course_modes.models import CourseMode
 from student.models import CourseEnrollment
 from student.views import reverification_info
@@ -40,25 +44,28 @@ from shoppingcart.processors import (
 )
 from verify_student.models import (
     SoftwareSecurePhotoVerification,
-)
+    VerificationCheckpoint,
+    VerificationStatus,
+    InCourseReverificationConfiguration)
 from reverification.models import MidcourseReverificationWindow
 import ssencrypt
-from xmodule.modulestore.exceptions import ItemNotFoundError
-from opaque_keys.edx.keys import CourseKey
 from .exceptions import WindowExpiredException
-from xmodule.modulestore.django import modulestore
 from microsite_configuration import microsite
-
 from embargo import api as embargo_api
-
 from util.json_request import JsonResponse
 from util.date_utils import get_default_time_display
+from eventtracking import tracker
+import analytics
+from courseware.url_helpers import get_redirect_url
 
 log = logging.getLogger(__name__)
 
 EVENT_NAME_USER_ENTERED_MIDCOURSE_REVERIFY_VIEW = 'edx.course.enrollment.reverify.started'
 EVENT_NAME_USER_SUBMITTED_MIDCOURSE_REVERIFY = 'edx.course.enrollment.reverify.submitted'
 EVENT_NAME_USER_REVERIFICATION_REVIEWED_BY_SOFTWARESECURE = 'edx.course.enrollment.reverify.reviewed'
+
+EVENT_NAME_USER_ENTERED_INCOURSE_REVERIFY_VIEW = 'edx.bi.reverify.started'
+EVENT_NAME_USER_SUBMITTED_INCOURSE_REVERIFY = 'edx.bi.reverify.submitted'
 
 
 class PayAndVerifyView(View):
@@ -272,15 +279,16 @@ class PayAndVerifyView(View):
         if redirect_url:
             return redirect(redirect_url)
 
-        # Check that the course has an unexpired verified mode
-        course_mode, expired_course_mode = self._get_verified_modes_for_course(course_key)
+        expired_verified_course_mode, unexpired_paid_course_mode = self._get_expired_verified_and_paid_mode(course_key)
 
-        if course_mode is not None:
-            log.info(
-                u"Entering verified workflow for user '%s', course '%s', with current step '%s'.",
-                request.user.id, course_id, current_step
-            )
-        elif expired_course_mode is not None:
+        # Check that the course has an unexpired paid mode
+        if unexpired_paid_course_mode is not None:
+            if CourseMode.is_verified_mode(unexpired_paid_course_mode):
+                log.info(
+                    u"Entering verified workflow for user '%s', course '%s', with current step '%s'.",
+                    request.user.id, course_id, current_step
+                )
+        elif expired_verified_course_mode is not None:
             # Check if there is an *expired* verified course mode;
             # if so, we should show a message explaining that the verification
             # deadline has passed.
@@ -288,16 +296,16 @@ class PayAndVerifyView(View):
             context = {
                 'course': course,
                 'deadline': (
-                    get_default_time_display(expired_course_mode.expiration_datetime)
-                    if expired_course_mode.expiration_datetime else ""
+                    get_default_time_display(expired_verified_course_mode.expiration_datetime)
+                    if expired_verified_course_mode.expiration_datetime else ""
                 )
             }
             return render_to_response("verify_student/missed_verification_deadline.html", context)
         else:
-            # Otherwise, there has never been a verified mode,
+            # Otherwise, there has never been a verified/paid mode,
             # so return a page not found response.
             log.warn(
-                u"No verified course mode found for course '%s' for verification flow request",
+                u"No paid/verified course mode found for course '%s' for verification/payment flow request",
                 course_id
             )
             raise Http404
@@ -307,7 +315,9 @@ class PayAndVerifyView(View):
         # with a paid course mode (such as "verified").
         # For this reason, every paid user is enrolled, but not
         # every enrolled user is paid.
-        already_verified = self._check_already_verified(request.user)
+        # If the course mode is not verified(i.e only paid) then already_verified is always True
+        already_verified = self._check_already_verified(request.user) \
+            if CourseMode.is_verified_mode(unexpired_paid_course_mode) else True
         already_paid, is_enrolled = self._check_enrollment(request.user, course_key)
 
         # Redirect the user to a more appropriate page if the
@@ -326,7 +336,8 @@ class PayAndVerifyView(View):
         display_steps = self._display_steps(
             always_show_payment,
             already_verified,
-            already_paid
+            already_paid,
+            unexpired_paid_course_mode
         )
         requirements = self._requirements(display_steps, request.user.is_active)
 
@@ -366,12 +377,15 @@ class PayAndVerifyView(View):
         # so we can fire an analytics event upon payment.
         request.session['attempting_upgrade'] = (message == self.UPGRADE_MSG)
 
+        # Determine the photo verification status
+        verification_good_until = self._verification_valid_until(request.user)
+
         # Render the top-level page
         context = {
             'contribution_amount': contribution_amount,
             'course': course,
             'course_key': unicode(course_key),
-            'course_mode': course_mode,
+            'course_mode': unexpired_paid_course_mode,
             'courseware_url': courseware_url,
             'current_step': current_step,
             'disable_courseware_js': True,
@@ -383,9 +397,11 @@ class PayAndVerifyView(View):
             'requirements': requirements,
             'user_full_name': full_name,
             'verification_deadline': (
-                get_default_time_display(course_mode.expiration_datetime)
-                if course_mode.expiration_datetime else ""
+                get_default_time_display(unexpired_paid_course_mode.expiration_datetime)
+                if unexpired_paid_course_mode.expiration_datetime else ""
             ),
+            'already_verified': already_verified,
+            'verification_good_until': verification_good_until,
         }
         return render_to_response("verify_student/pay_and_verify.html", context)
 
@@ -459,21 +475,32 @@ class PayAndVerifyView(View):
         if url is not None:
             return redirect(url)
 
-    def _get_verified_modes_for_course(self, course_key):
-        """Retrieve unexpired and expired verified modes for a course.
+    def _get_expired_verified_and_paid_mode(self, course_key):  # pylint: disable=invalid-name
+        """Retrieve expired verified mode and unexpired paid mode(with min_price>0) for a course.
 
         Arguments:
             course_key (CourseKey): The location of the course.
 
         Returns:
-            Tuple of `(verified_mode, expired_verified_mode)`.  If provided,
-                `verified_mode` is an *unexpired* verified mode for the course.
-                If provided, `expired_verified_mode` is an *expired* verified
+            Tuple of `(expired_verified_mode, unexpired_paid_mode)`.  If provided,
+                `expired_verified_mode` is an *expired* verified mode for the course.
+                If provided, `unexpired_paid_mode` is an *unexpired* paid(with min_price>0)
                 mode for the course.  Either of these may be None.
 
         """
         # Retrieve all the modes at once to reduce the number of database queries
         all_modes, unexpired_modes = CourseMode.all_and_unexpired_modes_for_courses([course_key])
+
+        # Unexpired paid modes
+        unexpired_paid_modes = [mode for mode in unexpired_modes[course_key] if mode.min_price]
+        if len(unexpired_paid_modes) > 1:
+            # There is more than one paid mode defined,
+            # so choose the first one.
+            log.warn(
+                u"More than one paid modes are defined for course '%s' choosing the first one %s",
+                course_key, unexpired_paid_modes[0]
+            )
+        unexpired_paid_mode = unexpired_paid_modes[0] if unexpired_paid_modes else None
 
         # Find an unexpired verified mode
         verified_mode = CourseMode.verified_mode_for_course(course_key, modes=unexpired_modes[course_key])
@@ -482,9 +509,9 @@ class PayAndVerifyView(View):
         if verified_mode is None:
             expired_verified_mode = CourseMode.verified_mode_for_course(course_key, modes=all_modes[course_key])
 
-        return (verified_mode, expired_verified_mode)
+        return (expired_verified_mode, unexpired_paid_mode)
 
-    def _display_steps(self, always_show_payment, already_verified, already_paid):
+    def _display_steps(self, always_show_payment, already_verified, already_paid, course_mode):
         """Determine which steps to display to the user.
 
         Includes all steps by default, but removes steps
@@ -508,7 +535,7 @@ class PayAndVerifyView(View):
         display_steps = self.ALL_STEPS
         remove_steps = set()
 
-        if already_verified:
+        if already_verified or not CourseMode.is_verified_mode(course_mode):
             remove_steps |= set(self.VERIFICATION_STEPS)
 
         if already_paid and not always_show_payment:
@@ -517,7 +544,6 @@ class PayAndVerifyView(View):
             # The "make payment" step doubles as an intro step,
             # so if we're showing the payment step, hide the intro step.
             remove_steps |= set([self.INTRO_STEP])
-
         return [
             {
                 'name': step,
@@ -559,6 +585,26 @@ class PayAndVerifyView(View):
 
         return all_requirements
 
+    def _verification_valid_until(self, user, date_format="%m/%d/%Y"):
+        """
+        Check whether the user has a valid or pending verification.
+
+        Arguments:
+            user:
+            date_format: optional parameter for formatting datetime
+                object to string in response
+
+        Returns:
+            datetime object in string format
+        """
+        photo_verifications = SoftwareSecurePhotoVerification.verification_valid_or_pending(user)
+        # return 'expiration_datetime' of latest photo verification if found,
+        # otherwise implicitly return ''
+        if photo_verifications:
+            return photo_verifications[0].expiration_datetime.strftime(date_format)
+
+        return ''
+
     def _check_already_verified(self, user):
         """Check whether the user has a valid or pending verification.
 
@@ -596,6 +642,21 @@ class PayAndVerifyView(View):
             has_paid = (course_mode and course_mode.min_price > 0)
 
         return (has_paid, bool(is_active))
+
+
+def create_order_with_ecommerce_service(user, course_key, course_mode):     # pylint: disable=invalid-name
+    """ Create a new order using the E-Commerce API. """
+    try:
+        api = EcommerceAPI()
+        # Make an API call to create the order and retrieve the results
+        _order_number, _order_status, data = api.create_order(user, course_mode.sku)
+
+        # Pass the payment parameters directly from the API response.
+        return HttpResponse(json.dumps(data['payment_parameters']), content_type='application/json')
+    except ApiError:
+        params = {'username': user.username, 'mode': course_mode.slug, 'course_id': unicode(course_key)}
+        log.error('Failed to create order for %(username)s %(mode)s mode of %(course_id)s', params)
+        raise
 
 
 @require_POST
@@ -636,30 +697,34 @@ def create_order(request):
     course_id = request.POST['course_id']
     course_id = CourseKey.from_string(course_id)
     donation_for_course = request.session.get('donation_for_course', {})
-    current_donation = donation_for_course.get(unicode(course_id), decimal.Decimal(0))
     contribution = request.POST.get("contribution", donation_for_course.get(unicode(course_id), 0))
     try:
         amount = decimal.Decimal(contribution).quantize(decimal.Decimal('.01'), rounding=decimal.ROUND_DOWN)
     except decimal.InvalidOperation:
         return HttpResponseBadRequest(_("Selected price is not valid number."))
 
-    if amount != current_donation:
-        donation_for_course[unicode(course_id)] = amount
-        request.session['donation_for_course'] = donation_for_course
+    current_mode = None
+    paid_modes = CourseMode.paid_modes_for_course(course_id)
+    # Check if there are more than 1 paid(mode with min_price>0 e.g verified/professional/no-id-professional) modes
+    # for course exist then choose the first one
+    if paid_modes:
+        if len(paid_modes) > 1:
+            log.warn(u"Multiple paid course modes found for course '%s' for create order request", course_id)
+        current_mode = paid_modes[0]
 
-    # prefer professional mode over verified_mode
-    current_mode = CourseMode.verified_mode_for_course(course_id)
-
-    # make sure this course has a verified mode
+    # Make sure this course has a paid mode
     if not current_mode:
-        log.warn(u"Verification requested for course {course_id} without a verified mode.".format(course_id=course_id))
-        return HttpResponseBadRequest(_("This course doesn't support verified certificates"))
+        log.warn(u"Create order requested for course '%s' without a paid mode.", course_id)
+        return HttpResponseBadRequest(_("This course doesn't support paid certificates"))
 
-    if current_mode.slug == 'professional':
+    if CourseMode.is_professional_mode(current_mode):
         amount = current_mode.min_price
 
     if amount < current_mode.min_price:
         return HttpResponseBadRequest(_("No selected price or selected price is below minimum."))
+
+    if current_mode.sku:
+        return create_order_with_ecommerce_service(request.user, course_id, current_mode)
 
     # I know, we should check this is valid. All kinds of stuff missing here
     cart = Order.get_cart_for_user(request.user)
@@ -714,16 +779,14 @@ def submit_photos_for_verification(request):
     if SoftwareSecurePhotoVerification.user_has_valid_or_pending(request.user):
         return HttpResponseBadRequest(_("You already have a valid or pending verification."))
 
-    username = request.user.username
-
     # If the user wants to change his/her full name,
     # then try to do that before creating the attempt.
     if request.POST.get('full_name'):
         try:
-            AccountView.update_account(request.user, username, {"name": request.POST.get('full_name')})
-        except AccountUserNotFound:
+            update_account_settings(request.user, {"name": request.POST.get('full_name')})
+        except UserNotFound:
             return HttpResponseBadRequest(_("No profile found for user"))
-        except AccountUpdateError:
+        except AccountValidationError:
             msg = _(
                 "Name must be at least {min_length} characters long."
             ).format(min_length=NAME_MIN_LENGTH)
@@ -743,7 +806,7 @@ def submit_photos_for_verification(request):
     attempt.mark_ready()
     attempt.submit()
 
-    account_settings = AccountView.get_serialized_account(username)
+    account_settings = get_account_settings(request.user)
 
     # Send a confirmation email to the user
     context = {
@@ -815,15 +878,20 @@ def results_callback(request):
         log.error("Software Secure posted back for receipt_id {}, but not found".format(receipt_id))
         return HttpResponseBadRequest("edX ID {} not found".format(receipt_id))
 
+    checkpoints = VerificationCheckpoint.objects.filter(photo_verification=attempt).all()
+
     if result == "PASS":
         log.debug("Approving verification for {}".format(receipt_id))
         attempt.approve()
+        status = "approved"
     elif result == "FAIL":
         log.debug("Denying verification for {}".format(receipt_id))
         attempt.deny(json.dumps(reason), error_code=error_code)
+        status = "denied"
     elif result == "SYSTEM FAIL":
         log.debug("System failure for {} -- resetting to must_retry".format(receipt_id))
         attempt.system_error(json.dumps(reason), error_code=error_code)
+        status = "error"
         log.error("Software Secure callback attempt for %s failed: %s", receipt_id, reason)
     else:
         log.error("Software Secure returned unknown result {}".format(result))
@@ -836,7 +904,7 @@ def results_callback(request):
         course_id = attempt.window.course_id
         course_enrollment = CourseEnrollment.get_or_create_enrollment(attempt.user, course_id)
         course_enrollment.emit_event(EVENT_NAME_USER_REVERIFICATION_REVIEWED_BY_SOFTWARESECURE)
-
+    VerificationStatus.add_status_from_checkpoints(checkpoints=checkpoints, user=attempt.user, status=status)
     return HttpResponse("OK!")
 
 
@@ -1034,3 +1102,152 @@ def reverification_window_expired(_request):
     """
     # TODO need someone to review the copy for this template
     return render_to_response("verify_student/reverification_window_expired.html")
+
+
+class InCourseReverifyView(View):
+    """
+    The in-course reverification view.
+    Needs to perform these functions:
+        - take new face photo
+        - retrieve the old id photo
+        - submit these photos to photo verification service
+
+    Does not need to worry about pricing
+    """
+    @method_decorator(login_required)
+    def get(self, request, course_id, checkpoint_name, location):
+        """ Display the view for face photo submission"""
+        # Check the in-course re-verification is enabled or not
+        incourse_reverify_enabled = InCourseReverificationConfiguration.current().enabled
+        if not incourse_reverify_enabled:
+            raise Http404
+
+        user = request.user
+        course_key = CourseKey.from_string(course_id)
+        course = modulestore().get_course(course_key)
+        if course is None:
+            raise Http404
+
+        checkpoint = VerificationCheckpoint.get_verification_checkpoint(course_key, checkpoint_name)
+        if checkpoint is None:
+            raise Http404
+
+        init_verification = SoftwareSecurePhotoVerification.get_initial_verification(user)
+        if not init_verification:
+            return redirect(reverse('verify_student_verify_later', kwargs={'course_id': unicode(course_key)}))
+
+        # emit the reverification event
+        self._track_reverification_events(
+            EVENT_NAME_USER_ENTERED_INCOURSE_REVERIFY_VIEW, user.id, course_id, checkpoint_name
+        )
+
+        context = {
+            'course_key': unicode(course_key),
+            'course_name': course.display_name_with_default,
+            'checkpoint_name': checkpoint_name,
+            'platform_name': settings.PLATFORM_NAME,
+            'location': location
+        }
+        return render_to_response("verify_student/incourse_reverify.html", context)
+
+    @method_decorator(login_required)
+    def post(self, request, course_id, checkpoint_name, location):
+        """Submits the re-verification attempt to SoftwareSecure
+
+        Args:
+            request(HttpRequest): HttpRequest object
+            course_id(str): Course Id
+            checkpoint_name(str): Checkpoint name
+
+        Returns:
+            HttpResponse with status_code 400 if photo is missing or any error
+            or redirect to verify_student_verify_later url if initial verification doesn't exist otherwise
+            HttpsResponse with status code 200
+        """
+        # Check the in-course re-verification is enabled or not
+        incourse_reverify_enabled = InCourseReverificationConfiguration.current().enabled
+        if not incourse_reverify_enabled:
+            raise Http404
+
+        user = request.user
+        try:
+            course_key = CourseKey.from_string(course_id)
+            usage_key = UsageKey.from_string(location).replace(course_key=course_key)
+        except InvalidKeyError:
+            raise Http404(u"Invalid course_key or usage_key")
+        course = modulestore().get_course(course_key)
+        checkpoint = VerificationCheckpoint.get_verification_checkpoint(course_key, checkpoint_name)
+        if checkpoint is None:
+            log.error("Checkpoint is not defined. Could not submit verification attempt for user %s",
+                      request.user.id)
+            context = {
+                'course_key': unicode(course_key),
+                'course_name': course.display_name_with_default,
+                'checkpoint_name': checkpoint_name,
+                'error': True,
+                'errorMsg': _("No checkpoint found"),
+                'platform_name': settings.PLATFORM_NAME,
+                'location': location
+            }
+            return render_to_response("verify_student/incourse_reverify.html", context)
+        init_verification = SoftwareSecurePhotoVerification.get_initial_verification(user)
+        if not init_verification:
+            log.error("Could not submit verification attempt for user %s", request.user.id)
+            return redirect(reverse('verify_student_verify_later', kwargs={'course_id': unicode(course_key)}))
+
+        try:
+            attempt = SoftwareSecurePhotoVerification.submit_faceimage(
+                request.user, request.POST['face_image'], init_verification.photo_id_key
+            )
+            checkpoint.add_verification_attempt(attempt)
+            VerificationStatus.add_verification_status(checkpoint, user, "submitted")
+
+            # emit the reverification event
+            self._track_reverification_events(
+                EVENT_NAME_USER_SUBMITTED_INCOURSE_REVERIFY, user.id, course_id, checkpoint_name
+            )
+
+            try:
+                redirect_url = get_redirect_url(course_key, usage_key)
+            except (ItemNotFoundError, NoPathToItem):
+                redirect_url = reverse("courseware", args=(unicode(course_key),))
+
+            return JsonResponse({'url': redirect_url})
+        except Http404 as expt:
+            log.exception("Invalid location during photo verification.")
+            return HttpResponseBadRequest(expt.message)
+        except IndexError:
+            log.exception("Invalid image data during photo verification.")
+            return HttpResponseBadRequest(_("Invalid image data during photo verification."))
+        except Exception:  # pylint: disable=broad-except
+            log.exception("Could not submit verification attempt for user %s.", request.user.id)
+            msg = _("Could not submit photos")
+            return HttpResponseBadRequest(msg)
+
+    def _track_reverification_events(self, event_name, user_id, course_id, checkpoint):  # pylint: disable=invalid-name
+        """Track re-verification events for user against course checkpoints
+
+        Arguments:
+            user_id (str): The ID of the user generting the certificate.
+            course_id (unicode):  id associated with the course
+            checkpoint (str):  checkpoint name
+        Returns:
+            None
+
+        """
+        if settings.FEATURES.get('SEGMENT_IO_LMS') and hasattr(settings, 'SEGMENT_IO_LMS_KEY'):
+            tracking_context = tracker.get_tracker().resolve_context()
+            analytics.track(
+                user_id,
+                event_name,
+                {
+                    'category': "verification",
+                    'label': unicode(course_id),
+                    'checkpoint': checkpoint
+                },
+                context={
+                    'Google Analytics': {
+                        'clientId': tracking_context.get('client_id')
+                    }
+                }
+            )

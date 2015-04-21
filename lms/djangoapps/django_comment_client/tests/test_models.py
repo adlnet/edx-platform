@@ -2,7 +2,6 @@
 Tests for the django comment client integration models
 """
 from django.test.testcases import TestCase
-from django.test.utils import override_settings
 from opaque_keys.edx.locations import SlashSeparatedCourseKey
 
 from xmodule.modulestore.tests.django_utils import TEST_DATA_MIXED_TOY_MODULESTORE
@@ -33,10 +32,6 @@ class RoleClassTestCase(ModuleStoreTestCase):
         self.course_id_2 = SlashSeparatedCourseKey("edx", "6.002x", "2012_Fall")
         self.TA_role_2 = models.Role.objects.get_or_create(name="Community TA",
                                                            course_id=self.course_id_2)[0]
-
-        class Dummy():
-            def render_template():
-                pass
 
     def test_has_permission(self):
         # Whenever you add a permission to student_role,

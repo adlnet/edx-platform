@@ -113,6 +113,12 @@ class PreviewModuleSystem(ModuleSystem):  # pylint: disable=abstract-method
             if aside_type != 'acid_aside'
         ]
 
+    def render_child_placeholder(self, block, view_name, context):
+        """
+        Renders a placeholder XBlock.
+        """
+        return self.wrap_xblock(block, view_name, Fragment(), context)
+
 
 class StudioPermissionsService(object):
     """
@@ -213,7 +219,8 @@ def _load_preview_module(request, descriptor):
         field_data = LmsFieldData(descriptor._field_data, student_data)  # pylint: disable=protected-access
     descriptor.bind_for_student(
         _preview_module_system(request, descriptor, field_data),
-        field_data
+        field_data,
+        request.user.id
     )
     return descriptor
 
@@ -233,17 +240,18 @@ def _studio_wrap_xblock(xblock, view, frag, context, display_name_only=False):
     # Only add the Studio wrapper when on the container page. The "Pages" page will remain as is for now.
     if not context.get('is_pages_view', None) and view in PREVIEW_VIEWS:
         root_xblock = context.get('root_xblock')
-        can_edit_visibility = not isinstance(xblock.location, LibraryUsageLocator)
         is_root = root_xblock and xblock.location == root_xblock.location
         is_reorderable = _is_xblock_reorderable(xblock, context)
         template_context = {
             'xblock_context': context,
             'xblock': xblock,
+            'show_preview': context.get('show_preview', True),
             'content': frag.content,
             'is_root': is_root,
             'is_reorderable': is_reorderable,
             'can_edit': context.get('can_edit', True),
-            'can_edit_visibility': can_edit_visibility,
+            'can_edit_visibility': context.get('can_edit_visibility', True),
+            'can_add': context.get('can_add', True),
         }
         html = render_to_string('studio_xblock_wrapper.html', template_context)
         frag = wrap_fragment(frag, html)

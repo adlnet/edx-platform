@@ -56,16 +56,17 @@ Markdown==2.2.1
 meliae==0.4.0
 mongoengine==0.7.10
 networkx==1.7
-nltk==2.0.4
+nltk==2.0.5
 nose==1.3.3
-oauthlib==0.6.3
+oauthlib==0.7.2
 paramiko==1.9.0
-path.py==3.0.1
+path.py==7.2
 Pillow==2.7.0
 polib==1.0.3
 pycrypto>=2.6
 pygments==2.0.1
 pygraphviz==1.1
+PyJWT==1.0.1
 pymongo==2.7.2
 pyparsing==2.0.1
 python-memcached==1.48
@@ -103,7 +104,7 @@ watchdog==0.7.1
 
 # Metrics gathering and monitoring
 dogapi==1.2.1
-newrelic==2.18.1.15
+newrelic==2.46.0.37
 
 # Used for documentation gathering
 sphinx==1.1.3
@@ -124,6 +125,7 @@ django_debug_toolbar==1.2.2
 django-debug-toolbar-mongo
 
 # Used for testing
+astroid==1.3.4
 chrono==1.0.2
 coverage==3.7
 ddt==0.8.0
@@ -140,10 +142,11 @@ nose-ignore-docstring
 nosexcover==1.0.7
 pep8==1.5.7
 PyContracts==1.7.1
-pylint==1.4.1
+pylint==1.4.2
 python-subunit==0.0.16
+pyquery==1.2.9
 radon==1.2
-rednose==0.3
+rednose==0.4.1
 selenium==2.42.1
 splinter==0.5.4
 testtools==0.9.34

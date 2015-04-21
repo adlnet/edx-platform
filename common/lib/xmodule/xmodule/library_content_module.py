@@ -2,11 +2,12 @@
 """
 LibraryContent: The XBlock used to include blocks from a library in a course.
 """
-from bson.objectid import ObjectId, InvalidId
-from collections import namedtuple
+import json
+from lxml import etree
 from copy import copy
 from capa.responsetypes import registry
 from gettext import ngettext
+from lazy import lazy
 
 from .mako_module import MakoModuleDescriptor
 from opaque_keys.edx.locator import LibraryLocator
@@ -133,6 +134,19 @@ class LibraryContentModule(LibraryContentFields, XModule, StudioEditableModule):
     as children of this block, but only a subset of those children are shown to
     any particular student.
     """
+
+    def _publish_event(self, event_name, result, **kwargs):
+        """ Helper method to publish an event for analytics purposes """
+        event_data = {
+            "location": unicode(self.location),
+            "result": result,
+            "previous_count": getattr(self, "_last_event_result_count", len(self.selected)),
+            "max_count": self.max_count,
+        }
+        event_data.update(kwargs)
+        self.runtime.publish(self, "edx.librarycontentblock.content.{}".format(event_name), event_data)
+        self._last_event_result_count = len(result)  # pylint: disable=attribute-defined-outside-init
+
     def selected_children(self):
         """
         Returns a set() of block_ids indicating which of the possible children
@@ -149,21 +163,9 @@ class LibraryContentModule(LibraryContentFields, XModule, StudioEditableModule):
             return self._selected_set  # pylint: disable=access-member-before-definition
 
         selected = set(tuple(k) for k in self.selected)  # set of (block_type, block_id) tuples assigned to this student
-        previous_count = len(selected)
 
         lib_tools = self.runtime.service(self, 'library_tools')
         format_block_keys = lambda keys: lib_tools.create_block_analytics_summary(self.location.course_key, keys)
-
-        def publish_event(event_name, **kwargs):
-            """ Publish an event for analytics purposes """
-            event_data = {
-                "location": unicode(self.location),
-                "result": format_block_keys(selected),
-                "previous_count": previous_count,
-                "max_count": self.max_count,
-            }
-            event_data.update(kwargs)
-            self.runtime.publish(self, "edx.librarycontentblock.content.{}".format(event_name), event_data)
 
         # Determine which of our children we will show:
         valid_block_keys = set([(c.block_type, c.block_id) for c in self.children])  # pylint: disable=no-member
@@ -173,14 +175,24 @@ class LibraryContentModule(LibraryContentFields, XModule, StudioEditableModule):
             selected -= invalid_block_keys
             # Publish an event for analytics purposes:
             # reason "invalid" means deleted from library or a different library is now being used.
-            publish_event("removed", removed=format_block_keys(invalid_block_keys), reason="invalid")
+            self._publish_event(
+                "removed",
+                result=format_block_keys(selected),
+                removed=format_block_keys(invalid_block_keys),
+                reason="invalid"
+            )
         # If max_count has been decreased, we may have to drop some previously selected blocks:
         overlimit_block_keys = set()
         while len(selected) > self.max_count:
             overlimit_block_keys.add(selected.pop())
         if overlimit_block_keys:
             # Publish an event for analytics purposes:
-            publish_event("removed", removed=format_block_keys(overlimit_block_keys), reason="overlimit")
+            self._publish_event(
+                "removed",
+                result=format_block_keys(selected),
+                removed=format_block_keys(overlimit_block_keys),
+                reason="overlimit"
+            )
         # Do we have enough blocks now?
         num_to_add = self.max_count - len(selected)
         if num_to_add > 0:
@@ -196,7 +208,11 @@ class LibraryContentModule(LibraryContentFields, XModule, StudioEditableModule):
             selected |= added_block_keys
             if added_block_keys:
                 # Publish an event for analytics purposes:
-                publish_event("assigned", added=format_block_keys(added_block_keys))
+                self._publish_event(
+                    "assigned",
+                    result=format_block_keys(selected),
+                    added=format_block_keys(added_block_keys)
+                )
         # Save our selections to the user state, to ensure consistency:
         self.selected = list(selected)  # TODO: this doesn't save from the LMS "Progress" page.
         # Cache the results
@@ -254,6 +270,7 @@ class LibraryContentModule(LibraryContentFields, XModule, StudioEditableModule):
                     'max_count': self.max_count,
                     'display_name': self.display_name or self.url_name,
                 }))
+                context['can_edit_visibility'] = False
                 self.render_children(context, fragment, can_reorder=False, can_add=False)
         # else: When shown on a unit page, don't show any sort of preview -
         # just the status of this block in the validation area.
@@ -291,6 +308,25 @@ class LibraryContentDescriptor(LibraryContentFields, MakoModuleDescriptor, XmlDe
         non_editable_fields.extend([LibraryContentFields.mode, LibraryContentFields.source_library_version])
         return non_editable_fields
 
+    @lazy
+    def tools(self):
+        """
+        Grab the library tools service or raise an error.
+        """
+        return self.runtime.service(self, 'library_tools')
+
+    def get_user_id(self):
+        """
+        Get the ID of the current user.
+        """
+        user_service = self.runtime.service(self, 'user')
+        if user_service:
+            # May be None when creating bok choy test fixtures
+            user_id = user_service.get_current_user().opt_attrs.get('edx-platform.user_id', None)
+        else:
+            user_id = None
+        return user_id
+
     @XBlock.handler
     def refresh_children(self, request=None, suffix=None):  # pylint: disable=unused-argument
         """
@@ -305,16 +341,49 @@ class LibraryContentDescriptor(LibraryContentFields, MakoModuleDescriptor, XmlDe
         the version number of the libraries used, so we easily determine if
         this block is up to date or not.
         """
-        lib_tools = self.runtime.service(self, 'library_tools')
-        user_service = self.runtime.service(self, 'user')
         user_perms = self.runtime.service(self, 'studio_user_permissions')
-        if user_service:
-            # May be None when creating bok choy test fixtures
-            user_id = user_service.get_current_user().opt_attrs.get('edx-platform.user_id', None)
-        else:
-            user_id = None
-        lib_tools.update_children(self, user_id, user_perms)
+        user_id = self.get_user_id()
+        if not self.tools:
+            return Response("Library Tools unavailable in current runtime.", status=400)
+        self.tools.update_children(self, user_id, user_perms)
         return Response()
+
+    # Copy over any overridden settings the course author may have applied to the blocks.
+    def _copy_overrides(self, store, user_id, source, dest):
+        """
+        Copy any overrides the user has made on blocks in this library.
+        """
+        for field in source.fields.itervalues():
+            if field.scope == Scope.settings and field.is_set_on(source):
+                setattr(dest, field.name, field.read_from(source))
+        if source.has_children:
+            source_children = [self.runtime.get_block(source_key) for source_key in source.children]
+            dest_children = [self.runtime.get_block(dest_key) for dest_key in dest.children]
+            for source_child, dest_child in zip(source_children, dest_children):
+                self._copy_overrides(store, user_id, source_child, dest_child)
+        store.update_item(dest, user_id)
+
+    def studio_post_duplicate(self, store, source_block):
+        """
+        Used by the studio after basic duplication of a source block. We handle the children
+        ourselves, because we have to properly reference the library upstream and set the overrides.
+
+        Otherwise we'll end up losing data on the next refresh.
+        """
+        # The first task will be to refresh our copy of the library to generate the children.
+        # We must do this at the currently set version of the library block. Otherwise we may not have
+        # exactly the same children-- someone may be duplicating an out of date block, after all.
+        user_id = self.get_user_id()
+        user_perms = self.runtime.service(self, 'studio_user_permissions')
+        # pylint: disable=no-member
+        if not self.tools:
+            raise RuntimeError("Library tools unavailable, duplication will not be sane!")
+        self.tools.update_children(self, user_id, user_perms, version=self.source_library_version)
+
+        self._copy_overrides(store, user_id, source_block, self)
+
+        # Children have been handled.
+        return True
 
     def _validate_library_version(self, validation, lib_tools, version, library_key):
         """
@@ -477,18 +546,27 @@ class LibraryContentDescriptor(LibraryContentFields, MakoModuleDescriptor, XmlDe
 
     @classmethod
     def definition_from_xml(cls, xml_object, system):
-        """ XML support not yet implemented. """
-        raise NotImplementedError
+        children = [
+            # pylint: disable=no-member
+            system.process_xml(etree.tostring(child)).scope_ids.usage_id
+            for child in xml_object.getchildren()
+        ]
+        definition = {
+            attr_name: json.loads(attr_value)
+            for attr_name, attr_value in xml_object.attrib
+        }
+        return definition, children
 
     def definition_to_xml(self, resource_fs):
-        """ XML support not yet implemented. """
-        raise NotImplementedError
-
-    @classmethod
-    def from_xml(cls, xml_data, system, id_generator):
-        """ XML support not yet implemented. """
-        raise NotImplementedError
-
-    def export_to_xml(self, resource_fs):
-        """ XML support not yet implemented. """
-        raise NotImplementedError
+        """ Exports Library Content Module to XML """
+        # pylint: disable=no-member
+        xml_object = etree.Element('library_content')
+        for child in self.get_children():
+            self.runtime.add_block_as_child_node(child, xml_object)
+        # Set node attributes based on our fields.
+        for field_name, field in self.fields.iteritems():
+            if field_name in ('children', 'parent', 'content'):
+                continue
+            if field.is_set_on(self):
+                xml_object.set(field_name, unicode(field.read_from(self)))
+        return xml_object
